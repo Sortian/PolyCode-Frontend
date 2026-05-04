@@ -82,7 +82,7 @@ export default function Sidebar({
   selectedLanguage,
   onLanguageSelect,
 }) {
-    const [tree, setTree] = useState([]);
+  const [tree, setTree] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const location = useLocation();
@@ -90,12 +90,42 @@ export default function Sidebar({
 
   useEffect(() => {
     const params = selectedLanguage ? { language: selectedLanguage } : {};
+
+    // Initialize with empty arrays to prevent runtime errors
+    setTree([]);
+    setLanguages([]);
+
     getTree(params)
-      .then((r) => setTree(r.data.tree || []))
-      .catch(() => {});
+      .then((r) => {
+        if (r.data && Array.isArray(r.data.tree)) {
+          setTree(r.data.tree);
+        } else if (r.data && Array.isArray(r.data)) {
+          setTree(r.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching tree:", error);
+        setTree([]);
+      });
+
+    // FIX: The API returns { languages: [...] }, not a plain array.
+    // Was checking Array.isArray(r.data) which would always be false
+    // since r.data is { languages: [...] }. Now correctly reads r.data.languages.
     getLanguages()
-      .then((r) => setLanguages(r.data))
-      .catch(() => {});
+      .then((r) => {
+        if (r.data && Array.isArray(r.data.languages)) {
+          setLanguages(r.data.languages);
+        } else if (r.data && Array.isArray(r.data)) {
+          // Fallback: if API ever returns a plain array
+          setLanguages(r.data);
+        } else {
+          setLanguages([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching languages:", error);
+        setLanguages([]);
+      });
   }, [selectedLanguage]);
 
   const isActive = (p) => location.pathname === p;
@@ -205,12 +235,16 @@ export default function Sidebar({
   };
 
   return (
-    <aside className={`sidebar ${isOpen ? "active" : ""}`}>
+    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
       {/* Close button */}
-      <button className="sidebar-close" onClick={onClose}>
+      <button
+        className="sidebar-close"
+        onClick={onClose}
+        aria-label="Close sidebar"
+      >
         <svg
-          width="24"
-          height="24"
+          width="18"
+          height="18"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -242,21 +276,27 @@ export default function Sidebar({
 
           {showLangMenu && (
             <div className="language-dropdown-menu">
-              {languages.map((lang) => {
-                const logo = languageLogos[lang.toLowerCase()];
-                return (
-                  <button
-                    key={lang}
-                    className={`lang-option ${lang === selectedLanguage ? "active" : ""}`}
-                    onClick={() => handleSelectLanguage(lang)}
-                  >
-                    {logo && (
-                      <img src={logo} alt="" className="lang-icon-tiny" />
-                    )}
-                    <span>{lang}</span>
-                  </button>
-                );
-              })}
+              {Array.isArray(languages) && languages.length > 0 ? (
+                languages.map((lang) => {
+                  const logo = languageLogos[lang.toLowerCase()];
+                  return (
+                    <button
+                      key={lang}
+                      className={`lang-option ${lang === selectedLanguage ? "active" : ""}`}
+                      onClick={() => handleSelectLanguage(lang)}
+                    >
+                      {logo && (
+                        <img src={logo} alt="" className="lang-icon-tiny" />
+                      )}
+                      <span>{lang}</span>
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="lang-option" style={{ opacity: 0.5 }}>
+                  No languages found
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -300,12 +340,17 @@ export default function Sidebar({
       <div className="sidebar-section">
         <div className="sidebar-section-title">Files</div>
         <div className="sidebar-tree">
-          {tree.length === 0 && (
-            <div className="tree-empty">No files found</div>
+          {Array.isArray(tree) ? (
+            tree.length === 0 ? (
+              <div className="tree-empty">No files found</div>
+            ) : (
+              tree.map((node, i) => (
+                <SidebarTreeNode key={i} node={node} depth={0} />
+              ))
+            )
+          ) : (
+            <div className="tree-empty">Loading files...</div>
           )}
-          {tree.map((node, i) => (
-            <SidebarTreeNode key={i} node={node} depth={0} />
-          ))}
         </div>
       </div>
     </aside>
