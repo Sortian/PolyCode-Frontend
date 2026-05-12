@@ -118,7 +118,7 @@ export async function runTypeScript(code) {
           '📝 Example:',
           '❌ import axios from "axios";',
           '✅ interface User { name: string; }',
-          '✅ const greet = (u: User): string => `Hello, ${u.name}!`;',
+          '✅ const greet = (u: User): string => `Hello, $' + '{u.name}!`;',
         ].join('\n'),
         error: null,
       };
@@ -323,7 +323,6 @@ export function runPHP(code) {
       });
     }
 
-    const lines = [];
     const normalized = code.replace(/<\?php\s*/gi, '').replace(/\?>/gi, '');
     // Convert basic PHP to JS
     let js = normalized
@@ -361,6 +360,7 @@ export function runBrainfuck(code) {
         case '.': out += String.fromCharCode(mem[dp]); break;
         case '[': if (!mem[dp]) ip = brackets[ip]; break;
         case ']': if (mem[dp]) ip = brackets[ip]; break;
+        default: ip++; break;
       }
       ip++;
     }
