@@ -118,7 +118,7 @@ export async function runTypeScript(code) {
           '📝 Example:',
           '❌ import axios from "axios";',
           '✅ interface User { name: string; }',
-          '✅ const greet = (u: User): string => `Hello, ${u.name}!`;',
+          '✅ const greet = (u: User): string => `Hello, \${u.name}!`;',
         ].join('\n'),
         error: null,
       };
