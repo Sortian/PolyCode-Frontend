@@ -65,12 +65,16 @@ export default function MarkdownRenderer({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          code({ node, inline, className, children, ...props }) {
+          // react-markdown v10: 'inline' prop removed. Use node.tagName or check children instead.
+          code({ node, className, children, ...props }) {
             const match = /language-([a-zA-Z0-9#+-]+)/.exec(className || '');
             const lang = normalizeDocLanguage(match ? match[1] : 'python');
             const codeStr = String(children).replace(/\n$/, '');
 
-            if (!inline && (match || codeStr.length > 60)) {
+            // Block code: has a language class, or is long enough to warrant a block
+            const isBlock = Boolean(match) || codeStr.includes('\n') || codeStr.length > 60;
+
+            if (isBlock) {
               return <CodeBlock language={lang} code={codeStr} theme={theme} />;
             }
             return <code className={className} {...props}>{children}</code>;

@@ -103,7 +103,7 @@ export default function CodePlayground({
   const currentWorkspace = workspaces[language] || createWorkspace(language);
   const { code, output, previewHTML, activeTab } = currentWorkspace;
   const currentIsRunning = runningLanguage === language;
-  const anyIsRunning = runningLanguage !== null;
+  const anyIsRunning = runningLanguage !== null; // eslint-disable-line no-unused-vars
 
   const updateWorkspace = useCallback((lang, nextValue) => {
     setWorkspaces((prev) => {
@@ -272,62 +272,49 @@ export default function CodePlayground({
         </div>
 
         <div className="pg-toolbar-right">
-          <button
-            className="pg-icon-btn"
-            onClick={() => setFontSize((f) => Math.max(10, f - 1))}
-            title="Smaller font"
-          >
-            A-
-          </button>
           <span className="pg-font-size">{fontSize}px</span>
           <button
             className="pg-icon-btn"
+            onClick={() => setFontSize((f) => Math.max(10, f - 1))}
+            title="Decrease font size"
+          >
+            A-
+          </button>
+          <button
+            className="pg-icon-btn"
             onClick={() => setFontSize((f) => Math.min(24, f + 1))}
-            title="Larger font"
+            title="Increase font size"
           >
             A+
           </button>
           <button
             className={`pg-icon-btn ${wordWrap ? "active" : ""}`}
             onClick={() => setWordWrap((w) => !w)}
-            title="Word wrap"
+            title="Toggle word wrap"
           >
-            ⇌
-          </button>
-          <button
-            className="pg-icon-btn"
-            onClick={() =>
-              updateWorkspace(language, {
-                code: getStarterCode(language),
-                output: [],
-                previewHTML: null,
-                activeTab: "output",
-              })
-            }
-            title="Reset"
-          >
-            ↺
+            ↵
           </button>
           <button
             className={`pg-run-btn ${currentIsRunning ? "running" : ""}`}
             onClick={handleRun}
-            disabled={anyIsRunning}
-            title="Run (Ctrl+Enter)"
+            disabled={currentIsRunning}
+            title="Run code (Ctrl+Enter)"
           >
             {currentIsRunning ? (
               <>
-                <span className="pg-spinner">⟳</span> Running...
+                <span className="pg-spinner">⟳</span> Running…
               </>
             ) : (
-              <>{anyIsRunning ? "⌛ Busy" : "▶ Run"}</>
+              "▶ Run"
             )}
           </button>
         </div>
       </div>
 
+      {/* ── Workspace strip ── */}
       <div className="pg-workspace-strip">
         {LANG_GROUPS.map((group) => (
-          <div className="pg-workspace-group" key={group.label}>
+          <div key={group.label} className="pg-workspace-group">
             <span className="pg-workspace-label">{group.label}</span>
             <div className="pg-workspace-list">
               {group.langs.map((lang) => {
@@ -398,7 +385,7 @@ export default function CodePlayground({
           </div>
         </div>
 
-        {/* Output / Preview — RIGHT side */}
+        {/* Output / Preview */}
         <div className="pg-output-pane">
           <div className="pg-pane-header">
             <div className="pg-output-tabs">

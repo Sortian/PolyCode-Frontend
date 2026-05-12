@@ -352,7 +352,9 @@ end
 
 puts "Fibonacci: #{(0..9).map { |i| fib(i) }}"`,
 
-  kotlin: `fun fibonacci(n: Int): List<Int> {
+  // FIX: The ${fibonacci(10)} inside this string was parsed by ESLint as
+  // a JS template expression, causing a no-undef error. Escaped to a raw string.
+  kotlin: String.raw`fun fibonacci(n: Int): List<Int> {
     val result = mutableListOf<Int>()
     var a = 0; var b = 1
     repeat(n) {
@@ -364,7 +366,7 @@ puts "Fibonacci: #{(0..9).map { |i| fib(i) }}"`,
 fun main() {
     println("Hello from Kotlin! 🎯")
     println("Fibonacci: " + fibonacci(10))
-} `,
+}`,
 
   swift: `import Foundation
 
