@@ -15,7 +15,6 @@ export default function Navbar({
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  // Keyboard shortcut: Cmd/Ctrl + K
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
