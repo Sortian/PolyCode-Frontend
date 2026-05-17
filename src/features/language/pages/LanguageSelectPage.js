@@ -21,7 +21,7 @@ const languageMeta = {
   'c#': { icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg', color: '#239120' },
 };
 
-export default function LanguageSelectPage({ onLanguageSelect }) {
+export default function LanguageSelectPage({ onLanguageSelect, continueLanguage }) {
   const [languages, setLanguages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredLanguage, setHoveredLanguage] = useState(null);
@@ -85,6 +85,17 @@ export default function LanguageSelectPage({ onLanguageSelect }) {
           Explore an extensive collection of Go, Python, JavaScript, Java, C++, Rust,
           and more. Choose your language to begin exploration.
         </p>
+
+        {continueLanguage && (
+          <button
+            type="button"
+            className="btn-secondary continue-stack-btn"
+            onClick={() => navigate('/hub')}
+            style={{ margin: '0 auto 24px', display: 'block' }}
+          >
+            Continue with {continueLanguage} →
+          </button>
+        )}
       </section>
 
       {/* ── Language Selection Grid ── */}

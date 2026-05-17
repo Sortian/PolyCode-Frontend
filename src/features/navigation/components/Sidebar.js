@@ -225,9 +225,20 @@ export default function Sidebar({
       {/* Quick nav */}
       <div className="sidebar-section">
         <div className="sidebar-section-title">Navigate</div>
+        <button
+          type="button"
+          className={`sidebar-item sidebar-item-btn ${location.pathname === "/select-language" ? "active" : ""}`}
+          onClick={() => {
+            onGoToStackPicker?.();
+            onClose();
+          }}
+        >
+          <span className="icon">⊞</span>
+          <span className="sidebar-text">All stacks</span>
+        </button>
         <Link to="/hub" className={`sidebar-item ${isActive("/hub") ? "active" : ""}`} onClick={handleItemClick}>
           <span className="icon">⌂</span>
-          <span className="sidebar-text">Home</span>
+          <span className="sidebar-text">Docs hub</span>
         </Link>
         <Link to="/search" className={`sidebar-item ${isActive("/search") ? "active" : ""}`} onClick={handleItemClick}>
           <span className="icon">⌕</span>

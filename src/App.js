@@ -152,7 +152,10 @@ function AppRoutes() {
           <Route
             path="/select-language"
             element={
-              <LanguageSelectPage onLanguageSelect={handleLanguageSelect} />
+              <LanguageSelectPage
+                onLanguageSelect={handleLanguageSelect}
+                continueLanguage={selectedLanguage}
+              />
             }
           />
           <Route

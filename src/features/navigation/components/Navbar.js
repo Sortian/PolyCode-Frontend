@@ -64,14 +64,19 @@ export default function Navbar({
         <span />
       </button>
 
-      {/* Brand */}
-      <Link to="/hub" className="navbar-brand">
+      {/* Brand — back to language selection (main page) */}
+      <button
+        type="button"
+        className="navbar-brand"
+        onClick={onGoToStackPicker}
+        title="Back to all languages"
+      >
         <img src="/logo.png" alt="PolyCode Logo" className="navbar-logo" />
         <div className="navbar-brand-text">
           <span className="logo-text">PolyCode</span>
           <span className="logo-sub">v2.0 docs</span>
         </div>
-      </Link>
+      </button>
 
       {/* Search */}
       <form className="navbar-search" onSubmit={handleSearch}>
@@ -89,8 +94,16 @@ export default function Navbar({
 
       {/* Links */}
       <div className="navbar-links">
-        <Link to="/hub" className={isActive("/hub")}>
+        <button
+          type="button"
+          className={`navbar-link-btn ${location.pathname === "/select-language" ? "active" : ""}`}
+          onClick={onGoToStackPicker}
+          title="Choose a programming language"
+        >
           Home
+        </button>
+        <Link to="/hub" className={isActive("/hub")}>
+          Docs hub
         </Link>
         <Link to="/search" className={isActive("/search")}>
           Search
@@ -103,17 +116,6 @@ export default function Navbar({
         >
           ▶ Playground
         </NavLink>
-
-        {onGoToStackPicker && (
-          <button
-            type="button"
-            className="navbar-change-stack-btn"
-            onClick={onGoToStackPicker}
-            title="Return to language selection"
-          >
-            ⇄ Change stack
-          </button>
-        )}
 
         <button
           type="button"

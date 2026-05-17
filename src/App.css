@@ -173,6 +173,48 @@ body {
   gap: 10px;
   text-decoration: none;
   flex-shrink: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.navbar-brand:hover .navbar-logo {
+  transform: scale(1.05);
+}
+
+.navbar-link-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--txt-1);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.navbar-link-btn:hover {
+  background: var(--glass-2);
+  color: var(--txt-0);
+}
+
+.navbar-link-btn.active {
+  background: var(--acid-dim);
+  color: var(--acid);
+}
+
+.sidebar-item-btn {
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
 }
 
 .navbar-logo {
