@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import {
   definePolycodeMonacoTheme,
@@ -18,12 +18,25 @@ export default function CodeChallenge({
   const [results, setResults] = useState(null); // null | { passed, tests }
   const [showSolution, setShowSolution] = useState(false);
   const [running, setRunning] = useState(false);
+  const activeChallengeId = useRef(challenge.id);
 
   useEffect(() => {
-    setCode(initialCode || challenge.starterCode);
-    setResults(null);
-    setShowSolution(false);
-  }, [challenge, initialCode]);
+    const challengeChanged = activeChallengeId.current !== challenge.id;
+
+    if (challengeChanged) {
+      activeChallengeId.current = challenge.id;
+      setCode(initialCode || challenge.starterCode);
+      setResults(null);
+      setShowSolution(false);
+      return;
+    }
+
+    if (typeof initialCode === "string") {
+      setCode((currentCode) =>
+        currentCode === challenge.starterCode ? initialCode : currentCode,
+      );
+    }
+  }, [challenge.id, challenge.starterCode, initialCode]);
 
   // Simulated test runner — checks code string heuristically
   // In production: hook into your backend compiler (BrowserExecutor / Piston API)

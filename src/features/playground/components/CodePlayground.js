@@ -94,7 +94,6 @@ export default function CodePlayground({
   initialLanguage = "javascript",
   onToggleSidebar,
   sidebarOpen,
-  theme,
 }) {
   const normalizedInitialLanguage = normalizeLanguage(initialLanguage);
   const [language, setLanguage] = useState(normalizedInitialLanguage);
@@ -365,7 +364,7 @@ export default function CodePlayground({
               beforeMount={definePolycodeMonacoTheme}
               onChange={(v) => updateWorkspace(language, { code: v || "" })}
               theme={POLYCODE_VSCODE_THEME}
-              key={`editor-${theme}-${language}`}
+              key={`editor-${language}`}
               options={{
                 ...getVSCodeEditorOptions({ fontSize, wordWrap }),
                 fontSize,
