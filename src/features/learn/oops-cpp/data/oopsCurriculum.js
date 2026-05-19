@@ -1,5 +1,6 @@
 // ──────────────────────────────────────────────
 //  PolyCode — OOP in C++ Curriculum Data
+//  Enhanced with quiz, diagram, and stepthrough block types
 // ──────────────────────────────────────────────
 
 export const CHAPTERS = [
@@ -24,6 +25,24 @@ export const CHAPTERS = [
             variant: "info",
             content:
               "Think of an object like a vending machine: it has *state* (what's inside, how much money is inserted) and *behavior* (dispense item, return change).",
+          },
+          {
+            type: "diagram",
+            title: "Procedural vs OOP",
+            nodes: [
+              {
+                id: "proc",
+                label: "Procedural",
+                color: "#ff6b6b",
+                items: ["Data (variables)", "Functions", "Separate concerns"],
+              },
+              {
+                id: "oop",
+                label: "OOP",
+                color: "#b8ff00",
+                items: ["Object = Data + Methods", "Encapsulated", "Reusable"],
+              },
+            ],
           },
           {
             type: "code",
@@ -51,6 +70,19 @@ public:
         cout << "Hi " << name << ", age " << age << endl;
     }
 };`,
+          },
+          {
+            type: "quiz",
+            question: "Which OOP principle bundles data and behavior together?",
+            options: [
+              "Inheritance",
+              "Encapsulation",
+              "Polymorphism",
+              "Abstraction",
+            ],
+            answer: 1,
+            explanation:
+              "Encapsulation is the principle of wrapping data and the methods that operate on that data into a single unit (class).",
           },
         ],
         challenge: {
@@ -129,6 +161,27 @@ int main() {
               "Constructor name = Class name. No return type — not even `void`.",
           },
           {
+            type: "stepthrough",
+            title: "How Object Creation Works",
+            steps: [
+              {
+                label: "Memory allocated",
+                code: "Rectangle r2(5, 3);",
+                desc: "The runtime allocates memory for all member variables of Rectangle.",
+              },
+              {
+                label: "Constructor called",
+                code: "Rectangle(int w, int h) {\n  width = w; height = h;\n}",
+                desc: "The parameterized constructor runs and sets width=5, height=3.",
+              },
+              {
+                label: "Object ready",
+                code: "r2.area(); // returns 15",
+                desc: "The object is fully initialized and ready to use.",
+              },
+            ],
+          },
+          {
             type: "code",
             lang: "cpp",
             label: "Default & Parameterized constructors",
@@ -162,6 +215,14 @@ int main() {
             variant: "warning",
             content:
               "If you define any constructor, the compiler stops generating a default one for you. Always be explicit.",
+          },
+          {
+            type: "quiz",
+            question:
+              "What is printed by: `Rectangle r(4, 5); cout << r.area();`",
+            options: ["9", "20", "45", "Compiler error"],
+            answer: 1,
+            explanation: "area() returns width * height = 4 * 5 = 20.",
           },
         ],
         challenge: {
@@ -250,6 +311,15 @@ Student s;
 s.setGrade(95);   // ✅ OK
 // s.grade = 95;  // ❌ compile error`,
           },
+          {
+            type: "quiz",
+            question:
+              "Which access specifier lets subclasses (but NOT outside code) access a member?",
+            options: ["public", "private", "protected", "internal"],
+            answer: 2,
+            explanation:
+              "`protected` members are accessible within the class and any derived class, but not from outside code.",
+          },
         ],
         challenge: {
           title: "Encapsulate Temperature",
@@ -317,6 +387,25 @@ int main() {
             content: "Syntax: `class Child : public Parent { ... };`",
           },
           {
+            type: "diagram",
+            title: "Inheritance Chain",
+            nodes: [
+              {
+                id: "animal",
+                label: "Animal",
+                color: "#ff6b6b",
+                items: ["name: string", "breathe()"],
+              },
+              {
+                id: "dog",
+                label: "Dog : Animal",
+                color: "#ffaa00",
+                items: ["← inherits name, breathe()", "bark()"],
+                parent: "animal",
+              },
+            ],
+          },
+          {
             type: "code",
             lang: "cpp",
             label: "Animal → Dog",
@@ -337,6 +426,20 @@ int main() {
     d.breathe();   // inherited!
     d.bark();      // Dog-specific
 }`,
+          },
+          {
+            type: "quiz",
+            question:
+              "In `class Dog : public Animal`, what does `public` control?",
+            options: [
+              "Whether Dog's members are public",
+              "The access level of inherited members in Dog",
+              "Whether Animal can access Dog",
+              "Nothing — it's always required",
+            ],
+            answer: 1,
+            explanation:
+              "The `public` inheritance mode means public/protected members of Animal remain public/protected in Dog. With `private` inheritance they'd all become private.",
           },
         ],
         challenge: {
@@ -410,6 +513,27 @@ int main() {
               "Without `virtual`, calling through a base pointer will always use the base version — even if the derived class overrides it.",
           },
           {
+            type: "stepthrough",
+            title: "Runtime Dispatch with virtual",
+            steps: [
+              {
+                label: "Base pointer assigned",
+                code: "Shape* s = new Circle(5);",
+                desc: "A Shape* is pointing to a Circle object on the heap.",
+              },
+              {
+                label: "Virtual table lookup",
+                code: "s->area();",
+                desc: "Because area() is virtual, C++ looks up the actual type (Circle) in the vtable at runtime.",
+              },
+              {
+                label: "Correct override runs",
+                code: "// Circle::area() → 78.5",
+                desc: "Circle's override executes, not Shape's default. This is dynamic dispatch.",
+              },
+            ],
+          },
+          {
             type: "code",
             lang: "cpp",
             label: "Runtime polymorphism",
@@ -437,6 +561,20 @@ int main() {
     for (auto* sh : shapes)
         cout << sh->area() << endl;  // different result, same call!
 }`,
+          },
+          {
+            type: "quiz",
+            question:
+              "What happens if you call `s->area()` where `s` is a `Shape*` pointing to a `Circle`, but `area()` is NOT virtual?",
+            options: [
+              "Circle::area() is called (correct result)",
+              "Shape::area() is called (wrong result)",
+              "Compile error",
+              "Undefined behavior",
+            ],
+            answer: 1,
+            explanation:
+              "Without `virtual`, the call is resolved at compile-time based on the pointer type (Shape), so Shape::area() runs regardless of what the pointer actually points to.",
           },
         ],
         challenge: {
@@ -505,6 +643,36 @@ int main() {
               "An **abstract class** is a blueprint you can't instantiate directly. It uses **pure virtual functions** (syntax: `= 0`) to *force* derived classes to implement them.",
           },
           {
+            type: "diagram",
+            title: "Abstract Class Pattern",
+            nodes: [
+              {
+                id: "payment",
+                label: "Payment (abstract)",
+                color: "#f59e0b",
+                items: [
+                  "processPayment() = 0",
+                  "getMethod() = 0",
+                  "❌ Cannot instantiate",
+                ],
+              },
+              {
+                id: "cc",
+                label: "CreditCard",
+                color: "#00d4ff",
+                items: ["processPayment() ✓", "getMethod() ✓", "✅ Concrete"],
+                parent: "payment",
+              },
+              {
+                id: "crypto",
+                label: "Crypto",
+                color: "#b8ff00",
+                items: ["processPayment() ✓", "getMethod() ✓", "✅ Concrete"],
+                parent: "payment",
+              },
+            ],
+          },
+          {
             type: "code",
             lang: "cpp",
             label: "Pure virtual function",
@@ -527,6 +695,20 @@ public:
 };
 
 // Shape s;  // ❌ Error! Can't instantiate abstract class`,
+          },
+          {
+            type: "quiz",
+            question:
+              "Which syntax makes a function purely virtual (abstract)?",
+            options: [
+              "virtual void foo() {}",
+              "abstract void foo();",
+              "virtual void foo() = 0;",
+              "void foo() override;",
+            ],
+            answer: 2,
+            explanation:
+              "The `= 0` suffix makes a virtual function pure virtual. The class becomes abstract and cannot be instantiated.",
           },
         ],
         challenge: {
