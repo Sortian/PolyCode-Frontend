@@ -1,12 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/context/AuthContext";
+import { getLearnNavLinks } from "../../language/courseCatalog";
 
 export default function Navbar({
   toggleSidebar,
   theme = "dark",
   onToggleTheme,
   onGoToStackPicker,
+  selectedLanguage,
 }) {
   const { user, logout } = useAuth();
   const [query, setQuery] = useState("");
@@ -48,6 +50,11 @@ export default function Navbar({
     location.pathname === path || location.pathname.startsWith(path + "/")
       ? "active"
       : "";
+
+  const learnNavLinks = useMemo(
+    () => getLearnNavLinks(selectedLanguage, location.pathname),
+    [selectedLanguage, location.pathname],
+  );
 
   const handleLogout = () => {
     logout();
@@ -113,16 +120,11 @@ export default function Navbar({
         <Link to="/search" className={isActive("/search")}>
           Search
         </Link>
-        {/* Learn nav link — highlights for all /learn/* sub-routes */}
-        <Link to="/learn/oops-cpp" className={isActive("/learn/oops-cpp")}>
-          OOPs
-        </Link>
-        <Link
-          to="/learn/pointers-cpp"
-          className={isActive("/learn/pointers-cpp")}
-        >
-          Pointers
-        </Link>
+        {learnNavLinks.map((item) => (
+          <Link key={item.to} to={item.to} className={isActive(item.to)}>
+            {item.label}
+          </Link>
+        ))}
         <NavLink
           to="/playground"
           className={({ isActive: a }) =>

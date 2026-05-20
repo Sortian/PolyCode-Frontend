@@ -185,6 +185,66 @@ export async function runSQL(code) {
 
 let pyodideInstance = null;
 let pyodideLoading = false;
+const pyodideLoadedPackages = new Set();
+
+const PYTHON_STDLIB_PREFIXES = [
+  'math', 'random', 'datetime', 'time', 'sys', 'os', 'json', 're',
+  'collections', 'itertools', 'functools', 'typing', 'statistics',
+  'string', 'textwrap', 'unicodedata', 'struct', 'codecs', 'copy',
+  'pprint', 'reprlib', 'enum', 'graphlib', 'contextlib', 'abc',
+];
+
+/** Pyodide wheels available via loadPackage (used by learn + playground). */
+const PYTHON_PYODIDE_PACKAGES = {
+  numpy: 'numpy',
+  pandas: 'pandas',
+  matplotlib: 'matplotlib',
+  scipy: 'scipy',
+  micropip: 'micropip',
+  sklearn: 'scikit-learn',
+  skimage: 'scikit-image',
+};
+
+function getImportedModules(code = '') {
+  const modules = new Set();
+  const importRegex = /^\s*(?:import|from)\s+([\w.]+)/gm;
+  let match = importRegex.exec(code);
+  while (match) {
+    modules.add(match[1].split('.')[0]);
+    match = importRegex.exec(code);
+  }
+  return [...modules];
+}
+
+function isAllowedPythonModule(moduleName = '') {
+  if (!moduleName) return true;
+  if (PYTHON_STDLIB_PREFIXES.some((lib) => moduleName === lib || moduleName.startsWith(`${lib}.`))) {
+    return true;
+  }
+  return Object.prototype.hasOwnProperty.call(PYTHON_PYODIDE_PACKAGES, moduleName);
+}
+
+async function ensurePyodidePackages(py, code = '') {
+  const needed = getImportedModules(code)
+    .map((name) => PYTHON_PYODIDE_PACKAGES[name])
+    .filter(Boolean);
+
+  for (const pkg of needed) {
+    if (pyodideLoadedPackages.has(pkg)) continue;
+    await py.loadPackage(pkg);
+    pyodideLoadedPackages.add(pkg);
+  }
+}
+
+function resetPyodideIO(py) {
+  py.runPython(`
+import sys, io
+class _Cap(io.StringIO):
+    pass
+sys.stdout = _Cap()
+sys.stderr = _Cap()
+`);
+}
 
 async function ensurePyodide() {
   if (pyodideInstance) return pyodideInstance;
@@ -212,13 +272,7 @@ async function ensurePyodide() {
       indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/',
     });
     
-    // Setup stdout/stderr capture
-    pyodideInstance.runPython(`
-import sys, io
-class _Cap(io.StringIO): pass
-sys.stdout = _Cap()
-sys.stderr = _Cap()
-    `);
+    resetPyodideIO(pyodideInstance);
     
     pyodideLoading = false;
     return pyodideInstance;
@@ -230,50 +284,28 @@ sys.stderr = _Cap()
 
 export async function runPython(code, stdin = '') {
   try {
-    // Check for common import statements that won't work in browser
-    const importMatch = code.match(/^\s*(import|from)\s+([\w.]+)/m);
-    if (importMatch) {
-      const importedModule = importMatch[2];
-      const isStandardLib = [
-        'math', 'random', 'datetime', 'time', 'sys', 'os', 'json', 're', 
-        'collections', 'itertools', 'functools', 'typing', 'statistics',
-        'string', 'textwrap', 'unicodedata', 'struct', 'codecs', 'copy',
-        'pprint', 'reprlib', 'enum', 'graphlib', 'contextlib', 'abc'
-      ].some(lib => importedModule.startsWith(lib));
-      
-      if (!isStandardLib) {
-        return {
-          stdout: '',
-          stderr: [
-            `⚠️  The module '${importedModule}' may not be available in browser mode.`,
-            '',
-            '💡 What\'s happening?',
-            'This playground runs Python in your browser using Pyodide (WebAssembly).',
-            'Only Python standard library and some pre-installed packages are available.',
-            '',
-            '✅ Available modules:',
-            '• Standard library: math, random, datetime, json, re, collections, etc.',
-            '• Scientific: numpy, pandas, matplotlib, scipy (pre-installed)',
-            '• You can install pure-Python packages with: import micropip; await micropip.install(\'package-name\')',
-            '',
-            '❌ Not available:',
-            '• System modules: socket, threading, multiprocessing, subprocess',
-            '• C-extensions that aren\'t compiled for WebAssembly',
-            '',
-            '📝 Example:',
-            '✅ import math',
-            '✅ print(math.sqrt(16))',
-            '❌ import requests  # Use: from js import fetch instead',
-          ].join('\n'),
-          error: null,
-        };
-      }
+    const blocked = getImportedModules(code).filter(
+      (moduleName) => !isAllowedPythonModule(moduleName),
+    );
+    if (blocked.length) {
+      const importedModule = blocked[0];
+      return {
+        stdout: '',
+        stderr: [
+          `⚠️  The module '${importedModule}' is not available in browser mode.`,
+          '',
+          '💡 This playground runs Python with Pyodide (WebAssembly).',
+          '',
+          '✅ Available: stdlib, numpy, pandas, matplotlib, scipy, micropip',
+          '❌ Not available: requests, socket, threading, subprocess, etc.',
+        ].join('\n'),
+        error: `Module '${importedModule}' is not available in the browser.`,
+      };
     }
 
     const py = await ensurePyodide();
-    
-    // Reset stdout/stderr
-    py.runPython('sys.stdout = _Cap()\nsys.stderr = _Cap()');
+    await ensurePyodidePackages(py, code);
+    resetPyodideIO(py);
     
     let error = null;
     try {

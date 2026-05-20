@@ -46,6 +46,12 @@ const PointersHub = lazy(
 const PointersLessonPage = lazy(
   () => import("./features/learn/pointers-cpp/pages/PointersLessonPage"),
 );
+const NumpyHub = lazy(
+  () => import("./features/learn/numpy-py/pages/NumpyHub"),
+);
+const NumpyLessonPage = lazy(
+  () => import("./features/learn/numpy-py/pages/NumpyLessonPage"),
+);
 
 const PageFallback = () => (
   <div className="loading">
@@ -132,6 +138,7 @@ function MainApp({
         theme={theme}
         onToggleTheme={onToggleTheme}
         onGoToStackPicker={onGoToStackPicker}
+        selectedLanguage={selectedLanguage}
       />
       <div className="layout">
         {isSidebarOpen && <div className="backdrop" onClick={closeSidebar} />}
@@ -190,7 +197,13 @@ function MainApp({
   );
 }
 
-function LearnShell({ theme, onToggleTheme, onGoToStackPicker, children }) {
+function LearnShell({
+  theme,
+  onToggleTheme,
+  onGoToStackPicker,
+  selectedLanguage,
+  children,
+}) {
   const location = useLocation();
 
   React.useEffect(() => {
@@ -213,6 +226,7 @@ function LearnShell({ theme, onToggleTheme, onGoToStackPicker, children }) {
         theme={theme}
         onToggleTheme={onToggleTheme}
         onGoToStackPicker={onGoToStackPicker}
+        selectedLanguage={selectedLanguage}
       />
       <main className="main-content learn-content">{children}</main>
     </>
@@ -288,6 +302,18 @@ function AppRoutes() {
   }, []);
 
   React.useEffect(() => {
+    const path = location.pathname;
+    if (path.startsWith("/learn/numpy-py")) {
+      handleLanguageSelect("Python", { stay: true });
+    } else if (
+      path.startsWith("/learn/oops-cpp") ||
+      path.startsWith("/learn/pointers-cpp")
+    ) {
+      handleLanguageSelect("C++", { stay: true });
+    }
+  }, [location.pathname, handleLanguageSelect]);
+
+  React.useEffect(() => {
     localStorage.setItem("theme", theme);
     // Bug fix: always apply the theme attribute, even on /select-language.
     // StackPickerShell forces "dark" via its own useLayoutEffect and restores
@@ -334,6 +360,7 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <LanguageLandingPage
                   selectedLanguage={selectedLanguage}
@@ -351,6 +378,7 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <OopsHub />
               </LearnShell>
@@ -365,6 +393,7 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <LessonPage />
               </LearnShell>
@@ -379,6 +408,7 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <LessonPage />
               </LearnShell>
@@ -393,6 +423,7 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <PointersHub />
               </LearnShell>
@@ -407,6 +438,7 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <PointersLessonPage />
               </LearnShell>
@@ -421,8 +453,54 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <PointersLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/numpy-py"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <NumpyHub />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/numpy-py/lesson/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <NumpyLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/numpy-py/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <NumpyLessonPage />
               </LearnShell>
             </ThemedShell>
           }
@@ -435,6 +513,7 @@ function AppRoutes() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
               >
                 <ProfilePage />
               </LearnShell>

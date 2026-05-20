@@ -1,16 +1,10 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowRight, BookOpen, Code2, Sparkles } from "lucide-react";
 import {
-  ArrowRight,
-  BookOpen,
-  Boxes,
-  Brain,
-  Code2,
-  FileText,
-  Layers3,
-  Play,
-  Sparkles,
-} from "lucide-react";
+  getLanguageLandingCourses,
+  languageKey,
+} from "../courseCatalog";
 
 const languageMeta = {
   javascript: {
@@ -85,79 +79,8 @@ const languageMeta = {
   },
 };
 
-const generalCourses = [
-  {
-    title: "Core Documentation Path",
-    tag: "Docs",
-    icon: FileText,
-    description: "Read curated guides, examples, syntax notes, and reference material.",
-    href: "/hub",
-  },
-  {
-    title: "Practice Playground",
-    tag: "Hands-on",
-    icon: Play,
-    description: "Experiment with code, run snippets, and test ideas as you learn.",
-    href: "/playground",
-  },
-  {
-    title: "Daily Challenge",
-    tag: "Routine",
-    icon: Brain,
-    description: "Build a steady habit with small problems and feedback.",
-    href: "/daily-challenge",
-  },
-];
-
-const courseCatalog = {
-  cpp: [
-    {
-      title: "OOPs C++",
-      tag: "Interactive Course",
-      icon: Boxes,
-      description:
-        "Classes, constructors, inheritance, polymorphism, design principles, and real coding challenges.",
-      href: "/learn/oops-cpp",
-      accent: "#b8ff00",
-    },
-    {
-      title: "Pointers C++",
-      tag: "Memory Course",
-      icon: Layers3,
-      description:
-        "Addresses, dereferencing, nullptr, arrays, 2D arrays, smart pointers, callbacks, and safety.",
-      href: "/learn/pointers-cpp",
-      accent: "#00d4ff",
-    },
-  ],
-  "c++": [
-    {
-      title: "OOPs C++",
-      tag: "Interactive Course",
-      icon: Boxes,
-      description:
-        "Classes, constructors, inheritance, polymorphism, design principles, and real coding challenges.",
-      href: "/learn/oops-cpp",
-      accent: "#b8ff00",
-    },
-    {
-      title: "Pointers C++",
-      tag: "Memory Course",
-      icon: Layers3,
-      description:
-        "Addresses, dereferencing, nullptr, arrays, 2D arrays, smart pointers, callbacks, and safety.",
-      href: "/learn/pointers-cpp",
-      accent: "#00d4ff",
-    },
-  ],
-};
-
 function normalizeLanguage(value = "") {
   return decodeURIComponent(value).trim();
-}
-
-function languageKey(value = "") {
-  return value.toLowerCase().replace(/\s+/g, "");
 }
 
 export default function LanguageLandingPage({ selectedLanguage, onLanguageSelect }) {
@@ -171,7 +94,7 @@ export default function LanguageLandingPage({ selectedLanguage, onLanguageSelect
     description:
       "Explore curated documentation, examples, practice tools, and learning paths for this language.",
   };
-  const courses = [...(courseCatalog[key] || []), ...generalCourses];
+  const courses = getLanguageLandingCourses(key);
 
   React.useEffect(() => {
     if (displayLanguage && displayLanguage !== "Programming") {

@@ -8,6 +8,11 @@ import {
   POINTER_TOTAL_XP,
 } from "../learn/pointers-cpp/data/pointersCurriculum";
 import usePointersProgress from "../learn/pointers-cpp/hooks/usePointersProgress";
+import {
+  NUMPY_LESSONS,
+  NUMPY_TOTAL_XP,
+} from "../learn/numpy-py/data/numpyCurriculum";
+import useNumpyProgress from "../learn/numpy-py/hooks/useNumpyProgress";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MIN_ACTIVITY_DAYS = 30;
@@ -201,21 +206,35 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const oops = useOopsProgress();
   const pointers = usePointersProgress();
+  const numpy = useNumpyProgress();
   const initials = user
     ? (user.firstName?.[0] || user.username?.[0] || "U").toUpperCase()
     : "G";
   const totalCompleted =
     Object.keys(oops.completedMap).length +
-    Object.keys(pointers.completedMap).length;
-  const totalLessons = ALL_LESSONS.length + POINTER_LESSONS.length;
+    Object.keys(pointers.completedMap).length +
+    Object.keys(numpy.completedMap).length;
+  const totalLessons =
+    ALL_LESSONS.length + POINTER_LESSONS.length + NUMPY_LESSONS.length;
   const totalPct = Math.round((totalCompleted / totalLessons) * 100) || 0;
   const totalStreak = oops.remoteProgress?.currentStreak || 0;
   const [activityWidth, setActivityWidth] = React.useState(0);
   const activityWrapRef = React.useRef(null);
   const activityDayCount = getResponsiveActivityDays(activityWidth);
   const activityDays = React.useMemo(
-    () => buildActivityDays(activityDayCount, oops.completedMap, pointers.completedMap),
-    [activityDayCount, oops.completedMap, pointers.completedMap],
+    () =>
+      buildActivityDays(
+        activityDayCount,
+        oops.completedMap,
+        pointers.completedMap,
+        numpy.completedMap,
+      ),
+    [
+      activityDayCount,
+      oops.completedMap,
+      pointers.completedMap,
+      numpy.completedMap,
+    ],
   );
 
   React.useEffect(() => {
@@ -303,6 +322,16 @@ export default function ProfilePage() {
           bookmarks={pointers.bookmarks}
           href="/learn/pointers-cpp"
           accent="#00d4ff"
+        />
+        <TrackProgressCard
+          title="NumPy · py"
+          subtitle="Python data track"
+          lessons={NUMPY_LESSONS}
+          totalXP={NUMPY_TOTAL_XP}
+          progress={numpy.completedMap}
+          bookmarks={numpy.bookmarks}
+          href="/learn/numpy-py"
+          accent="#4dabcf"
         />
       </div>
     </main>
