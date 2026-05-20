@@ -995,7 +995,11 @@ int main() {
           tests: [
             { id: 1, label: "Function accepts grid[][3]", keywords: ["grid[][3]"] },
             { id: 2, label: "Rows are looped", keywords: ["for", "rows"] },
-            { id: 3, label: "Columns are looped", keywords: ["for", "c < 3"] },
+            {
+              id: 3,
+              label: "Columns are looped",
+              keywords: [{ pattern: "for\\s*\\([^;]*;\\s*[A-Za-z_]\\w*\\s*<\\s*3" }],
+            },
             { id: 4, label: "printGrid is called", keywords: ["printGrid(grid, 2)"] },
           ],
         },

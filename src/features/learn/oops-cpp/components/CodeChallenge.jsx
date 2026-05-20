@@ -248,14 +248,18 @@ export default function CodeChallenge({
 
   function getParamNames(params = "") {
     return splitArgs(params)
-      .map((param) =>
-        param
+      .map((param) => {
+        const pointerToArray = param.match(/\(\s*\*\s*([A-Za-z_]\w*)\s*\)/);
+        if (pointerToArray) return pointerToArray[1];
+
+        return param
           .replace(/=.*$/, "")
+          .replace(/\[[^\]]*\]/g, "")
           .trim()
           .split(/\s+/)
           .pop()
-          ?.replace(/[&*]/g, ""),
-      )
+          ?.replace(/[&*]/g, "");
+      })
       .filter(Boolean);
   }
 
@@ -363,6 +367,145 @@ export default function CodeChallenge({
         }
       }
     });
+
+    return output;
+  }
+
+  function findMatchingBrace(source, openIndex) {
+    let depth = 0;
+    let quote = null;
+
+    for (let index = openIndex; index < source.length; index += 1) {
+      const char = source[index];
+      const previous = source[index - 1];
+
+      if ((char === '"' || char === "'") && previous !== "\\") {
+        quote = quote === char ? null : quote || char;
+      }
+      if (quote) continue;
+
+      if (char === "{") depth += 1;
+      if (char === "}") {
+        depth -= 1;
+        if (depth === 0) return index;
+      }
+    }
+
+    return -1;
+  }
+
+  function collectFunctionDefs(source) {
+    const functions = new Map();
+    const functionRegex =
+      /\b(?:void|int|double|float|string|bool|auto)\s+([A-Za-z_]\w*)\s*\(([^)]*)\)\s*\{/g;
+
+    for (const match of source.matchAll(functionRegex)) {
+      const [, functionName, params] = match;
+      if (functionName === "main") continue;
+
+      const openBraceIndex = match.index + match[0].length - 1;
+      const closeBraceIndex = findMatchingBrace(source, openBraceIndex);
+      if (closeBraceIndex === -1) continue;
+
+      functions.set(functionName, {
+        params: getParamNames(params),
+        body: source.slice(openBraceIndex + 1, closeBraceIndex),
+      });
+    }
+
+    return functions;
+  }
+
+  function bindFunctionArgs(functionDef, rawArgs, baseValues) {
+    const values = new Map(baseValues);
+    const args = splitArgs(rawArgs);
+
+    functionDef.params.forEach((param, index) => {
+      const arg = args[index]?.trim();
+      if (!arg) return;
+
+      values.set(param, resolveToken(arg, baseValues));
+      [...baseValues.entries()].forEach(([key, value]) => {
+        if (key === arg || key.startsWith(`${arg}[`)) {
+          values.set(key.replace(arg, param), value);
+        }
+      });
+    });
+
+    return values;
+  }
+
+  function resolveLoopLimit(rawLimit, values) {
+    const resolved = values.get(rawLimit.trim()) ?? rawLimit.trim();
+    const parsed = Number(resolved);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function renderFunctionBody(body, values, maxLines = 200) {
+    const output = [];
+    let lineCount = 0;
+
+    function renderLines(block, scopedValues) {
+      block.split("\n").forEach((rawLine) => {
+        const line = rawLine.split("//")[0];
+        if (!line.includes("cout") || lineCount >= maxLines) return;
+
+        const rendered = line
+          .split("<<")
+          .map((part) => renderCoutPart(part, scopedValues))
+          .join("");
+        if (rendered) {
+          output.push(rendered);
+          lineCount += 1;
+        }
+      });
+    }
+
+    function runBlock(block, scopedValues) {
+      const forRegex =
+        /for\s*\(\s*(?:int\s+)?([A-Za-z_]\w*)\s*=\s*(-?\d+)\s*;\s*\1\s*<\s*([A-Za-z_]\w*|-?\d+)\s*;\s*\1\s*\+\+\s*\)\s*\{/g;
+      let cursor = 0;
+
+      for (const loopMatch of block.matchAll(forRegex)) {
+        renderLines(block.slice(cursor, loopMatch.index), scopedValues);
+
+        const [, loopVar, rawStart, rawLimit] = loopMatch;
+        const openBraceIndex = loopMatch.index + loopMatch[0].length - 1;
+        const closeBraceIndex = findMatchingBrace(block, openBraceIndex);
+        if (closeBraceIndex === -1) continue;
+
+        const loopBody = block.slice(openBraceIndex + 1, closeBraceIndex);
+        const start = Number(rawStart);
+        const limit = resolveLoopLimit(rawLimit, scopedValues);
+
+        for (let value = start; value < limit && lineCount < maxLines; value += 1) {
+          const nextValues = new Map(scopedValues);
+          nextValues.set(loopVar, String(value));
+          runBlock(loopBody, nextValues);
+        }
+
+        cursor = closeBraceIndex + 1;
+      }
+
+      renderLines(block.slice(cursor), scopedValues);
+    }
+
+    runBlock(body, values);
+    return output;
+  }
+
+  function collectFunctionOutput(source, baseValues, mainSource) {
+    const output = [];
+    const functionDefs = collectFunctionDefs(source);
+    const callRegex = /\b([A-Za-z_]\w*)\s*\(([^;{}]*)\)\s*;/g;
+
+    for (const callMatch of mainSource.matchAll(callRegex)) {
+      const functionDef = functionDefs.get(callMatch[1]);
+      if (!functionDef) continue;
+
+      const values = bindFunctionArgs(functionDef, callMatch[2], baseValues);
+      output.push(...renderFunctionBody(functionDef.body, values));
+    }
 
     return output;
   }
@@ -483,6 +626,11 @@ export default function CodeChallenge({
       const arrayValue = values.get(`${arrayName}[${index}]`);
       if (arrayValue !== undefined) return arrayValue;
     }
+    const resolvedIndexedToken = token.replace(
+      /\[([A-Za-z_]\w*)\]/g,
+      (match, name) => `[${values.get(name) ?? name}]`,
+    );
+    if (values.has(resolvedIndexedToken)) return values.get(resolvedIndexedToken);
     if (values.has(token)) return values.get(token);
     return "";
   }
@@ -492,6 +640,7 @@ export default function CodeChallenge({
     const outputLines = collectObjectOutput(source, values);
     const mainMatch = source.match(/\bint\s+main\s*\([^)]*\)\s*\{([\s\S]*)\}\s*$/);
     const directOutputSource = mainMatch ? mainMatch[1] : source;
+    outputLines.push(...collectFunctionOutput(source, values, directOutputSource));
 
     directOutputSource.split("\n").forEach((rawLine) => {
       const line = rawLine.split("//")[0];
