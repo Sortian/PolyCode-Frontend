@@ -29,6 +29,7 @@ const PlaygroundPage = lazy(
 const LoginPage = lazy(() => import("./features/auth/pages/LoginPage"));
 const SignupPage = lazy(() => import("./features/auth/pages/SignupPage"));
 const DailyChallenge = lazy(() => import("./pages/DailyChallenges"));
+const ProfilePage = lazy(() => import("./features/profile/ProfilePage"));
 
 // Learn — OOP C++ pages
 const OopsHub = lazy(() => import("./features/learn/oops-cpp/pages/OopsHub"));
@@ -343,6 +344,20 @@ function AppRoutes() {
                 onGoToStackPicker={goToStackPicker}
               >
                 <PointersLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+              >
+                <ProfilePage />
               </LearnShell>
             </ThemedShell>
           }

@@ -182,6 +182,13 @@ export default function Navbar({
                   <strong>{user.username}</strong>
                   <span>{user.email}</span>
                 </div>
+                <Link
+                  to="/profile"
+                  className="navbar-dropdown-item"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  View profile
+                </Link>
                 <button
                   type="button"
                   className="navbar-dropdown-item navbar-dropdown-logout"

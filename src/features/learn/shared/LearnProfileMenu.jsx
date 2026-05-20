@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LearnProfileMenu({
   user,
@@ -12,6 +13,7 @@ export default function LearnProfileMenu({
   streak = 0,
 }) {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const pct = Math.round((completedCount / totalLessons) * 100) || 0;
   const initials = user
     ? (user.firstName?.[0] || user.username?.[0] || "U").toUpperCase()
@@ -73,6 +75,13 @@ export default function LearnProfileMenu({
           </div>
 
           <div className="learn-profile-sync">{syncLabel}</div>
+          <button
+            type="button"
+            className="learn-profile-view-btn"
+            onClick={() => navigate("/profile")}
+          >
+            View full profile
+          </button>
         </div>
       )}
     </div>

@@ -4873,6 +4873,207 @@ body {
   font-weight: 800;
 }
 
+.learn-profile-view-btn {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: var(--vscode-blue, #007acc);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.learn-profile-view-btn:hover {
+  opacity: 0.88;
+}
+
+.profile-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.profile-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: clamp(20px, 4vw, 34px);
+  border: 1px solid rgba(55, 148, 255, 0.22);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at top right, rgba(0, 212, 255, 0.14), transparent 38%),
+    var(--vscode-panel, #252526);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+}
+
+.profile-hero-avatar {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--vscode-blue, #007acc), #00d4ff);
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.profile-kicker {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: var(--acid, #b8ff00);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-hero h1 {
+  margin: 0;
+  color: var(--txt-0, #f0f0ff);
+  font-size: clamp(1.6rem, 3vw, 2.35rem);
+}
+
+.profile-hero p {
+  margin: 6px 0 0;
+  color: var(--txt-2, #6e7891);
+}
+
+.profile-total-progress {
+  min-width: 130px;
+  padding: 14px;
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  text-align: right;
+}
+
+.profile-total-progress span,
+.profile-overview-grid span,
+.profile-track-head span,
+.profile-track-stats span,
+.profile-next-row span {
+  color: var(--txt-3, #3a4260);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-total-progress strong {
+  display: block;
+  color: var(--acid, #b8ff00);
+  font-size: 1.45rem;
+  margin-top: 4px;
+}
+
+.profile-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.profile-overview-grid div,
+.profile-track-card {
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 10px;
+  background: var(--ink-2, #0d1117);
+}
+
+.profile-overview-grid div {
+  padding: 15px;
+}
+
+.profile-overview-grid strong {
+  display: block;
+  color: var(--txt-0, #f0f0ff);
+  font-size: 1.05rem;
+  margin-top: 6px;
+}
+
+.profile-track-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.profile-track-card {
+  padding: 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+.profile-track-head,
+.profile-next-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+}
+
+.profile-track-head h2 {
+  margin: 5px 0 0;
+  color: var(--txt-0, #f0f0ff);
+  font-size: 1.2rem;
+}
+
+.profile-track-head > strong {
+  color: var(--profile-accent, var(--acid, #b8ff00));
+  font-size: 1.4rem;
+}
+
+.profile-track-meter {
+  height: 8px;
+  margin: 16px 0;
+  border-radius: 999px;
+  background: var(--border, #1e2433);
+  overflow: hidden;
+}
+
+.profile-track-meter div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--profile-accent), var(--cyan, #00d4ff));
+}
+
+.profile-track-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.profile-track-stats div {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.profile-track-stats strong,
+.profile-next-row strong {
+  display: block;
+  color: var(--txt-0, #f0f0ff);
+  margin-top: 5px;
+}
+
+.profile-next-row {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border, #1e2433);
+}
+
+.profile-next-row a {
+  flex-shrink: 0;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: var(--profile-accent, var(--vscode-blue, #007acc));
+  color: var(--ink, #03050a);
+  font-weight: 900;
+  text-decoration: none;
+}
+
 /* Tabs */
 .oops-tabs {
   display: flex;
@@ -5472,8 +5673,16 @@ body {
   .oops-dashboard-strip,
   .oops-learning-brief,
   .oops-easy-summary,
-  .oops-confidence-panel {
+  .oops-confidence-panel,
+  .profile-hero,
+  .profile-overview-grid,
+  .profile-track-grid,
+  .profile-track-stats {
     grid-template-columns: 1fr;
+  }
+
+  .profile-total-progress {
+    text-align: left;
   }
 
   .oops-search-row,
