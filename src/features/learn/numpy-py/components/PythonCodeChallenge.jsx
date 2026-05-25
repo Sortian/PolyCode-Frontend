@@ -295,8 +295,8 @@ export default function PythonCodeChallenge({
         {!canRun && (
           <div className="oops-auth-gate">
             <p>
-              Sign in or create an account to run code, save progress, and mark
-              lessons complete.
+              You can write code in the editor. Sign in or create an account to
+              run, submit, save progress, and mark lessons complete.
             </p>
             <div className="oops-auth-gate-actions">
               <Link to="/login" className="oops-auth-gate-btn">
@@ -383,12 +383,12 @@ export default function PythonCodeChallenge({
               if (!showSolution) {
                 const next = value || "";
                 setCode(next);
-                if (canRun) onCodeChange?.(next);
+                if (isAuthenticated) onCodeChange?.(next);
               }
             }}
             options={getVSCodeEditorOptions({
               fontSize: 14,
-              readOnly: showSolution || !canRun,
+              readOnly: showSolution,
             })}
           />
         </div>
