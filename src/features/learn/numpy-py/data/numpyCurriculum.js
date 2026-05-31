@@ -593,23 +593,38 @@ print(arr.shape)`,
           {
             type: "text",
             content:
-              "**`np.arange(start, stop, step)`** builds numbers with a fixed **step**, like counting by twos. Important: **stop is excluded** — just like Python's `range()`.",
+              "In the last lesson, **`np.array()`** was for numbers you **already have** — like typing `[5, 10, 15, 20]` by hand. But what if you need **many numbers in a pattern** and do not want to type them all? That is when **`np.arange`** and **`np.linspace`** help — they **generate** the sequence for you.",
             code: {
               lang: "python",
-              label: "Count 0, 2, 4, 6, 8 (10 is left out)",
+              label: "np.array() — you supply every number",
               content: `import numpy as np
 
-steps = np.arange(0, 10, 2)
-print(steps)   # [0 2 4 6 8]`,
+# You already know the values → use np.array()
+hours = np.array([0, 2, 4, 6, 8])
+print(hours)`,
             },
           },
           {
             type: "text",
             content:
-              "**`np.linspace(start, stop, num)`** picks exactly **`num`** evenly spaced values **including both endpoints**. Great when you need a smooth line for a chart, not a fixed step size.",
+              "**`np.arange(start, stop, step)`** is like **`range()`**, but it gives you a NumPy array. You pick where to start, where to stop, and the **gap** between numbers. The **stop value is left out** — same rule as Python `range()`.",
             code: {
               lang: "python",
-              label: "Five values from 0.0 to 1.0 inclusive",
+              label: "Generate 0, 2, 4, 6, 8 — no typing each number",
+              content: `import numpy as np
+
+# Same as [0, 2, 4, 6, 8] but generated automatically
+steps = np.arange(0, 10, 2)
+print(steps)   # [0 2 4 6 8]  (10 is excluded)`,
+            },
+          },
+          {
+            type: "text",
+            content:
+              "**`np.linspace(start, stop, num)`** picks exactly **`num`** evenly spaced values **including both ends**. Use it when you care about **how many points** you want between two numbers — perfect for smooth charts.",
+            code: {
+              lang: "python",
+              label: "Five values from 0.0 to 1.0 — both ends included",
               content: `import numpy as np
 
 points = np.linspace(0, 1, 5)
@@ -619,48 +634,82 @@ print(points)
           },
           {
             type: "diagram",
-            title: "arange vs linspace",
+            title: "Which one should I use?",
             nodes: [
+              {
+                id: "array",
+                label: "np.array()",
+                color: "#10b981",
+                items: [
+                  "You already have the numbers",
+                  "Small, fixed lists",
+                  "Example: test scores [88, 92, 75]",
+                ],
+              },
               {
                 id: "arange",
                 label: "np.arange",
                 color: "#6366f1",
-                items: ["You choose the step", "Stop value excluded", "Like range() but returns an array"],
+                items: [
+                  "You know the step (gap)",
+                  "Stop value excluded",
+                  "Example: 0, 2, 4, 6, 8",
+                ],
               },
               {
                 id: "linspace",
                 label: "np.linspace",
                 color: "#4f46e5",
-                items: ["You choose how many points", "Both ends included", "Even spacing for plots"],
+                items: [
+                  "You know how many points",
+                  "Both ends included",
+                  "Example: 5 values from 0 to 10",
+                ],
               },
             ],
           },
           {
             type: "text",
             content:
-              "Quick pick: use **arange** when you know the gap between numbers (every 5 minutes, every 2 points). Use **linspace** when you know how many points you want between two values.",
+              "Same goal — get a row of numbers — but different tools. **`np.array()`** copies what you typed. **`arange`** counts by steps. **`linspace`** splits a range into equal pieces.",
             code: {
               lang: "python",
-              label: "Same idea, two tools",
+              label: "Three ways to get similar data",
               content: `import numpy as np
 
-# 6 ticks from 0 to 10 (step = 2, stop excluded)
-print(np.arange(0, 12, 2))
+a = np.array([0, 2, 4, 6, 8])      # type them yourself
+b = np.arange(0, 10, 2)            # generate with step 2
+c = np.linspace(0, 8, 5)           # 5 points from 0 to 8
 
-# 6 evenly spaced values from 0 to 10 inclusive
-print(np.linspace(0, 10, 6))`,
+print(a)
+print(b)
+print(c)`,
             },
           },
           {
             type: "callout",
             variant: "info",
             content:
-              "A common mistake: expecting `arange(0, 10, 2)` to include 10. It won't — use `linspace(0, 10, 6)` if you need 10 as the last value.",
+              "**Simple pick:** already have data → **`np.array()`**. Need every 2nd or 5th number → **`arange`**. Need exactly 50 points for a graph → **`linspace`**.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Common mistake: expecting `arange(0, 10, 2)` to include 10. It will not. If you need 10 as the last value, use `linspace(0, 10, 6)` instead.",
+          },
+          {
+            type: "quiz",
+            question: "You already wrote `[1, 2, 3, 4, 5]`. Which function fits best?",
+            options: ["np.arange", "np.linspace", "np.array()", "np.zeros"],
+            answer: 2,
+            explanation:
+              "When you already have the full list, `np.array([1, 2, 3, 4, 5])` is the right choice.",
           },
           {
             type: "quiz",
             question: "Which function includes the stop value by default?",
-            options: ["arange", "linspace", "zeros", "reshape"],
+            options: ["arange", "linspace", "np.array", "zeros"],
             answer: 1,
             explanation: "linspace always includes both endpoints; arange excludes stop like range().",
           },
