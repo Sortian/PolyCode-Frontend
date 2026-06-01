@@ -53,6 +53,12 @@ const NumpyHub = lazy(
 const NumpyLessonPage = lazy(
   () => import("./features/learn/numpy-py/pages/NumpyLessonPage"),
 );
+const PandasHub = lazy(
+  () => import("./features/learn/pandas-py/pages/PandasHub"),
+);
+const PandasLessonPage = lazy(
+  () => import("./features/learn/pandas-py/pages/PandasLessonPage"),
+);
 
 const PageFallback = () => (
   <div className="loading">
@@ -332,7 +338,10 @@ function AppRoutes() {
 
   React.useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith("/learn/numpy-py")) {
+    if (
+      path.startsWith("/learn/numpy-py") ||
+      path.startsWith("/learn/pandas-py")
+    ) {
       handleLanguageSelect("Python", { stay: true });
     } else if (
       path.startsWith("/learn/oops-cpp") ||
@@ -530,6 +539,51 @@ function AppRoutes() {
                 selectedLanguage={selectedLanguage}
               >
                 <NumpyLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/pandas-py"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <PandasHub />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/pandas-py/lesson/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <PandasLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/pandas-py/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <PandasLessonPage />
               </LearnShell>
             </ThemedShell>
           }

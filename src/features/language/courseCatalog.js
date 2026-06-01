@@ -1,4 +1,12 @@
-import { Boxes, FileText, Grid3x3, Layers3, Play, Brain } from "lucide-react";
+import {
+  Boxes,
+  FileText,
+  Grid3x3,
+  Layers3,
+  Play,
+  Brain,
+  Table2,
+} from "lucide-react";
 
 export function languageKey(value = "") {
   return value.toLowerCase().replace(/\s+/g, "");
@@ -81,6 +89,15 @@ export const languageCourses = {
       href: "/learn/numpy-py",
       accent: "#4dabcf",
     },
+    {
+      title: "Pandas · py",
+      tag: "Data Course",
+      icon: Table2,
+      description:
+        "Series, DataFrames, filtering, cleaning, groupby, merges, and CSV workflows with Pandas.",
+      href: "/learn/pandas-py",
+      accent: "#059669",
+    },
   ],
 };
 
@@ -94,7 +111,10 @@ export const learnNavByLanguage = {
     { label: "OOPs", to: "/learn/oops-cpp" },
     { label: "Pointers", to: "/learn/pointers-cpp" },
   ],
-  python: [{ label: "NumPy", to: "/learn/numpy-py" }],
+  python: [
+    { label: "NumPy", to: "/learn/numpy-py" },
+    { label: "Pandas", to: "/learn/pandas-py" },
+  ],
 };
 
 /** Infer stack from an active /learn/* route when language is not set. */
@@ -105,7 +125,10 @@ export function inferLanguageFromLearnPath(pathname = "") {
   ) {
     return "cpp";
   }
-  if (pathname.startsWith("/learn/numpy-py")) {
+  if (
+    pathname.startsWith("/learn/numpy-py") ||
+    pathname.startsWith("/learn/pandas-py")
+  ) {
     return "python";
   }
   return null;

@@ -15,6 +15,11 @@ import {
   NUMPY_TOTAL_XP,
 } from "../learn/numpy-py/data/numpyCurriculum";
 import useNumpyProgress from "../learn/numpy-py/hooks/useNumpyProgress";
+import {
+  PANDAS_LESSONS,
+  PANDAS_TOTAL_XP,
+} from "../learn/pandas-py/data/pandasCurriculum";
+import usePandasProgress from "../learn/pandas-py/hooks/usePandasProgress";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MIN_ACTIVITY_DAYS = 30;
@@ -210,12 +215,17 @@ export default function ProfilePage() {
   const oops = useOopsProgress();
   const pointers = usePointersProgress();
   const numpy = useNumpyProgress();
+  const pandas = usePandasProgress();
   const totalCompleted =
     Object.keys(oops.completedMap).length +
     Object.keys(pointers.completedMap).length +
-    Object.keys(numpy.completedMap).length;
+    Object.keys(numpy.completedMap).length +
+    Object.keys(pandas.completedMap).length;
   const totalLessons =
-    ALL_LESSONS.length + POINTER_LESSONS.length + NUMPY_LESSONS.length;
+    ALL_LESSONS.length +
+    POINTER_LESSONS.length +
+    NUMPY_LESSONS.length +
+    PANDAS_LESSONS.length;
   const totalPct = Math.round((totalCompleted / totalLessons) * 100) || 0;
   const totalStreak = oops.remoteProgress?.currentStreak || 0;
   const [activityWidth, setActivityWidth] = React.useState(0);
@@ -228,12 +238,14 @@ export default function ProfilePage() {
         oops.completedMap,
         pointers.completedMap,
         numpy.completedMap,
+        pandas.completedMap,
       ),
     [
       activityDayCount,
       oops.completedMap,
       pointers.completedMap,
       numpy.completedMap,
+      pandas.completedMap,
     ],
   );
 
@@ -332,6 +344,16 @@ export default function ProfilePage() {
           bookmarks={numpy.bookmarks}
           href="/learn/numpy-py"
           accent="#4dabcf"
+        />
+        <TrackProgressCard
+          title="Pandas · py"
+          subtitle="Python data track"
+          lessons={PANDAS_LESSONS}
+          totalXP={PANDAS_TOTAL_XP}
+          progress={pandas.completedMap}
+          bookmarks={pandas.bookmarks}
+          href="/learn/pandas-py"
+          accent="#059669"
         />
       </div>
     </main>
