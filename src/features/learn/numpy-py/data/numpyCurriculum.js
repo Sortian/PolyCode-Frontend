@@ -1286,101 +1286,173 @@ print(nums[nums % 2 == 0])`,
           {
             type: "text",
             content:
-              "Sometimes you do not only want to **filter** values — you want to **replace** them. **`np.where(condition, x, y)`** works like **if/else for the whole array**: where the condition is **True**, take from **`x`**; where **False**, take from **`y`**.",
+              "In the last lesson, a **boolean mask** helped you **keep** values that match a rule (like scores above 90). In real life you often need something different: **change** values by a rule — \"if temperature is below 60, show 0 on the chart\" or \"if the student failed, store 0 instead of the score.\" That is what **`np.where`** is for.",
             code: {
               lang: "python",
-              label: "Passing scores stay, failing scores become 0",
+              label: "Real life: exam scores — pass keeps score, fail becomes 0",
               content: `import numpy as np
 
-scores = np.array([45, 88, 52, 95, 70])
-result = np.where(scores >= 60, scores, 0)
-print(result)   # [ 0 88  0 95 70]`,
+# Five students' marks out of 100
+marks = np.array([45, 88, 52, 95, 70])
+
+# If mark >= 60 → keep the mark; else → 0 (did not pass threshold)
+report = np.where(marks >= 60, marks, 0)
+print(report)   # [ 0 88  0 95 70]`,
             },
           },
           {
             type: "text",
             content:
-              "**Fancy indexing** means picking items by a **list of positions** — not a slice range. Like choosing player #0, #2, and #5 from a roster instead of \"players 0 through 2\".",
+              "Read **`np.where(condition, x, y)`** like a sentence: **\"where the condition is True, use x; otherwise use y.\"** It checks **every value at once** — no loop over each student or each day.",
             code: {
               lang: "python",
-              label: "Pick specific days by index",
+              label: "Real life: daily temperature — cold days become 0 for a simple chart",
               content: `import numpy as np
 
-temps = np.array([72, 68, 75, 80, 65, 90])
-pick = temps[[0, 2, 5]]   # Mon, Wed, Sat
-print(pick)   # [72 75 90]`,
+# Celsius readings for the week
+temps = np.array([55, 72, 88, 61, 95])
+
+# Warm days (>= 60) stay; cooler days become 0 so the graph is easy to read
+display = np.where(temps >= 60, temps, 0)
+print(display)   # [ 0 72 88  0 95]`,
+            },
+          },
+          {
+            type: "text",
+            content:
+              "**Fancy indexing** is for when you already know **which positions** you want — not a rule, not a continuous slice. Real-life examples: pull **Monday, Wednesday, and Friday** from a week of step counts, or grab **items #0, #2, and #5** from a shopping list.",
+            code: {
+              lang: "python",
+              label: "Real life: steps on Mon, Wed, Sat only",
+              content: `import numpy as np
+
+# Steps for 7 days (index 0 = Monday ... 6 = Sunday)
+steps = np.array([4000, 5200, 6100, 4800, 5500, 7200, 3900])
+
+# Pick Monday(0), Wednesday(2), Saturday(5) — note the double brackets
+weekend_check = steps[[0, 2, 5]]
+print(weekend_check)   # [4000 6100 7200]`,
             },
           },
           {
             type: "diagram",
-            title: "Three ways to select data",
+            title: "Which tool for which job?",
             nodes: [
-              {
-                id: "slice",
-                label: "Slicing",
-                color: "#6366f1",
-                items: ["Continuous range", "arr[1:4]"],
-              },
               {
                 id: "mask",
                 label: "Boolean mask",
                 color: "#8b5cf6",
-                items: ["By rule", "arr[arr > 60]"],
+                items: [
+                  "Keep values that match a rule",
+                  "Example: scores[scores >= 90]",
+                  "Result: shorter list of matches",
+                ],
               },
               {
                 id: "where",
                 label: "np.where",
                 color: "#4f46e5",
-                items: ["Replace by rule", "np.where(cond, x, y)"],
+                items: [
+                  "Replace or pick per cell",
+                  "Example: pass → score, fail → 0",
+                  "Same length as original",
+                ],
+              },
+              {
+                id: "fancy",
+                label: "Fancy indexing",
+                color: "#6366f1",
+                items: [
+                  "Pick exact positions you name",
+                  "Example: steps[[0, 2, 5]]",
+                  "Like choosing specific days",
+                ],
               },
             ],
           },
           {
             type: "text",
             content:
-              "With **one argument**, **`np.where(condition)`** returns the **indices** where True — useful when you need positions, not just values.",
+              "**Mask vs `np.where`:** a mask **removes** non-matching values. **`np.where`** keeps the **same size** array but **swaps** some cells — great for reports and charts where every day or every student still needs a slot.",
             code: {
               lang: "python",
-              label: "Find where scores passed",
+              label: "Same data — filter vs replace",
               content: `import numpy as np
 
-scores = np.array([45, 88, 52, 95, 70])
-passed_at = np.where(scores >= 60)
-print(passed_at)   # (array([1, 3, 4]),)  → indices 1, 3, 4`,
+prices = np.array([12, 45, 8, 99, 30])
+
+# Mask: only prices above 20 (fewer items)
+print(prices[prices > 20])          # [45 99 30]
+
+# where: every slot stays; cheap items become -1 as a flag
+print(np.where(prices > 20, prices, -1))
+# [12 45 -1 99 30]`,
+            },
+          },
+          {
+            type: "text",
+            content:
+              "With **one argument**, **`np.where(condition)`** tells you **where** (which index) the rule is True — like asking \"which students passed?\" and getting back **positions 1, 3, 4** instead of only their scores.",
+            code: {
+              lang: "python",
+              label: "Find which students passed (indices)",
+              content: `import numpy as np
+
+marks = np.array([45, 88, 52, 95, 70])
+passed_slots = np.where(marks >= 60)
+print(passed_slots)   # (array([1, 3, 4]),)
+
+# Fancy indexing: get those students' marks directly
+print(marks[passed_slots[0]])   # [88 95 70]`,
+            },
+          },
+          {
+            type: "text",
+            content:
+              "Another fancy-indexing example: a **menu** with 6 meal prices — you only want prices for **lunch items** at positions 1, 3, and 4 (not a range from 1 to 4).",
+            code: {
+              lang: "python",
+              label: "Real life: pick specific menu items by number",
+              content: `import numpy as np
+
+meal_prices = np.array([5, 12, 8, 15, 20, 6])   # item 0..5
+lunch_items = meal_prices[[1, 3, 4]]
+print(lunch_items)   # [12 15 20]`,
             },
           },
           {
             type: "callout",
             variant: "info",
             content:
-              "**Quick pick:** filter only → **`arr[condition]`**. replace values → **`np.where(cond, x, y)`**. pick exact positions → **`arr[[0, 2, 5]]`**.",
+              "**Quick pick:** only keep matches → **`arr[condition]`**. same length, swap values → **`np.where(cond, x, y)`**. pick named positions → **`arr[[0, 2, 5]]`**.",
           },
           {
             type: "callout",
             variant: "tip",
             content:
-              "`x` and `y` in `np.where` can be numbers or arrays the same shape as your data.",
+              "Fancy indexing uses **double brackets** `arr[[...]]` with a **list of indices**. A single slice `arr[0:3]` only gives a **continuous** block.",
           },
           {
             type: "quiz",
-            question: "What does `np.where(arr > 0, arr, -1)` do?",
+            question: "You want failed exam scores to show as 0 but keep passes unchanged. Best tool?",
             options: [
-              "Keeps positives, replaces others with -1",
-              "Removes negative values",
-              "Sorts the array",
-              "Returns indices only",
+              "marks[marks >= 60]",
+              "np.where(marks >= 60, marks, 0)",
+              "marks[[0, 1, 2]]",
+              "np.linspace(0, 100, 5)",
             ],
-            answer: 0,
-            explanation: "Three-argument where is element-wise: positive values stay, rest become -1.",
+            answer: 1,
+            explanation:
+              "np.where replaces failing cells with 0 while keeping the same array length.",
           },
           {
             type: "quiz",
-            question: "You want readings on days 0, 2, and 4 from `temps`. Best approach?",
+            question: "You want step counts for days 0, 2, and 4 from a week array. Best approach?",
             options: [
-              "temps[0:4]",
-              "temps[[0, 2, 4]]",
-              "temps > 0",
-              "np.where(temps)",
+              "steps[0:4]",
+              "steps[[0, 2, 4]]",
+              "steps > 0",
+              "np.where(steps >= 60, steps, 0)",
             ],
             answer: 1,
             explanation: "Double brackets with a list of indices is fancy indexing.",
