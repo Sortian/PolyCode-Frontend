@@ -18,8 +18,8 @@ import "./styles/theme-light.css";
 import "./styles/stack-picker-dark.css";
 import "./styles/responsive.css";
 
-const LanguageSelectPage = lazy(
-  () => import("./features/language/pages/LanguageSelectPage"),
+const LandingPage = lazy(
+  () => import("./features/landing/pages/LandingPage"),
 );
 const LanguageLandingPage = lazy(
   () => import("./features/language/pages/LanguageLandingPage"),
@@ -383,7 +383,7 @@ function AppRoutes() {
           path="/select-language"
           element={
             <StackPickerShell savedTheme={theme}>
-              <LanguageSelectPage
+              <LandingPage
                 onLanguageSelect={handleLanguageSelect}
                 continueLanguage={selectedLanguage}
               />
