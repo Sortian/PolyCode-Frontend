@@ -78,7 +78,6 @@ print(students)`,
             explanation:
               "A DataFrame is Pandas' table structure containing rows and columns.",
           },
-
           {
             type: "quiz",
             question: "What does Pandas mainly help with?",
@@ -175,13 +174,13 @@ print(df)`,
             lang: "python",
             label: "Creating a Series and a DataFrame",
             content: `import pandas as pd
-          
+
 scores = pd.Series([90, 85, 78], index=["Ali", "Sara", "Mo"])
 table = pd.DataFrame(
-              {"math": [90, 85, 78], "english": [88, 91, 80]},
-              index=["Ali", "Sara", "Mo"]
-          )
-          
+    {"math": [90, 85, 78], "english": [88, 91, 80]},
+    index=["Ali", "Sara", "Mo"]
+)
+
 print(scores)
 print(table)`,
           },
@@ -206,24 +205,23 @@ print(table)`,
               "A Series stores one column of data with labels, while a DataFrame stores multiple columns.",
           },
         ],
-
         challenge: {
           title: "Build a Series",
           description:
             'Create a Series called `prices` containing the values `10`, `20`, and `30` with index labels `"a"`, `"b"`, and `"c"`. Then print the Series.',
           starterCode: `import pandas as pd
-      
-      # Create prices Series here
-      
-      `,
+
+# Create prices Series here
+
+`,
           solutionCode: `import pandas as pd
-      
-      prices = pd.Series(
-          [10, 20, 30],
-          index=["a", "b", "c"]
-      )
-      
-      print(prices)`,
+
+prices = pd.Series(
+    [10, 20, 30],
+    index=["a", "b", "c"]
+)
+
+print(prices)`,
           tests: [
             {
               id: 1,
@@ -267,19 +265,43 @@ print(table)`,
               "You can create a Series from a list, dictionary, or NumPy array. When using a dictionary, the keys automatically become the index labels.",
           },
           {
+            type: "diagram",
+            title: "Ways to create a Series",
+            nodes: [
+              {
+                id: "from-list",
+                label: "From a list",
+                color: "#0d9488",
+                items: ["pd.Series([1, 2, 3])", "Auto index 0, 1, 2"],
+              },
+              {
+                id: "from-dict",
+                label: "From a dict",
+                color: "#14b8a6",
+                items: ["pd.Series({'a': 1})", "Keys become index"],
+              },
+              {
+                id: "custom-index",
+                label: "Custom index",
+                color: "#2dd4bf",
+                items: ["index=['Mon','Tue']", "Any hashable labels"],
+              },
+            ],
+          },
+          {
             type: "code",
             lang: "python",
             label: "Create a Series from a dictionary",
             content: `import pandas as pd
-      
-      temps = pd.Series({
-          "Mon": 18,
-          "Tue": 22,
-          "Wed": 19
-      })
-      
-      print(temps)
-      print(temps["Tue"])`,
+
+temps = pd.Series({
+    "Mon": 18,
+    "Tue": 22,
+    "Wed": 19
+})
+
+print(temps)
+print(temps["Tue"])`,
           },
           {
             type: "callout",
@@ -293,23 +315,54 @@ print(table)`,
             content:
               "Use `.values` to see the raw data stored inside a Series.",
           },
+          {
+            type: "quiz",
+            question:
+              "When you create a Series from a dictionary, what becomes the index?",
+            options: [
+              "The values",
+              "The dictionary keys",
+              "Numbers 0, 1, 2 …",
+              "Nothing — Series have no index",
+            ],
+            answer: 1,
+            explanation:
+              "Dictionary keys automatically become the index labels of the resulting Series.",
+          },
         ],
         challenge: {
           title: "Favorite Colors",
           description:
             'Create a Series named `colors` using a dictionary with keys `"r"`, `"g"`, and `"b"` and values `"red"`, `"green"`, and `"blue"`. Then print the value for `"g"`.',
           starterCode: `import pandas as pd
-      
-      `,
+
+`,
           solutionCode: `import pandas as pd
-      
-      colors = pd.Series({
-          "r": "red",
-          "g": "green",
-          "b": "blue"
-      })
-      
-      print(colors["g"])`,
+
+colors = pd.Series({
+    "r": "red",
+    "g": "green",
+    "b": "blue"
+})
+
+print(colors["g"])`,
+          tests: [
+            {
+              id: 1,
+              label: "Uses pd.Series",
+              keywords: [{ pattern: "pd\\.Series\\s*\\(" }],
+            },
+            {
+              id: 2,
+              label: "Has keys r, g, b",
+              keywords: ['"r"', '"g"', '"b"'],
+            },
+            {
+              id: 3,
+              label: "Prints colors[g]",
+              keywords: [{ pattern: 'colors\\s*\\[\\s*"g"\\s*\\]' }],
+            },
+          ],
         },
       },
       {
@@ -320,7 +373,36 @@ print(table)`,
           {
             type: "text",
             content:
-              "Series support vectorized math — add, multiply, compare — aligned by index. Missing labels become NaN.",
+              "Series support **vectorized math** — add, multiply, compare — applied to every element at once without a loop. Operations align by index label, so missing labels produce **NaN**.",
+          },
+          {
+            type: "text",
+            content:
+              "You can also combine two Series with `+`, `-`, `*`, or `/`. Pandas lines up matching index labels and computes element-by-element.",
+          },
+          {
+            type: "diagram",
+            title: "Vectorized operations",
+            nodes: [
+              {
+                id: "scalar",
+                label: "Scalar math",
+                color: "#0d9488",
+                items: ["s + 5", "s * 2", "s ** 2"],
+              },
+              {
+                id: "series-ops",
+                label: "Series + Series",
+                color: "#14b8a6",
+                items: ["Aligned by index", "Missing → NaN"],
+              },
+              {
+                id: "compare",
+                label: "Comparisons",
+                color: "#2dd4bf",
+                items: ["s > 10 → bool Series", "Use to filter rows"],
+              },
+            ],
           },
           {
             type: "code",
@@ -331,10 +413,36 @@ print(table)`,
 s = pd.Series([1, 2, 3])
 print(s + 5)`,
           },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "Vectorized operations are much faster than Python loops on large datasets because they run in optimized C code under the hood.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `s.abs()` to get absolute values, and `s.round(2)` to round to 2 decimal places.",
+          },
+          {
+            type: "quiz",
+            question:
+              "What happens when you add two Series with different index labels?",
+            options: [
+              "An error is raised",
+              "Matching labels are added; unmatched become NaN",
+              "The shorter Series is ignored",
+              "Labels are ignored and positions are used",
+            ],
+            answer: 1,
+            explanation:
+              "Pandas aligns by index label. Labels present in one but not the other result in NaN.",
+          },
         ],
         challenge: {
           title: "Double the Series",
-          description: "Create `s = pd.Series([4, 8, 12])`, print `s * 2`.",
+          description: "Create `s = pd.Series([4, 8, 12])` and print `s * 2`.",
           starterCode: `import pandas as pd
 
 `,
@@ -356,16 +464,67 @@ print(s * 2)`,
           {
             type: "text",
             content:
-              "Handy methods: `.sum()`, `.mean()`, `.max()`, `.min()`, `.count()`. They skip NaN by default.",
+              "Series come with built-in **aggregation methods** for quick statistics. These skip `NaN` values by default, so missing data does not skew your results.",
+          },
+          {
+            type: "text",
+            content:
+              "The most common ones are `.sum()`, `.mean()`, `.max()`, `.min()`, `.count()`, and `.std()`. You can also use `.describe()` to get all of them at once.",
+          },
+          {
+            type: "diagram",
+            title: "Common Series methods",
+            nodes: [
+              {
+                id: "stats",
+                label: "Statistics",
+                color: "#0d9488",
+                items: [".sum()", ".mean()", ".std()"],
+              },
+              {
+                id: "shape",
+                label: "Extremes & count",
+                color: "#14b8a6",
+                items: [".max()", ".min()", ".count()"],
+              },
+              {
+                id: "overview",
+                label: "Full summary",
+                color: "#2dd4bf",
+                items: [".describe()", "All stats at once"],
+              },
+            ],
           },
           {
             type: "code",
             lang: "python",
-            label: "Quick stats",
+            label: "Quick stats on sales",
             content: `import pandas as pd
 
 sales = pd.Series([100, 150, 120])
-print(sales.mean())`,
+print(sales.mean())
+print(sales.max())
+print(sales.describe())`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "`.count()` returns the number of **non-NaN** values, not the total length. Use `len(s)` for total length.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Chain methods: `s.dropna().mean()` drops missing values first, then computes the mean.",
+          },
+          {
+            type: "quiz",
+            question: "Which method returns all summary statistics at once?",
+            options: [".summary()", ".info()", ".describe()", ".stats()"],
+            answer: 2,
+            explanation:
+              "`.describe()` outputs count, mean, std, min, quartiles, and max for a numeric Series.",
           },
         ],
         challenge: {
@@ -404,6 +563,35 @@ print(scores.mean())`,
               "Pass a **dict of column name → list** to `pd.DataFrame()`. Each list is one column; all lists must be the same length.",
           },
           {
+            type: "text",
+            content:
+              "You can also build a DataFrame from a **list of dicts** (one dict per row), from a 2-D NumPy array, or by reading a file. All methods produce the same structure.",
+          },
+          {
+            type: "diagram",
+            title: "Ways to build a DataFrame",
+            nodes: [
+              {
+                id: "dict-of-lists",
+                label: "Dict of lists",
+                color: "#0891b2",
+                items: ['{"col": [vals]}', "Most common"],
+              },
+              {
+                id: "list-of-dicts",
+                label: "List of dicts",
+                color: "#0ea5e9",
+                items: ["[{row1}, {row2}]", "Natural for JSON"],
+              },
+              {
+                id: "numpy",
+                label: "NumPy array",
+                color: "#38bdf8",
+                items: ["np.array([[…]])", "Provide column names"],
+              },
+            ],
+          },
+          {
             type: "code",
             lang: "python",
             label: "From a dict of lists",
@@ -414,6 +602,32 @@ df = pd.DataFrame({
     "pop": [9_000_000, 2_100_000]
 })
 print(df.columns)`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "All lists in the dict must have the same length, or Pandas will raise a `ValueError`.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `df.shape` to quickly check how many rows and columns your DataFrame has.",
+          },
+          {
+            type: "quiz",
+            question:
+              "What does `pd.DataFrame({'a': [1, 2], 'b': [3, 4]})` create?",
+            options: [
+              "A 4-row, 1-column table",
+              "A 2-row, 2-column table",
+              "A Series with 4 values",
+              "A dictionary",
+            ],
+            answer: 1,
+            explanation:
+              "Each key becomes a column name and each list provides that column's values, giving 2 rows and 2 columns.",
           },
         ],
         challenge: {
@@ -441,7 +655,36 @@ print(df.shape)`,
           {
             type: "text",
             content:
-              "`.head(n)` shows first rows. `.info()` shows dtypes and non-null counts. `.describe()` summarizes numeric columns.",
+              "The first thing to do with any new DataFrame is **explore it**. Three methods cover the essentials: `.head()`, `.info()`, and `.describe()`.",
+          },
+          {
+            type: "text",
+            content:
+              "`.head(n)` shows the first `n` rows (default 5). `.info()` lists column names, data types, and non-null counts. `.describe()` gives numeric statistics like mean and standard deviation.",
+          },
+          {
+            type: "diagram",
+            title: "Exploration methods",
+            nodes: [
+              {
+                id: "head",
+                label: ".head(n)",
+                color: "#0891b2",
+                items: ["First n rows", "Quick preview"],
+              },
+              {
+                id: "info",
+                label: ".info()",
+                color: "#0ea5e9",
+                items: ["Column dtypes", "Non-null counts", "Memory use"],
+              },
+              {
+                id: "describe",
+                label: ".describe()",
+                color: "#38bdf8",
+                items: ["mean, std, min", "quartiles, max"],
+              },
+            ],
           },
           {
             type: "code",
@@ -449,8 +692,31 @@ print(df.shape)`,
             label: "Peek at a table",
             content: `import pandas as pd
 
-df = pd.DataFrame({"a": [1, 2, 3, 4, 5]})
-print(df.head(3))`,
+df = pd.DataFrame(
+       {"Name": ["Ali", "Sara", "Ahmed"],
+       "Age": [20, 22, 19]})
+print(df.head(2))`,
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `.tail(n)` to see the **last** n rows — handy for checking that a file loaded completely.",
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "`.info()` prints to stdout directly and does not return a value, so you cannot wrap it in `print()`.",
+          },
+          {
+            type: "quiz",
+            question:
+              "Which method shows column names, dtypes, and null counts?",
+            options: [".head()", ".describe()", ".info()", ".shape"],
+            answer: 2,
+            explanation:
+              "`.info()` gives a concise summary of column names, types, and how many non-null values each column has.",
           },
         ],
         challenge: {
@@ -458,13 +724,22 @@ print(df.head(3))`,
           description: "Create any 5-row DataFrame and print `df.head(3)`.",
           starterCode: `import pandas as pd
 
-df = pd.DataFrame({"x": [10, 20, 30, 40, 50]})
-# print first 3 rows
+df = pd.DataFrame({
+    "Name": ["Ali", "Sara", "Ahmed", "John", "Emma"],
+    "Age": [20, 22, 19, 25, 21],
+    "Grade": [85, 92, 78, 88, 95]
+})
+
+# Show only the first 3 rows
 
 `,
           solutionCode: `import pandas as pd
 
-df = pd.DataFrame({"x": [10, 20, 30, 40, 50]})
+df = pd.DataFrame({
+    "Name": ["Ali", "Sara", "Ahmed", "John", "Emma"],
+    "Age": [20, 22, 19, 25, 21],
+    "Grade": [85, 92, 78, 88, 95]
+})
 print(df.head(3))`,
           tests: [
             {
@@ -483,7 +758,36 @@ print(df.head(3))`,
           {
             type: "text",
             content:
-              'Access columns with `df["col"]` or `df.col`. Check types with `df.dtypes`. Cast with `.astype()`.',
+              "Every column in a DataFrame has a **dtype** (data type). Common ones are `int64`, `float64`, `object` (strings), and `bool`. Knowing dtypes helps you avoid type errors in calculations.",
+          },
+          {
+            type: "text",
+            content:
+              'Access a column with `df["col"]` (bracket notation, always works) or `df.col` (dot notation, only for names without spaces). Check all types with `df.dtypes`. Convert with `.astype()`.',
+          },
+          {
+            type: "diagram",
+            title: "Working with columns",
+            nodes: [
+              {
+                id: "access",
+                label: "Access",
+                color: "#0891b2",
+                items: ['df["col"]', "df.col"],
+              },
+              {
+                id: "inspect",
+                label: "Inspect",
+                color: "#0ea5e9",
+                items: ["df.dtypes", "df.columns"],
+              },
+              {
+                id: "convert",
+                label: "Convert",
+                color: "#38bdf8",
+                items: [".astype(int)", ".astype(str)", ".astype(float)"],
+              },
+            ],
           },
           {
             type: "code",
@@ -492,8 +796,33 @@ print(df.head(3))`,
             content: `import pandas as pd
 
 df = pd.DataFrame({"name": ["A", "B"], "age": [20, 21]})
-ages = df["age"]
-print(ages)`,
+print(df["age"])
+print(df.dtypes)`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "Strings are stored as `object` dtype in Pandas. Use `.astype(str)` or the `pd.StringDtype()` for explicit string columns.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "To select **multiple** columns, pass a list: `df[['name', 'age']]` — note the double brackets.",
+          },
+          {
+            type: "quiz",
+            question: "What does `df['score'].astype(float)` do?",
+            options: [
+              "Deletes the score column",
+              "Converts the score column values to floats",
+              "Rounds score values",
+              "Renames the column",
+            ],
+            answer: 1,
+            explanation:
+              "`.astype(float)` returns a new Series with each value converted to a floating-point number.",
           },
         ],
         challenge: {
@@ -534,7 +863,36 @@ print(df["score"])`,
           {
             type: "text",
             content:
-              "**`loc`** selects by **labels**: rows, columns, or both. Syntax: `df.loc[row_label, col_label]`.",
+              "**`loc`** selects rows and columns by their **labels** (index names and column names). It is the most readable way to pinpoint data when your index is meaningful.",
+          },
+          {
+            type: "text",
+            content:
+              "Syntax: `df.loc[row_label, col_label]`. You can pass a single label, a list of labels, or a slice. Slices with `loc` are **inclusive** on both ends.",
+          },
+          {
+            type: "diagram",
+            title: "loc patterns",
+            nodes: [
+              {
+                id: "single",
+                label: "Single cell",
+                color: "#0284c7",
+                items: ['df.loc["Ali", "score"]'],
+              },
+              {
+                id: "row",
+                label: "Full row",
+                color: "#0369a1",
+                items: ['df.loc["Ali"]', "Returns a Series"],
+              },
+              {
+                id: "slice",
+                label: "Slice",
+                color: "#0ea5e9",
+                items: ['df.loc["Ali":"Mo", "score"]', "Both ends included"],
+              },
+            ],
           },
           {
             type: "code",
@@ -544,6 +902,32 @@ print(df["score"])`,
 
 df = pd.DataFrame({"score": [88, 92]}, index=["Ali", "Sara"])
 print(df.loc["Ali", "score"])`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "Unlike Python slices, `loc` slices are **inclusive** — `df.loc['Ali':'Mo']` includes the 'Mo' row.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Pass `:` for a dimension to select everything: `df.loc[:, 'score']` selects the score column for all rows.",
+          },
+          {
+            type: "quiz",
+            question:
+              "Which correctly selects the 'price' column for the row labelled 'apple'?",
+            options: [
+              "df.iloc['apple', 'price']",
+              "df.loc['apple', 'price']",
+              "df['apple']['price']",
+              "df.select('apple', 'price')",
+            ],
+            answer: 1,
+            explanation:
+              "`df.loc['apple', 'price']` uses label-based selection — the row label first, then the column label.",
           },
         ],
         challenge: {
@@ -568,7 +952,36 @@ print(df.loc["y", "val"])`,
           {
             type: "text",
             content:
-              "**`iloc`** selects by **integer position** (0-based), like list indexing. `df.iloc[0, 1]` = first row, second column.",
+              "**`iloc`** selects by **integer position** (0-based), like list indexing. It ignores index labels entirely and counts rows and columns from zero.",
+          },
+          {
+            type: "text",
+            content:
+              "`df.iloc[0, 1]` = first row, second column. You can also pass slices: `df.iloc[0:3, :]` = first 3 rows, all columns. Unlike `loc`, `iloc` slices are **exclusive** on the right end.",
+          },
+          {
+            type: "diagram",
+            title: "iloc patterns",
+            nodes: [
+              {
+                id: "cell",
+                label: "Single cell",
+                color: "#0284c7",
+                items: ["df.iloc[0, 1]", "Row 0, Col 1"],
+              },
+              {
+                id: "row",
+                label: "Full row",
+                color: "#0369a1",
+                items: ["df.iloc[2]", "Third row as Series"],
+              },
+              {
+                id: "slice",
+                label: "Slice (exclusive end)",
+                color: "#0ea5e9",
+                items: ["df.iloc[0:3]", "Rows 0, 1, 2 only"],
+              },
+            ],
           },
           {
             type: "code",
@@ -578,6 +991,31 @@ print(df.loc["y", "val"])`,
 
 df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
 print(df.iloc[0])`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "`iloc` slices behave like Python list slices — `df.iloc[0:3]` returns rows at positions 0, 1, 2 (not 3).",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use negative indices: `df.iloc[-1]` gives the last row, just like Python lists.",
+          },
+          {
+            type: "quiz",
+            question: "What does `df.iloc[1, 0]` select?",
+            options: [
+              "First row, second column",
+              "Second row, first column",
+              "Row labelled 1, column labelled 0",
+              "The cell at (0, 1)",
+            ],
+            answer: 1,
+            explanation:
+              "`iloc` uses 0-based integer positions: row index 1 is the second row, column index 0 is the first column.",
           },
         ],
         challenge: {
@@ -609,7 +1047,36 @@ print(df.iloc[0, 0])`,
           {
             type: "text",
             content:
-              'Filter rows with a condition: `df[df["score"] >= 90]` returns only rows where the condition is True.',
+              "**Boolean filtering** lets you keep only the rows that satisfy a condition. The condition produces a boolean Series (True/False per row), and you pass that into the DataFrame to filter.",
+          },
+          {
+            type: "text",
+            content:
+              "You can combine conditions with `&` (and) and `|` (or) — always wrap each condition in parentheses when combining.",
+          },
+          {
+            type: "diagram",
+            title: "Boolean filtering flow",
+            nodes: [
+              {
+                id: "condition",
+                label: "Create condition",
+                color: "#0284c7",
+                items: ['df["score"] >= 90', "Returns bool Series"],
+              },
+              {
+                id: "filter",
+                label: "Apply filter",
+                color: "#0369a1",
+                items: ["df[condition]", "Keeps True rows only"],
+              },
+              {
+                id: "combine",
+                label: "Combine conditions",
+                color: "#0ea5e9",
+                items: ["(cond1) & (cond2)", "(cond1) | (cond2)"],
+              },
+            ],
           },
           {
             type: "code",
@@ -620,6 +1087,32 @@ print(df.iloc[0, 0])`,
 df = pd.DataFrame({"name": ["A", "B"], "score": [95, 70]})
 high = df[df["score"] >= 90]
 print(high)`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "Always use `&` and `|` (not Python's `and`/`or`) when combining boolean Series, because they operate element-wise.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `.isin([val1, val2])` to filter by a set of allowed values: `df[df['city'].isin(['London','Paris'])]`.",
+          },
+          {
+            type: "quiz",
+            question:
+              "Which syntax correctly filters rows where age > 18 AND score > 80?",
+            options: [
+              "df[df['age'] > 18 and df['score'] > 80]",
+              "df[(df['age'] > 18) & (df['score'] > 80)]",
+              "df[df['age'] > 18 & df['score'] > 80]",
+              "df.filter(age > 18, score > 80)",
+            ],
+            answer: 1,
+            explanation:
+              "Use `&` with each condition wrapped in parentheses. Python's `and` keyword does not work on Series.",
           },
         ],
         challenge: {
@@ -662,7 +1155,36 @@ print(adults)`,
           {
             type: "text",
             content:
-              "Missing data shows as **NaN**. Use `.isna()` to detect and `.fillna(value)` to replace.",
+              "Real-world data is rarely perfect. Missing entries appear as **NaN** (Not a Number) in Pandas. Ignoring them can silently corrupt your calculations, so always check and handle them early.",
+          },
+          {
+            type: "text",
+            content:
+              "Use `.isna()` to get a boolean mask of missing cells. `.isna().sum()` tallies missing values per column. Then either **fill** them with `.fillna(value)` or **drop** the affected rows with `.dropna()`.",
+          },
+          {
+            type: "diagram",
+            title: "Handling missing values",
+            nodes: [
+              {
+                id: "detect",
+                label: "Detect",
+                color: "#2563eb",
+                items: [".isna()", ".isna().sum()", ".notna()"],
+              },
+              {
+                id: "fill",
+                label: "Fill",
+                color: "#3b82f6",
+                items: [".fillna(0)", ".fillna(mean)", ".ffill()"],
+              },
+              {
+                id: "drop",
+                label: "Drop",
+                color: "#60a5fa",
+                items: [".dropna()", "axis=0 (rows)", "axis=1 (cols)"],
+              },
+            ],
           },
           {
             type: "code",
@@ -673,6 +1195,26 @@ import numpy as np
 
 s = pd.Series([1, np.nan, 3])
 print(s.fillna(0))`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "`.fillna()` does not modify the original Series by default — it returns a new one. Add `inplace=True` to modify in place.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Fill with the column mean: `df['col'].fillna(df['col'].mean())` — a common strategy for numeric columns.",
+          },
+          {
+            type: "quiz",
+            question: "Which method detects missing values in a Series?",
+            options: [".missing()", ".isna()", ".nan()", ".check()"],
+            answer: 1,
+            explanation:
+              "`.isna()` returns a boolean Series where True marks each missing (NaN) position.",
           },
         ],
         challenge: {
@@ -697,7 +1239,36 @@ print(s.fillna(0))`,
           {
             type: "text",
             content:
-              "`.dropna()` removes rows/cols with NaN. `.astype(int)` or `.astype(str)` converts column types.",
+              "Sometimes the cleanest approach is to remove rows or columns with missing data using **`.dropna()`**. Other times you need to fix column types with **`.astype()`**.",
+          },
+          {
+            type: "text",
+            content:
+              "Data imported from CSV often arrives with numbers stored as strings. `.astype(int)` or `.astype(float)` converts them so math operations work correctly.",
+          },
+          {
+            type: "diagram",
+            title: "dropna & astype options",
+            nodes: [
+              {
+                id: "dropna-rows",
+                label: "Drop rows",
+                color: "#2563eb",
+                items: ["df.dropna()", "axis=0 (default)"],
+              },
+              {
+                id: "dropna-cols",
+                label: "Drop columns",
+                color: "#3b82f6",
+                items: ["df.dropna(axis=1)", "Removes sparse cols"],
+              },
+              {
+                id: "astype",
+                label: "Type cast",
+                color: "#60a5fa",
+                items: [".astype(int)", ".astype(float)", ".astype(str)"],
+              },
+            ],
           },
           {
             type: "code",
@@ -707,6 +1278,31 @@ print(s.fillna(0))`,
 
 df = pd.DataFrame({"x": [1, None, 3]})
 print(df.dropna())`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "`.dropna(thresh=n)` keeps rows that have at least `n` non-NaN values — useful for partially filled rows.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Always cast after dropping NaNs — `None` in a column blocks integer casting until it is removed.",
+          },
+          {
+            type: "quiz",
+            question: "What does `df.dropna(axis=1)` do?",
+            options: [
+              "Drops rows with NaN",
+              "Drops columns that contain any NaN",
+              "Fills NaN with zeros",
+              "Counts missing values",
+            ],
+            answer: 1,
+            explanation:
+              "`axis=1` targets columns; any column containing at least one NaN is removed.",
           },
         ],
         challenge: {
@@ -731,7 +1327,36 @@ print(df.dropna())`,
           {
             type: "text",
             content:
-              'Assign new columns with `df["new_col"] = ...`. You can compute from existing columns.',
+              'Assign new columns by name: `df["new_col"] = ...`. The right-hand side can be a list, a scalar, or a computation on existing columns. All values are aligned by index.',
+          },
+          {
+            type: "text",
+            content:
+              "Computing derived columns is one of the most common data tasks — for example, calculating a total from price and quantity, or creating a label from a numeric score.",
+          },
+          {
+            type: "diagram",
+            title: "Adding new columns",
+            nodes: [
+              {
+                id: "constant",
+                label: "Constant value",
+                color: "#2563eb",
+                items: ['df["flag"] = True', "Same value for all rows"],
+              },
+              {
+                id: "derived",
+                label: "Derived column",
+                color: "#3b82f6",
+                items: ['df["total"] = df["qty"] * df["price"]'],
+              },
+              {
+                id: "conditional",
+                label: "Conditional",
+                color: "#60a5fa",
+                items: ["np.where(cond, a, b)", "If-else per row"],
+              },
+            ],
           },
           {
             type: "code",
@@ -742,6 +1367,32 @@ print(df.dropna())`,
 df = pd.DataFrame({"price": [10, 20]})
 df["tax"] = df["price"] * 0.1
 print(df)`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "Assigning to a new column name creates it; assigning to an existing name overwrites it in place.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `df.assign(col=expr)` for a chainable, non-mutating alternative that returns a new DataFrame.",
+          },
+          {
+            type: "quiz",
+            question:
+              "Which line adds a column 'bonus' equal to 10% of 'salary'?",
+            options: [
+              "df.add('bonus', df['salary'] * 0.1)",
+              "df['bonus'] = df['salary'] * 0.1",
+              "df.insert('bonus', df['salary'] * 0.1)",
+              "df.new_col('bonus') = df['salary'] * 0.1",
+            ],
+            answer: 1,
+            explanation:
+              "Direct assignment `df['bonus'] = df['salary'] * 0.1` is the standard idiomatic way to add a derived column.",
           },
         ],
         challenge: {
@@ -783,7 +1434,36 @@ print(df)`,
           {
             type: "text",
             content:
-              '**`groupby("col")`** splits the table into groups, then you `.sum()`, `.mean()`, etc. on each group.',
+              '**`groupby("col")`** splits the DataFrame into groups based on unique values in a column, then you apply an aggregation function like `.sum()` or `.mean()` to each group.',
+          },
+          {
+            type: "text",
+            content:
+              "This mirrors the SQL `GROUP BY` clause. It is the fastest way to compute per-category totals or averages without writing loops.",
+          },
+          {
+            type: "diagram",
+            title: "Split → Apply → Combine",
+            nodes: [
+              {
+                id: "split",
+                label: "Split",
+                color: "#4f46e5",
+                items: ['groupby("city")', "One group per city"],
+              },
+              {
+                id: "apply",
+                label: "Apply",
+                color: "#6366f1",
+                items: [".sum()", ".mean()", ".count()"],
+              },
+              {
+                id: "combine",
+                label: "Combine",
+                color: "#818cf8",
+                items: ["One row per group", "Result DataFrame"],
+              },
+            ],
           },
           {
             type: "code",
@@ -793,6 +1473,31 @@ print(df)`,
 
 df = pd.DataFrame({"city": ["A", "A", "B"], "sales": [10, 20, 5]})
 print(df.groupby("city")["sales"].sum())`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "The result of a groupby aggregation has the grouped column as its index. Use `.reset_index()` to turn it back into a regular column.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Group by multiple columns: `df.groupby(['dept', 'region'])['sales'].sum()` — pass a list of column names.",
+          },
+          {
+            type: "quiz",
+            question: "What does `df.groupby('team')['pts'].sum()` return?",
+            options: [
+              "The total of all pts values",
+              "The sum of pts for each unique team",
+              "A new column called pts_sum",
+              "The number of rows per team",
+            ],
+            answer: 1,
+            explanation:
+              "groupby splits by team, then `.sum()` totals the pts column within each team group.",
           },
         ],
         challenge: {
@@ -820,7 +1525,36 @@ print(df.groupby("team")["pts"].sum())`,
           {
             type: "text",
             content:
-              '`.agg(["mean", "max"])` computes several statistics at once. Great for quick reports.',
+              '**`.agg()`** lets you compute **several statistics at once** for each group. Pass a list of function names like `["mean", "max", "count"]` to get all of them in one call.',
+          },
+          {
+            type: "text",
+            content:
+              "You can also pass a dict to compute different stats for different columns: `df.groupby('dept').agg({'salary': 'mean', 'age': 'max'})`.",
+          },
+          {
+            type: "diagram",
+            title: "agg options",
+            nodes: [
+              {
+                id: "list",
+                label: "List of funcs",
+                color: "#4f46e5",
+                items: ['agg(["mean","max"])', "Both for every col"],
+              },
+              {
+                id: "dict",
+                label: "Dict of funcs",
+                color: "#6366f1",
+                items: ["agg({'col': 'sum'})", "Per-column control"],
+              },
+              {
+                id: "named",
+                label: "Named agg",
+                color: "#818cf8",
+                items: ["agg(avg=('col','mean'))", "Custom output names"],
+              },
+            ],
           },
           {
             type: "code",
@@ -830,6 +1564,31 @@ print(df.groupby("team")["pts"].sum())`,
 
 df = pd.DataFrame({"g": ["x", "x", "y"], "v": [1, 3, 10]})
 print(df.groupby("g")["v"].agg(["mean", "max"]))`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "When you pass a list to `.agg()`, the result is a DataFrame with one column per aggregation function.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `.agg(total=('salary', 'sum'), headcount=('name', 'count'))` (named aggregation) for clean, self-documenting output columns.",
+          },
+          {
+            type: "quiz",
+            question: "What type does `.agg(['mean','max'])` return?",
+            options: [
+              "A Series with two values",
+              "A DataFrame with one column per aggregation",
+              "A list of numbers",
+              "A dict",
+            ],
+            answer: 1,
+            explanation:
+              "Passing a list to `.agg()` produces a DataFrame where each aggregation function becomes a column.",
           },
         ],
         challenge: {
@@ -871,7 +1630,36 @@ print(df.groupby("dept")["salary"].mean())`,
           {
             type: "text",
             content:
-              "`pd.concat([df1, df2])` stacks tables vertically (more rows) when columns match.",
+              "**`pd.concat([df1, df2])`** stacks tables vertically — adding more rows — when the columns match. This is how you combine monthly reports or batches of the same data.",
+          },
+          {
+            type: "text",
+            content:
+              "Pass `ignore_index=True` to reset the row index on the result. Without it, the original indices are preserved, which can cause duplicate index values.",
+          },
+          {
+            type: "diagram",
+            title: "concat directions",
+            nodes: [
+              {
+                id: "vertical",
+                label: "Vertical (default)",
+                color: "#7c3aed",
+                items: ["axis=0", "More rows", "Same columns"],
+              },
+              {
+                id: "horizontal",
+                label: "Horizontal",
+                color: "#8b5cf6",
+                items: ["axis=1", "More columns", "Same rows"],
+              },
+              {
+                id: "index",
+                label: "Index options",
+                color: "#a78bfa",
+                items: ["ignore_index=True", "keys=['jan','feb']"],
+              },
+            ],
           },
           {
             type: "code",
@@ -881,7 +1669,33 @@ print(df.groupby("dept")["salary"].mean())`,
 
 a = pd.DataFrame({"x": [1]})
 b = pd.DataFrame({"x": [2]})
-print(pd.concat([a, b]))`,
+print(pd.concat([a, b], ignore_index=True))`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "Columns present in one DataFrame but not the other will be filled with NaN for the rows where they are absent.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `keys=['jan', 'feb']` to create a multi-level index that tracks which original table each row came from.",
+          },
+          {
+            type: "quiz",
+            question:
+              "What does `pd.concat([a, b], ignore_index=True)` do differently from `pd.concat([a, b])`?",
+            options: [
+              "It sorts the result",
+              "It resets the row index to 0, 1, 2 … in the output",
+              "It merges on a shared key",
+              "It drops duplicate rows",
+            ],
+            answer: 1,
+            explanation:
+              "`ignore_index=True` discards the original indices and gives the combined DataFrame a fresh 0-based integer index.",
           },
         ],
         challenge: {
@@ -907,7 +1721,40 @@ print(pd.concat([a, b]))`,
           {
             type: "text",
             content:
-              '`pd.merge(left, right, on="key")` joins two tables like a SQL join on a shared column.',
+              '**`pd.merge(left, right, on="key")`** joins two tables on a shared column, exactly like a SQL `JOIN`. Matching rows are combined side by side.',
+          },
+          {
+            type: "text",
+            content:
+              "The default is an **inner join** — only rows with matching keys appear. You can change this with `how='left'`, `how='right'`, or `how='outer'`.",
+          },
+          {
+            type: "diagram",
+            title: "Join types",
+            nodes: [
+              {
+                id: "inner",
+                label: "Inner (default)",
+                color: "#7c3aed",
+                items: ["how='inner'", "Only matching keys"],
+              },
+              {
+                id: "left",
+                label: "Left join",
+                color: "#8b5cf6",
+                items: ["how='left'", "All left rows kept", "NaN for no match"],
+              },
+              {
+                id: "outer",
+                label: "Outer join",
+                color: "#a78bfa",
+                items: [
+                  "how='outer'",
+                  "All rows from both",
+                  "NaN where missing",
+                ],
+              },
+            ],
           },
           {
             type: "code",
@@ -918,6 +1765,32 @@ print(pd.concat([a, b]))`,
 orders = pd.DataFrame({"id": [1], "item": ["book"]})
 names = pd.DataFrame({"id": [1], "name": ["Ali"]})
 print(pd.merge(orders, names, on="id"))`,
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "If key columns have different names in each table, use `left_on='col_a', right_on='col_b'` instead of `on`.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use `suffixes=('_left', '_right')` to distinguish same-named non-key columns that appear in both tables after the merge.",
+          },
+          {
+            type: "quiz",
+            question:
+              "What does a left join (`how='left'`) do with unmatched rows from the left table?",
+            options: [
+              "Drops them",
+              "Keeps them and fills right-side columns with NaN",
+              "Duplicates them",
+              "Raises an error",
+            ],
+            answer: 1,
+            explanation:
+              "A left join keeps every row from the left DataFrame; columns from the right that have no match are filled with NaN.",
           },
         ],
         challenge: {
@@ -961,7 +1834,36 @@ print(pd.merge(left, right, on="id"))`,
           {
             type: "text",
             content:
-              '`pd.read_csv("file.csv")` loads a CSV into a DataFrame. `df.to_csv("out.csv", index=False)` saves without row numbers.',
+              "**`pd.read_csv('file.csv')`** loads a CSV file into a DataFrame in one line. It automatically detects headers, infers column types, and handles common separators.",
+          },
+          {
+            type: "text",
+            content:
+              "To save a DataFrame back to CSV use **`df.to_csv('out.csv', index=False)`**. The `index=False` flag prevents Pandas from writing the row numbers as an extra column.",
+          },
+          {
+            type: "diagram",
+            title: "Common read_csv options",
+            nodes: [
+              {
+                id: "basic",
+                label: "Basic load",
+                color: "#9333ea",
+                items: ["pd.read_csv('file.csv')", "Auto header & dtypes"],
+              },
+              {
+                id: "options",
+                label: "Key options",
+                color: "#a855f7",
+                items: ["sep=';'", "header=None", "usecols=['a','b']"],
+              },
+              {
+                id: "inspect",
+                label: "After loading",
+                color: "#c084fc",
+                items: ["df.head()", "df.info()", "df.shape"],
+              },
+            ],
           },
           {
             type: "code",
@@ -978,7 +1880,26 @@ print(df)`,
             type: "callout",
             variant: "tip",
             content:
-              "Always inspect with `df.head()` after loading a new file.",
+              "Always inspect with `df.head()` and `df.info()` after loading a new file to catch type mismatches early.",
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "For Excel files use `pd.read_excel('file.xlsx')`. The API is nearly identical to `read_csv`.",
+          },
+          {
+            type: "quiz",
+            question: "Which method loads a CSV file into a DataFrame?",
+            options: [
+              "pd.load_csv",
+              "pd.read_csv",
+              "pd.open_csv",
+              "pd.import_csv",
+            ],
+            answer: 1,
+            explanation:
+              "`pd.read_csv(path)` is the standard function for loading CSV files into a Pandas DataFrame.",
           },
         ],
         challenge: {
@@ -1011,26 +1932,68 @@ print(df)`,
           {
             type: "text",
             content:
-              "You now know Series, DataFrames, selection, cleaning, groupby, merge, and I/O — the core Pandas toolkit for real projects.",
+              "You now know Series, DataFrames, selection, cleaning, groupby, merge, and I/O — the core Pandas toolkit. This final lesson ties it all together with a mini data pipeline.",
+          },
+          {
+            type: "text",
+            content:
+              "A typical pipeline loads data, cleans it, transforms it, groups it for insight, then exports the result. Each step uses the skills from earlier chapters.",
+          },
+          {
+            type: "diagram",
+            title: "Full data pipeline",
+            nodes: [
+              {
+                id: "load",
+                label: "Load",
+                color: "#9333ea",
+                items: ["pd.read_csv()", "pd.read_excel()"],
+              },
+              {
+                id: "clean",
+                label: "Clean & transform",
+                color: "#a855f7",
+                items: ["fillna / dropna", "astype, new cols"],
+              },
+              {
+                id: "analyze",
+                label: "Analyze",
+                color: "#c084fc",
+                items: ["groupby + agg", "merge tables"],
+              },
+              {
+                id: "export",
+                label: "Export",
+                color: "#d8b4fe",
+                items: ["to_csv(index=False)", "to_excel()"],
+              },
+            ],
           },
           {
             type: "callout",
             variant: "info",
             content:
-              "Next steps: combine with NumPy for numeric work and Matplotlib for charts.",
+              "Next steps: combine with NumPy for numeric work and Matplotlib / Seaborn for charts.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Use method chaining to write concise pipelines: `df.dropna().assign(tax=df['price']*0.1).groupby('cat')['tax'].sum()`.",
           },
           {
             type: "quiz",
-            question: "Which method loads a CSV file?",
+            question:
+              "Which method saves a DataFrame to CSV without writing row numbers?",
             options: [
-              "pd.load_csv",
-              "pd.read_csv",
-              "pd.open_csv",
-              "pd.import_csv",
+              "df.to_csv('out.csv')",
+              "df.to_csv('out.csv', index=False)",
+              "df.save_csv('out.csv')",
+              "df.export('out.csv', rows=False)",
             ],
             answer: 1,
             explanation:
-              "`pd.read_csv(path)` is the standard way to load CSV files.",
+              "`index=False` tells Pandas not to write the DataFrame's row index as a column in the output file.",
           },
         ],
         challenge: {

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ConceptCard from "../../oops-cpp/components/ConceptCard";
 import NumpyIntroTheory from "../../numpy-py/components/NumpyIntroTheory";
 import OopsSidebar from "../../oops-cpp/components/OopsSidebar";
 import LearnProfileMenu from "../../shared/LearnProfileMenu";
@@ -115,7 +114,9 @@ export default function PandasLessonPage() {
   }, [lessonId, notesMap]);
 
   useEffect(() => {
-    setConfidence(localStorage.getItem(`pandas_py_confidence_${lessonId}`) || "");
+    setConfidence(
+      localStorage.getItem(`pandas_py_confidence_${lessonId}`) || "",
+    );
   }, [lessonId]);
 
   useEffect(
@@ -137,7 +138,6 @@ export default function PandasLessonPage() {
   }
 
   const isCompleted = isAuthenticated && !!progress[lessonId];
-  const isIntroChapter = lesson.chapterId === "intro";
   const isBookmarked = bookmarks.includes(lessonId);
   const completedCount = Object.keys(progress).length;
   const earnedXP = PANDAS_LESSONS.filter((item) => progress[item.id]).reduce(
@@ -185,7 +185,9 @@ export default function PandasLessonPage() {
             ← Pandas · Python
           </button>
           <div className="oops-lesson-breadcrumb">
-            <span style={{ color: lesson.chapterColor }}>{lesson.chapterTitle}</span>
+            <span style={{ color: lesson.chapterColor }}>
+              {lesson.chapterTitle}
+            </span>
             <span className="oops-bc-sep">›</span>
             <span>{lesson.title}</span>
           </div>
@@ -242,149 +244,15 @@ export default function PandasLessonPage() {
 
         <div className="oops-lesson-content">
           {tab === "theory" ? (
-            isIntroChapter ? (
-              <NumpyIntroTheory
-                lesson={lesson}
-                noteDraft={noteDraft}
-                onNoteChange={setNoteDraft}
-                onSaveNote={handleSaveNote}
-                confidence={confidence}
-                onConfidenceChange={handleConfidenceChange}
-                onGoChallenge={() => setTab("challenge")}
-              />
-            ) : (
-              <div className="oops-theory-pane">
-                <div className="oops-lesson-title-row">
-                  <div>
-                    <span className="oops-interactive-label">Plain English</span>
-                    <h2 className="oops-lesson-heading">{lesson.title}</h2>
-                  </div>
-                  <div className="oops-term-cloud">
-                    {keyTerms.map((term) => (
-                      <span key={term}>{term}</span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="oops-easy-summary">
-                  <div>
-                    <span className="oops-summary-kicker">What it means</span>
-                    <p>{lessonSummary.plain}</p>
-                  </div>
-                  <div>
-                    <span className="oops-summary-kicker">Why it matters</span>
-                    <p>{lessonSummary.why}</p>
-                  </div>
-                  <div>
-                    <span className="oops-summary-kicker">Mental model</span>
-                    <p>{lessonSummary.analogy}</p>
-                  </div>
-                </div>
-
-                <div className="oops-learning-brief">
-                  <div className="oops-brief-card">
-                    <span className="oops-interactive-label">Start Here</span>
-                    <h3>Simple explanation</h3>
-                    <p>
-                      {plainLessonText(firstTextBlock?.content) ||
-                        `This lesson covers ${lesson.title}.`}
-                    </p>
-                  </div>
-                  <div className="oops-brief-card">
-                    <span className="oops-interactive-label">Tip</span>
-                    <h3>Remember</h3>
-                    <p>
-                      {plainLessonText(firstCallout?.content) ||
-                        "Pandas builds on NumPy — import pandas as pd is the standard shortcut."}
-                    </p>
-                  </div>
-                  <div className="oops-brief-card">
-                    <span className="oops-interactive-label">Code</span>
-                    <h3>Study the examples</h3>
-                    <p>
-                      {firstCodeBlock
-                        ? `Read "${firstCodeBlock.label}" and type it yourself.`
-                        : "Run the challenge after reading the theory blocks below."}
-                    </p>
-                  </div>
-                  <div className="oops-brief-card">
-                    <span className="oops-interactive-label">Steps</span>
-                    <h3>How to learn it</h3>
-                    <ol>
-                      {briefStepItems.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ol>
-                  </div>
-                  <div className="oops-brief-card oops-brief-wide">
-                    <span className="oops-interactive-label">Practice</span>
-                    <h3>Before the challenge, verify these</h3>
-                    <ul>
-                      {practicePrompts.map((item) => (
-                        <li key={item.id}>{item.label}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {lesson.theory.map((block, index) => (
-                  <ConceptCard
-                    key={index}
-                    block={block}
-                    accentColor={lesson.chapterColor}
-                    runnableCodeLangs={["python"]}
-                  />
-                ))}
-
-                <div className="oops-notes-panel">
-                  <div>
-                    <span className="oops-interactive-label">Lesson Notes</span>
-                    <h3>Your notes</h3>
-                  </div>
-                  <textarea
-                    value={noteDraft}
-                    onChange={(e) => setNoteDraft(e.target.value)}
-                    placeholder="Write a Pandas rule or gotcha..."
-                  />
-                  <button type="button" onClick={handleSaveNote}>
-                    Save Note
-                  </button>
-                </div>
-
-                <div className="oops-confidence-panel">
-                  <div>
-                    <span className="oops-interactive-label">Confidence</span>
-                    <h3>Ready for the challenge?</h3>
-                  </div>
-                  <div className="oops-confidence-options">
-                    {[
-                      ["review", "Need review"],
-                      ["almost", "Almost there"],
-                      ["ready", "Ready to code"],
-                    ].map(([value, label]) => (
-                      <button
-                        key={value}
-                        type="button"
-                        className={confidence === value ? "active" : ""}
-                        onClick={() => handleConfidenceChange(value)}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="oops-theory-footer">
-                  <button
-                    type="button"
-                    className="oops-cta-btn"
-                    onClick={() => setTab("challenge")}
-                  >
-                    Ready? Take the Challenge →
-                  </button>
-                </div>
-              </div>
-            )
+            <NumpyIntroTheory
+              lesson={lesson}
+              noteDraft={noteDraft}
+              onNoteChange={setNoteDraft}
+              onSaveNote={handleSaveNote}
+              confidence={confidence}
+              onConfidenceChange={handleConfidenceChange}
+              onGoChallenge={() => setTab("challenge")}
+            />
           ) : (
             <PythonCodeChallenge
               challenge={lesson.challenge}
