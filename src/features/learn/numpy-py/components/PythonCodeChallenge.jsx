@@ -226,12 +226,88 @@ export default function PythonCodeChallenge({
         <div className="oops-problem-header">
           <h3 className="oops-problem-title">{challenge.title}</h3>
           {canRun && isCompleted && (
-            <span className="oops-problem-solved" style={{ color: accentColor }}>
+            <span
+              className="oops-problem-solved"
+              style={{ color: accentColor }}
+            >
               ✓ Solved
             </span>
           )}
         </div>
-        <p className="oops-problem-desc">{challenge.description}</p>
+        {Array.isArray(challenge.description) ? (
+          <div className="oops-problem-desc">
+            {challenge.description.map((block, i) => {
+              if (block.type === "text")
+                return (
+                  <p key={i} style={{ marginBottom: "10px" }}>
+                    {block.content}
+                  </p>
+                );
+              if (block.type === "code")
+                return (
+                  <pre
+                    key={i}
+                    style={{
+                      background: "rgba(0,0,0,0.3)",
+                      padding: "10px 14px",
+                      borderRadius: "7px",
+                      fontSize: "0.82rem",
+                      margin: "8px 0",
+                      overflowX: "auto",
+                    }}
+                  >
+                    <code>{block.content}</code>
+                  </pre>
+                );
+              if (block.type === "callout")
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      borderLeft: "3px solid #b8ff00",
+                      padding: "8px 12px",
+                      background: "rgba(184,255,0,0.06)",
+                      borderRadius: "6px",
+                      margin: "8px 0",
+                      fontSize: "0.86rem",
+                    }}
+                  >
+                    {block.content}
+                  </div>
+                );
+              if (block.type === "expected")
+                return (
+                  <div key={i} style={{ marginTop: "10px" }}>
+                    <span
+                      style={{
+                        fontSize: "0.7rem",
+                        color: "#6e7891",
+                        textTransform: "uppercase",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                      }}
+                    >
+                      {block.label}
+                    </span>
+                    <pre
+                      style={{
+                        background: "rgba(0,0,0,0.3)",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        fontSize: "0.82rem",
+                        marginTop: "5px",
+                      }}
+                    >
+                      <code>{block.content}</code>
+                    </pre>
+                  </div>
+                );
+              return null;
+            })}
+          </div>
+        ) : (
+          <p className="oops-problem-desc">{challenge.description}</p>
+        )}
 
         {!canRun && (
           <div className="oops-auth-gate">
@@ -298,7 +374,11 @@ export default function PythonCodeChallenge({
         <div className="oops-editor-topbar">
           <span className="oops-editor-lang">Python · lesson.py</span>
           <div className="oops-editor-actions">
-            <button type="button" className="oops-editor-action" onClick={resetCode}>
+            <button
+              type="button"
+              className="oops-editor-action"
+              onClick={resetCode}
+            >
               ↺ Reset
             </button>
             <button
@@ -350,11 +430,7 @@ export default function PythonCodeChallenge({
             style={{ "--accent": accentColor }}
             onClick={runTests}
             disabled={!canRun || running || showSolution}
-            title={
-              !canRun
-                ? "Sign in or sign up to run and submit"
-                : undefined
-            }
+            title={!canRun ? "Sign in or sign up to run and submit" : undefined}
           >
             {authLoading
               ? "Checking sign-in…"

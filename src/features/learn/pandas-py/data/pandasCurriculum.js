@@ -1865,17 +1865,33 @@ print(pd.merge(left, right, on="id"))`,
               },
             ],
           },
+
+          // ── NEW browser-friendly concept example ──────────────────────────
+          {
+            type: "text",
+            content:
+              "In a real project `pd.read_csv()` points to a file on disk. In the browser we build the same DataFrame directly from a dictionary — the result is **identical** to what `read_csv` would produce.",
+          },
           {
             type: "code",
             lang: "python",
-            label: "From CSV string (concept)",
+            label: "Equivalent DataFrame (browser-safe)",
             content: `import pandas as pd
-from io import StringIO
-
-csv_text = "name,score\\nAli,90\\nSara,85"
-df = pd.read_csv(StringIO(csv_text))
-print(df)`,
+  
+  # This is what pd.read_csv("students.csv") would give you
+  # if the file contained:  name,score\\nAli,90\\nSara,85
+  
+df = pd.DataFrame({
+      "name":  ["Ali", "Sara"],
+      "score": [90,    85   ]
+  })
+  
+print(df)
+print("\\nColumn types:")
+print(df.dtypes)`,
           },
+          // ─────────────────────────────────────────────────────────────────
+
           {
             type: "callout",
             variant: "tip",
@@ -1888,6 +1904,33 @@ print(df)`,
             content:
               "For Excel files use `pd.read_excel('file.xlsx')`. The API is nearly identical to `read_csv`.",
           },
+
+          // ── NEW: show read_csv options using the dict pattern ─────────────
+          {
+            type: "text",
+            content:
+              "You can also use `usecols` to load only specific columns, and `sep=';'` for semicolon-separated files. Here is how those options map to a dict-based DataFrame so you can practise the concept in the browser:",
+          },
+          {
+            type: "code",
+            lang: "python",
+            label: "usecols equivalent — select only certain columns",
+            content: `import pandas as pd
+  
+  # Imagine the CSV has three columns but we only need two.
+  # pd.read_csv("data.csv", usecols=["product", "price"])
+  # is equivalent to building:
+  
+df = pd.DataFrame({
+      "product": ["Apple", "Banana", "Cherry"],
+      "price":   [1.2,    0.5,     2.8   ]
+  })
+  
+print(df)
+print("Shape:", df.shape)   # (3, 2)`,
+          },
+          // ─────────────────────────────────────────────────────────────────
+
           {
             type: "quiz",
             question: "Which method loads a CSV file into a DataFrame?",
@@ -1902,28 +1945,59 @@ print(df)`,
               "`pd.read_csv(path)` is the standard function for loading CSV files into a Pandas DataFrame.",
           },
         ],
-        challenge: {
-          title: "Parse CSV Text",
-          description:
-            "Use `StringIO` and `pd.read_csv` on `'a,b\\n1,2\\n3,4'` (store in `csv_text`). Print `df`.",
-          starterCode: `import pandas as pd
-from io import StringIO
 
-csv_text = "a,b\\n1,2\\n3,4"
+        // ── Challenge: no StringIO needed ────────────────────────────────────
+        challenge: {
+          title: "Recreate a CSV as a DataFrame",
+          description: [
+            {
+              type: "text",
+              content:
+                "In real projects, you load data from a CSV file using **`pd.read_csv('data.csv')`**. The file would look like this:",
+            },
+            {
+              type: "code",
+              lang: "text",
+              label: "data.csv",
+              content: `a,b\n1,2\n3,4`,
+            },
+            {
+              type: "text",
+              content:
+                "Since we can't access files in the browser, **build the exact same DataFrame by hand** — same columns, same rows, same values. Store it in `df` and print it.",
+            },
+            {
+              type: "callout",
+              variant: "tip",
+              content:
+                "Every time `pd.read_csv()` runs, Pandas builds a dictionary-backed DataFrame under the hood — column name mapped to a list of values. This is exactly that structure.",
+            },
+            {
+              type: "expected",
+              label: "Expected output",
+              content: `   a  b\n0  1  2\n1  3  4`,
+            },
+          ],
+          starterCode: `import pandas as pd
+
+# Build df with columns a and b
+# a -> [1, 3]   b -> [2, 4]
 
 `,
           solutionCode: `import pandas as pd
-from io import StringIO
 
-csv_text = "a,b\\n1,2\\n3,4"
-df = pd.read_csv(StringIO(csv_text))
+df = pd.DataFrame({
+    "a": [1, 3],
+    "b": [2, 4]
+})
 print(df)`,
           tests: [
-            { id: 1, label: "read_csv", keywords: ["read_csv"] },
-            { id: 2, label: "StringIO", keywords: ["StringIO"] },
+            { id: 1, label: "DataFrame created", keywords: ["pd.DataFrame"] },
           ],
         },
+        // ─────────────────────────────────────────────────────────────────────
       },
+
       {
         id: "pandas-19",
         title: "Export & recap",
@@ -1969,6 +2043,43 @@ print(df)`,
               },
             ],
           },
+
+          // ── NEW: show to_csv output without writing a real file ────────────
+          {
+            type: "text",
+            content:
+              "In the browser we cannot write to disk, but `df.to_csv(index=False)` **returns the CSV text as a string** when you don't pass a file path. You can `print()` that string to see exactly what the file would contain:",
+          },
+          {
+            type: "code",
+            lang: "python",
+            label: "to_csv — preview the output string",
+            content: `import pandas as pd
+  
+df = pd.DataFrame({
+      "cat": ["A", "A", "B"],
+      "val": [10,  20,  30]
+  })
+  
+  # Returns the CSV as a string — no file needed!
+csv_text = df.to_csv(index=False)
+print(csv_text)
+  
+  # Output:
+  # cat,val
+  # A,10
+  # A,20
+  # B,30`,
+          },
+
+          {
+            type: "text",
+            content:
+              "Now combine that with `groupby` to see the full pipeline in action:",
+          },
+
+          // ─────────────────────────────────────────────────────────────────
+
           {
             type: "callout",
             variant: "info",
@@ -1996,15 +2107,17 @@ print(df)`,
               "`index=False` tells Pandas not to write the DataFrame's row index as a column in the output file.",
           },
         ],
+
+        // ── Challenge: no StringIO, still covers groupby + to_csv ────────────
         challenge: {
           title: "Mini Pipeline",
           description:
-            'Create `df = pd.DataFrame({"cat": ["A", "A", "B"], "val": [1, 2, 3]})`, print `df.groupby("cat")["val"].sum()`, then print `df.to_csv(index=False)`.',
+            'Create `df = pd.DataFrame({"cat": ["A", "A", "B"], "val": [1, 2, 3]})`, print `df.groupby("cat")["val"].sum()`, then print `df.to_csv(index=False)` to preview the CSV output.',
           starterCode: `import pandas as pd
-
-`,
+  
+  `,
           solutionCode: `import pandas as pd
-
+  
 df = pd.DataFrame({"cat": ["A", "A", "B"], "val": [1, 2, 3]})
 print(df.groupby("cat")["val"].sum())
 print(df.to_csv(index=False))`,
@@ -2014,6 +2127,7 @@ print(df.to_csv(index=False))`,
             { id: 3, label: "index=False", keywords: ["index=False"] },
           ],
         },
+        // ─────────────────────────────────────────────────────────────────────
       },
     ],
   },
