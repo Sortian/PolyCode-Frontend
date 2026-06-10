@@ -1916,27 +1916,80 @@ print(a * b)`,
           {
             type: "text",
             content:
-              "The **dot product** multiplies matching pairs and sums them — like combining ingredient amounts with recipe weights. **`np.dot(a, b)`** handles 1D vectors (scalar result) and follows matrix rules for 2D.",
+              "In the last chapter you used **`*`** to multiply **matching cells** in a table. The **dot product** is different: it works on **two flat lists**, multiplies **matching pairs**, then **adds** everything into **one number** — like a receipt total.",
+            code: {
+              lang: "python",
+              label: "Real life: café order total with np.dot",
+              content: `import numpy as np
+
+prices  = np.array([3, 2])   # coffee $3, muffin $2
+amounts = np.array([2, 3])   # 2 coffees, 3 muffins
+
+total = np.dot(prices, amounts)
+print(total)   # 3*2 + 2*3 = 12`,
+            },
           },
           {
-            type: "code",
-            lang: "python",
-            label: "Vector dot",
-            content: `import numpy as np
+            type: "text",
+            content:
+              "The rule is simple: position **0** pairs with **0**, **1** with **1**, and so on. Multiply each pair, then sum. **`np.dot(a, b)`** does that in one line — no loop needed.",
+            code: {
+              lang: "python",
+              label: "Two longer lists — same rule",
+              content: `import numpy as np
 
 u = np.array([1, 2, 3])
 v = np.array([4, 5, 6])
-print(np.dot(u, v))  # 1*4 + 2*5 + 3*6 = 32`,
+
+print(np.dot(u, v))   # 1*4 + 2*5 + 3*6 = 32`,
+            },
+          },
+          {
+            type: "table",
+            title: "Café receipt — how the total is built",
+            columns: ["Price", "Qty"],
+            rows: [
+              { label: "Coffee", values: [3, 2] },
+              { label: "Muffin", values: [2, 3] },
+            ],
+            rowTotals: [6, 6],
+            colTotals: [5, 5],
+            rowTotalLabel: "price × qty per item",
+            colTotalLabel: "column sums (for reference)",
+          },
+          {
+            type: "diagram",
+            title: "np.dot in two steps",
+            nodes: [
+              {
+                id: "multiply",
+                label: "Step 1 — multiply pairs",
+                color: "#ec4899",
+                items: ["3×2 = 6", "2×3 = 6", "1×4 + 2×5 + 3×6 for longer lists"],
+              },
+              {
+                id: "add",
+                label: "Step 2 — add them up",
+                color: "#f472b6",
+                items: ["6 + 6 = 12", "One final number", "Your bill total"],
+              },
+            ],
           },
           {
             type: "callout",
             variant: "info",
             content:
-              "Dot product measures how much two vectors point in the same direction — used in ML, physics, and graphics.",
+              "**`*`** changes every cell in a table. **`np.dot`** on two 1D lists gives **one** answer. Both lists must be the **same length**.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Think of `np.dot` as a **smart total button** for two lists. In the next lesson you'll use **`@`** when whole **tables** need to combine.",
           },
           {
             type: "quiz",
-            question: "np.dot([1,2], [3,4]) equals?",
+            question: "np.dot([1, 2], [3, 4]) equals?",
             options: ["10", "11", "[3, 8]", "[4, 6]"],
             answer: 1,
             explanation: "1×3 + 2×4 = 3 + 8 = 11.",
@@ -1977,25 +2030,96 @@ print(np.dot(a, b))`,
           {
             type: "text",
             content:
-              "True **matrix multiplication** combines rows and columns — use **`@`** or **`np.matmul`**. This is different from element-wise `*`! Think of it as a machine: each output cell is a dot product of a row with a column.",
+              "You already know **`np.dot`** for two flat lists and **`*`** for cell-by-cell math. **Matrix multiply** (`@`) is the next step: it combines **whole tables** — each answer cell is a **row × column** dot product.",
+            code: {
+              lang: "python",
+              label: "Real life: weighted grades for two students",
+              content: `import numpy as np
+
+# rows = students, cols = quiz & project scores
+scores = np.array([[80, 90],
+                   [70, 85]])
+
+# quiz 40%, project 60%
+weights = np.array([[0.4],
+                    [0.6]])
+
+finals = scores @ weights
+print(finals)   # [[86.], [79.]] — one final per student`,
+            },
           },
           {
-            type: "code",
-            lang: "python",
-            label: "2×2 multiply",
-            content: `import numpy as np
+            type: "text",
+            content:
+              "Here is a small **2×2** table multiply. Each cell in the answer mixes one **row** from `A` with one **column** from `B` — that inner work is the dot product you just learned.",
+            code: {
+              lang: "python",
+              label: "2×2 multiply with @",
+              content: `import numpy as np
 
-A = np.array([[1, 2], [3, 4]])
-B = np.array([[2, 0], [1, 2]])
+A = np.array([[1, 2],
+              [3, 4]])
+B = np.array([[2, 0],
+              [1, 2]])
+
 print(A @ B)
-# [[4 4]
-#  [10 8]]`,
+# [[ 4  4]
+#  [10  8]]`,
+            },
+          },
+          {
+            type: "diagram",
+            title: "* vs @ — remember the difference",
+            nodes: [
+              {
+                id: "star",
+                label: "Element-wise *",
+                color: "#ec4899",
+                items: [
+                  "Same-size tables",
+                  "Cell × matching cell",
+                  "Sales, discounts, masks",
+                ],
+              },
+              {
+                id: "at",
+                label: "Matrix @",
+                color: "#f472b6",
+                items: [
+                  "Row × column rule",
+                  "Weighted grades, transforms",
+                  "Also: np.matmul(A, B)",
+                ],
+              },
+            ],
+          },
+          {
+            type: "text",
+            content:
+              "A quick check: multiplying by an **identity** matrix `np.eye(n)` leaves your table **unchanged** — useful to verify your code is working.",
+            code: {
+              lang: "python",
+              label: "Identity matrix sanity check",
+              content: `import numpy as np
+
+M = np.array([[5, 6],
+              [7, 8]])
+I = np.eye(2)
+
+print(I @ M)   # same as M`,
+            },
+          },
+          {
+            type: "callout",
+            variant: "info",
+            content:
+              "**Memory trick:** `*` = multiply **cells**. `@` = multiply **tables** (rows meet columns). Wrong operator → wrong answer, even when shapes match.",
           },
           {
             type: "callout",
             variant: "tip",
             content:
-              "Multiplying by an identity matrix `np.eye(n)` leaves your matrix unchanged — a quick sanity check!",
+              "For grades and weights, think: **scores @ weights** when weights are a **column** of percentages. Match inner sizes: columns of left = rows of right.",
           },
           {
             type: "quiz",
@@ -2041,35 +2165,100 @@ print(I @ M)`,
           {
             type: "text",
             content:
-              "Got equations to solve? **`np.linalg.solve(A, b)`** finds `x` in `Ax = b`. **`np.linalg.det(A)`** tells you if a matrix is invertible (det ≠ 0). Like unlocking a puzzle: solve finds the key, determinant checks if the lock exists.",
+              "Sometimes you know **totals** but not each **single price**. A snack shop gives you two clues — that is a small **system of equations**. NumPy can find the missing prices with **`np.linalg.solve`**.",
           },
           {
-            type: "code",
-            lang: "python",
-            label: "Solve a system",
-            content: `# 2x + y = 5
-# x + 3y = 7
-import numpy as np
-
-A = np.array([[2, 1], [1, 3]])
-b = np.array([5, 7])
-x = np.linalg.solve(A, b)
-print(x)  # [1.6 1.8] approximately`,
+            type: "text",
+            content:
+              "**Example:** 2 coffees + 1 muffin cost **$11**. 1 coffee + 1 muffin cost **$7**. Put the numbers in table **`A`**, put the totals in **`b`**, then solve for coffee and muffin prices.",
           },
           {
-            type: "code",
-            lang: "python",
-            label: "Determinant",
-            content: `import numpy as np
+            type: "table",
+            title: "Snack shop puzzle — two clues",
+            columns: ["Coffee", "Muffin"],
+            rows: [
+              { label: "Receipt 1 ($11)", values: [2, 1] },
+              { label: "Receipt 2 ($7)", values: [1, 1] },
+            ],
+            rowTotals: [11, 7],
+            colTotals: [3, 2],
+            rowTotalLabel: "total $ on receipt",
+            colTotalLabel: "items bought (reference)",
+          },
+          {
+            type: "text",
+            content:
+              "Turn the table into NumPy arrays and call **`np.linalg.solve(A, b)`**. It returns the unknown prices.",
+            code: {
+              lang: "python",
+              label: "Find coffee & muffin prices",
+              content: `import numpy as np
 
-M = np.array([[1, 2], [3, 4]])
-print(np.linalg.det(M))  # -2.0`,
+# 2c + 1m = 11
+# 1c + 1m =  7
+A = np.array([[2, 1],
+              [1, 1]])
+b = np.array([11, 7])
+
+prices = np.linalg.solve(A, b)
+print(prices)   # coffee ≈ 4, muffin ≈ 3`,
+            },
+          },
+          {
+            type: "text",
+            content:
+              "Before solving, you can check **`np.linalg.det(A)`**. If the determinant is **0** (or very close), the puzzle has **no one clear answer**. If it is **not 0**, `solve` should work.",
+            code: {
+              lang: "python",
+              label: "Check if the puzzle is solvable",
+              content: `import numpy as np
+
+A = np.array([[2, 1],
+              [1, 1]])
+print(np.linalg.det(A))   # not 0 → unique solution
+
+M = np.array([[1, 2],
+              [2, 4]])
+print(np.linalg.det(M))   # 0 → rows repeat, no unique answer`,
+            },
+          },
+          {
+            type: "diagram",
+            title: "solve vs det — when to use which",
+            nodes: [
+              {
+                id: "solve",
+                label: "np.linalg.solve(A, b)",
+                color: "#ec4899",
+                items: [
+                  "You want the unknown values",
+                  "Snack prices, missing numbers",
+                  "Needs square A, det ≠ 0",
+                ],
+              },
+              {
+                id: "det",
+                label: "np.linalg.det(A)",
+                color: "#f472b6",
+                items: [
+                  "Quick “can we solve this?” test",
+                  "det = 0 → no unique answer",
+                  "det ≠ 0 → solve should work",
+                ],
+              },
+            ],
           },
           {
             type: "callout",
             variant: "info",
             content:
-              "Always use square, non-singular matrices with solve. If det is ~0, the system has no unique solution.",
+              "**Ax = b** means: table **`A`** × unknowns **`x`** = totals **`b`**. `A` must be **square** (same number of equations and unknowns) for `solve` to give one answer.",
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "You don't need to memorize determinant formulas — just know: **det ≈ 0** means be careful; **`solve`** is the button that gives you the actual answers.",
           },
           {
             type: "quiz",
