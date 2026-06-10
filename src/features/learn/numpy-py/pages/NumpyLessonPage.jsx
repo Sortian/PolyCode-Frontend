@@ -128,11 +128,8 @@ export default function NumpyLessonPage() {
   }
 
   const isCompleted = isAuthenticated && !!progress[lessonId];
-  const useFriendlyTheory =
-    lesson.chapterId === "intro" ||
-    lesson.chapterId === "creation" ||
-    lesson.chapterId === "indexing" ||
-    lesson.chapterId === "broadcast";
+  // All NumPy lessons use NumpyIntroTheory (text+code blocks, visual tables, diagrams).
+  const useFriendlyTheory = true;
   const isBookmarked = bookmarks.includes(lessonId);
   const completedCount = Object.keys(progress).length;
   const earnedXP = NUMPY_LESSONS.filter((item) => progress[item.id]).reduce(

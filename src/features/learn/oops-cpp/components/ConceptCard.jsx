@@ -138,22 +138,33 @@ export default function ConceptCard({
 
   // ── Table block ──────────────────────────────────────────
   if (block.type === "table") {
+    const headers = block.headers || block.columns || [];
+    const bodyRows = Array.isArray(block.rows?.[0])
+      ? block.rows
+      : (block.rows || []).map((row) =>
+          Array.isArray(row) ? row : [row.label, ...(row.values || [])],
+        );
+
+    if (!headers.length || !bodyRows.length) {
+      return null;
+    }
+
     return (
       <div className="oops-table-wrap">
         <table className="oops-table">
           <thead>
             <tr>
-              {block.headers.map((h, i) => (
+              {headers.map((h, i) => (
                 <th key={i}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {block.rows.map((row, ri) => (
+            {bodyRows.map((row, ri) => (
               <tr key={ri}>
                 {row.map((cell, ci) => (
                   <td key={ci}>
-                    <InlineText text={cell} />
+                    <InlineText text={String(cell)} />
                   </td>
                 ))}
               </tr>
