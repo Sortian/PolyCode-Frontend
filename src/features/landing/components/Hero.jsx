@@ -35,8 +35,8 @@ export default function Hero() {
           </p>
 
           <div className="landing-hero-actions">
-            <a href="#modules" className="landing-btn-indigo">
-              Explore modules
+            <a href="#get-started" className="landing-btn-accent">
+              Get started
               <ArrowRight size={16} aria-hidden />
             </a>
             <OpenAssistantButton className="landing-btn-secondary">

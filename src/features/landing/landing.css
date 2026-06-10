@@ -1,21 +1,25 @@
 /* Scoped landing + assistant styles — only under .polycode-landing */
 
 .polycode-landing {
-  --landing-bg: #080b14;
-  --landing-fg: #f8fafc;
-  --landing-accent: #6366f1;
-  --landing-muted: #94a3b8;
-  background: var(--landing-bg);
+  --landing-bg: var(--ink, #03050a);
+  --landing-fg: var(--txt-0, #f8fafc);
+  --landing-muted: var(--txt-2, #94a3b8);
+  --landing-ink: var(--ink-3, #12141c);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(0, 242, 255, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(var(--acid-rgb), 0.03) 0%, transparent 50%),
+    var(--landing-bg);
   color: var(--landing-fg);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-body, system-ui, -apple-system, "Segoe UI", sans-serif);
   min-height: 100vh;
 }
 
 .polycode-landing .polycode-grid {
   background-image:
-    linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .polycode-landing .landing-container {
@@ -42,17 +46,17 @@
 .landing-bg-particle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(129, 140, 248, 0.5);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .landing-bg-grid-drift {
   position: absolute;
   inset: 0;
-  opacity: 0.6;
+  opacity: 0.35;
   background-image:
-    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
   animation: landing-grid-drift 20s linear infinite;
 }
 
@@ -133,27 +137,29 @@
 }
 
 .landing-nav-link:hover {
-  color: #fff;
+  color: var(--acid);
 }
 
 .landing-btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: none;
+  border: 1px solid var(--acid);
   cursor: pointer;
   border-radius: 0.75rem;
-  background: linear-gradient(to right, #2563eb, #7c3aed);
+  background: var(--acid-dim);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--acid);
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .landing-btn-primary:hover {
-  opacity: 0.9;
+  background: var(--acid-dim);
+  border-color: var(--acid);
+  color: var(--acid);
 }
 
 .landing-btn-secondary {
@@ -176,24 +182,28 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+.landing-btn-accent,
 .landing-btn-indigo {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: none;
+  border: 1px solid var(--acid);
   cursor: pointer;
   border-radius: 0.75rem;
-  background: #4f46e5;
+  background: var(--acid-dim);
   padding: 0.75rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--acid);
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 }
 
+.landing-btn-accent:hover,
 .landing-btn-indigo:hover {
-  background: #6366f1;
+  background: var(--acid-dim);
+  border-color: var(--acid);
+  color: var(--acid);
 }
 
 /* Logo */
@@ -204,13 +214,16 @@
   justify-content: center;
   padding: 0.4rem 0.85rem;
   border-radius: 0.85rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(59, 130, 246, 0.08) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.12), 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(135deg, rgba(0, 242, 255, 0.08), transparent 35%),
+    linear-gradient(315deg, rgba(var(--acid-rgb), 0.08), transparent 38%),
+    rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .polycode-logo-wrap--glow {
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2), 0 0 28px rgba(59, 130, 246, 0.22), 0 0 48px rgba(139, 92, 246, 0.14), 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .polycode-logo-aura {
@@ -218,8 +231,8 @@
   position: absolute;
   inset: -6px;
   border-radius: 1rem;
-  background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.35) 0%, rgba(139, 92, 246, 0.2) 45%, transparent 72%);
-  filter: blur(6px);
+  background: radial-gradient(ellipse at center, rgba(var(--acid-rgb), 0.06) 0%, transparent 72%);
+  filter: blur(8px);
   animation: logo-aura-pulse 3.5s ease-in-out infinite;
 }
 
@@ -233,12 +246,12 @@
   z-index: 1;
   object-fit: contain;
   object-position: left;
-  filter: brightness(1.18) contrast(1.12) drop-shadow(0 0 10px rgba(96, 165, 250, 0.45)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
 }
 
 @keyframes logo-aura-pulse {
-  0%, 100% { opacity: 0.45; transform: scale(0.98); }
-  50% { opacity: 0.9; transform: scale(1.04); }
+  0%, 100% { opacity: 0.3; transform: scale(0.98); }
+  50% { opacity: 0.55; transform: scale(1.03); }
 }
 
 /* Hero */
@@ -252,7 +265,7 @@
   pointer-events: none;
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.18), transparent 55%);
+  background: radial-gradient(ellipse at top, rgba(var(--acid-rgb), 0.03), transparent 55%);
 }
 
 .landing-hero-grid {
@@ -268,14 +281,14 @@
   gap: 0.5rem;
   margin-bottom: 1.25rem;
   border-radius: 999px;
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid var(--acid);
+  background: var(--acid-dim);
   padding: 0.375rem 1rem;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #a5b4fc;
+  color: var(--acid);
 }
 
 .landing-hero h1 {
@@ -290,12 +303,7 @@
 
 .landing-hero-shimmer {
   display: block;
-  background: linear-gradient(to right, #a5b4fc, #ddd6fe, #a5b4fc);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: landing-text-shimmer 4s linear infinite;
+  color: var(--acid);
 }
 
 @keyframes landing-text-shimmer {
@@ -328,7 +336,7 @@
   position: absolute;
   inset: -1rem;
   border-radius: 1.5rem;
-  background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.15), rgba(79, 70, 229, 0.1));
+  background: linear-gradient(to bottom right, rgba(0, 242, 255, 0.06), transparent, rgba(139, 92, 246, 0.05));
   filter: blur(24px);
 }
 
@@ -362,7 +370,7 @@
   padding: 0.25rem 0.625rem;
   font-family: ui-monospace, monospace;
   font-size: 0.625rem;
-  color: rgba(165, 180, 252, 0.5);
+  color: var(--txt-3, #60607a);
   backdrop-filter: blur(4px);
 }
 
@@ -383,7 +391,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #818cf8;
+  color: var(--acid);
 }
 
 .landing-section h2 {
@@ -524,10 +532,10 @@
   height: 2rem;
   margin-bottom: 1rem;
   border-radius: 0.5rem;
-  background: rgba(99, 102, 241, 0.15);
+  background: var(--acid-dim);
   font-size: 0.75rem;
   font-weight: 700;
-  color: #a5b4fc;
+  color: var(--acid);
 }
 
 .landing-step-icon {
@@ -538,8 +546,8 @@
   height: 2.5rem;
   margin-bottom: 0.75rem;
   border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
-  color: #818cf8;
+  background: var(--acid-dim);
+  color: var(--acid);
 }
 
 .landing-step-card h3 {
@@ -583,14 +591,17 @@
   height: 6px;
   margin-top: 0.5rem;
   border-radius: 50%;
-  background: #a78bfa;
+  background: var(--acid);
 }
 
 .landing-tech-panel {
   overflow: hidden;
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(to bottom right, rgba(99, 102, 241, 0.1), transparent, rgba(139, 92, 246, 0.1));
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(135deg, rgba(0, 242, 255, 0.08), transparent 35%),
+    linear-gradient(315deg, rgba(var(--acid-rgb), 0.08), transparent 38%),
+    rgba(255, 255, 255, 0.03);
   padding: 2rem;
 }
 
@@ -654,8 +665,11 @@
   position: relative;
   overflow: hidden;
   border-radius: 1.5rem;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  background: linear-gradient(to bottom right, rgba(79, 70, 229, 0.2), #12182a, rgba(124, 58, 237, 0.1));
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(135deg, rgba(0, 242, 255, 0.08), transparent 35%),
+    linear-gradient(315deg, rgba(var(--acid-rgb), 0.08), transparent 38%),
+    rgba(255, 255, 255, 0.03);
   padding: 3.5rem 2rem;
   text-align: center;
 }
@@ -687,7 +701,7 @@
   pointer-events: none;
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15), transparent 70%);
+  background: radial-gradient(circle at center, rgba(var(--acid-rgb), 0.03), transparent 70%);
 }
 
 /* Footer */
@@ -725,14 +739,14 @@
 /* Assistant panel */
 .polym_mentor-panel {
   background-image:
-    linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .polym_mentor-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgba(16, 185, 129, 0.3) transparent;
+  scrollbar-color: var(--border) transparent;
 }
 
 .polym_mentor-scroll::-webkit-scrollbar {
@@ -741,11 +755,11 @@
 
 .polym_mentor-scroll::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgba(16, 185, 129, 0.35);
+  background: var(--border);
 }
 
 .polym_mentor-dock {
-  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.15), -12px 12px 40px -8px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 0 1px var(--border), -12px 12px 40px -8px rgba(0, 0, 0, 0.7);
 }
 
 .assistant-overlay {
@@ -765,7 +779,7 @@
   display: flex;
   flex-direction: column;
   width: min(100vw, 420px);
-  border-left: 1px solid rgba(16, 185, 129, 0.2);
+  border-left: 1px solid var(--border);
   background: #060a10;
   box-shadow: -20px 0 80px rgba(0, 0, 0, 0.6);
 }
@@ -779,18 +793,19 @@
   align-items: center;
   gap: 0;
   overflow: hidden;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid var(--border);
   border-right: none;
   border-radius: 1rem 0 0 1rem;
   background: rgba(10, 16, 24, 0.95);
   padding: 0.5rem 1rem 0.5rem 0.5rem;
   cursor: pointer;
   backdrop-filter: blur(16px);
-  transition: border-color 0.2s, padding-left 0.3s;
+  transition: border-color 0.2s, padding-left 0.3s, background 0.2s;
 }
 
 .assistant-dock-btn:hover {
-  border-color: rgba(52, 211, 153, 0.5);
+  border-color: var(--acid);
+  background: var(--acid-dim);
   padding-left: 0.75rem;
 }
 

@@ -322,7 +322,7 @@ export default function ProfilePage() {
           progress={oops.completedMap}
           bookmarks={oops.bookmarks}
           href="/learn/oops-cpp"
-          accent="#b8ff00"
+          accent="#ffe566"
           streak={oops.remoteProgress?.currentStreak || 0}
         />
         <TrackProgressCard

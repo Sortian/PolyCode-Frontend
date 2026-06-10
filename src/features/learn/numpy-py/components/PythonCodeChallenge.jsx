@@ -264,7 +264,7 @@ export default function PythonCodeChallenge({
                   <div
                     key={i}
                     style={{
-                      borderLeft: "3px solid #b8ff00",
+                      borderLeft: "3px solid #ffe566",
                       padding: "8px 12px",
                       background: "rgba(184,255,0,0.06)",
                       borderRadius: "6px",

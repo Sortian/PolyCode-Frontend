@@ -47,7 +47,7 @@ export const languageCourses = {
       description:
         "Classes, constructors, inheritance, polymorphism, design principles, and real coding challenges.",
       href: "/learn/oops-cpp",
-      accent: "#b8ff00",
+      accent: "#ffe566",
     },
     {
       title: "Pointers C++",
@@ -67,7 +67,7 @@ export const languageCourses = {
       description:
         "Classes, constructors, inheritance, polymorphism, design principles, and real coding challenges.",
       href: "/learn/oops-cpp",
-      accent: "#b8ff00",
+      accent: "#ffe566",
     },
     {
       title: "Pointers C++",

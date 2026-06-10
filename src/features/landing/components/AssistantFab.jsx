@@ -68,7 +68,7 @@ function renderMarkdown(text) {
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
-        <strong key={i} style={{ fontWeight: 600, color: "#a7f3d0" }}>
+        <strong key={i} style={{ fontWeight: 600, color: "var(--acid)" }}>
           {part.slice(2, -2)}
         </strong>
       );
@@ -104,13 +104,13 @@ function MentorReply({ msg, reduceMotion }) {
           height: "calc(100% - 12px)",
           width: 3,
           borderRadius: 999,
-          background: "linear-gradient(to bottom, #34d399, #22d3ee, rgba(16,185,129,0.4))",
+          background: "var(--acid)",
         }}
       />
       <div
         style={{
           borderRadius: "0.75rem",
-          border: "1px solid rgba(16,185,129,0.15)",
+          border: "1px solid var(--border)",
           background: "rgba(10,18,24,0.9)",
           padding: "1rem",
         }}
@@ -124,7 +124,7 @@ function MentorReply({ msg, reduceMotion }) {
               fontWeight: 700,
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "#34d399",
+              color: "var(--acid)",
             }}
           >
             mentor.output
@@ -139,7 +139,7 @@ function MentorReply({ msg, reduceMotion }) {
                 width: 2,
                 height: "1em",
                 marginLeft: 2,
-                background: "#34d399",
+                background: "var(--acid)",
                 verticalAlign: "middle",
                 animation: "pulse 1s infinite",
               }}
@@ -435,8 +435,8 @@ export default function AssistantFab() {
                         onClick={() => sendText(prompt)}
                         style={{
                           borderRadius: "0.5rem",
-                          border: "1px solid rgba(16,185,129,0.2)",
-                          background: "rgba(16,185,129,0.05)",
+                          border: "1px solid var(--border)",
+                          background: "var(--glass)",
                           padding: "0.5rem 0.75rem",
                           fontSize: "0.75rem",
                           color: "rgba(167,243,208,0.9)",
@@ -477,8 +477,8 @@ export default function AssistantFab() {
                 padding: "1rem",
               }}
             >
-              <div style={{ display: "flex", alignItems: "flex-end", gap: "0.5rem", borderRadius: "0.75rem", border: "1px solid rgba(16,185,129,0.2)", background: "#0a1018", padding: "0.5rem" }}>
-                <span style={{ paddingBottom: "0.5rem", paddingLeft: "0.25rem", fontFamily: "ui-monospace, monospace", fontWeight: 700, color: "#34d399" }}>
+              <div style={{ display: "flex", alignItems: "flex-end", gap: "0.5rem", borderRadius: "0.75rem", border: "1px solid var(--border)", background: "#0a1018", padding: "0.5rem" }}>
+                <span style={{ paddingBottom: "0.5rem", paddingLeft: "0.25rem", fontFamily: "ui-monospace, monospace", fontWeight: 700, color: "var(--acid)" }}>
                   &gt;
                 </span>
                 <textarea
@@ -516,7 +516,7 @@ export default function AssistantFab() {
                     height: 36,
                     borderRadius: "0.5rem",
                     border: "none",
-                    background: "#059669",
+                    background: "#c4b56a",
                     color: "#fff",
                     cursor: "pointer",
                     opacity: !draft.trim() || sending ? 0.3 : 1,
@@ -557,13 +557,13 @@ export default function AssistantFab() {
           >
             <AssistantAvatar size="lg" alt={ASSISTANT_CONFIG.name} />
             <span style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-              <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "ui-monospace, monospace", fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#34d399" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "ui-monospace, monospace", fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--acid)" }}>
                 <Zap size={12} />
                 {ASSISTANT_CONFIG.name}
               </span>
               <span style={{ fontSize: "11px", color: "#94a3b8" }}>Tap to open mentor</span>
             </span>
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "0.5rem", background: "rgba(5,150,105,0.2)", color: "#34d399" }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "0.5rem", background: "var(--acid-dim)", color: "var(--acid)" }}>
               <Sparkles size={16} />
             </span>
           </button>

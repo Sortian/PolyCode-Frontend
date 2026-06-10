@@ -244,7 +244,7 @@ export const POINTER_CHAPTERS = [
               {
                 id: "value",
                 label: "int age = 21",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["Stores the actual number", "`age` is the value box"],
               },
               {
@@ -431,7 +431,7 @@ int main() {
     id: "movement",
     title: "Pointer Movement",
     icon: "⇄",
-    color: "#b8ff00",
+    color: "#ffe566",
     lessons: [
       {
         id: "ptr-move-1",
@@ -462,7 +462,7 @@ int main() {
               {
                 id: "next",
                 label: "arr + 1",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["Address of arr[1]", "`*(arr + 1)` reads second"],
               },
               {
@@ -820,7 +820,7 @@ int main() {
               {
                 id: "unique",
                 label: "unique_ptr",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["Exactly one owner", "Move-only", "Great default for ownership"],
               },
               {
@@ -928,7 +928,7 @@ int main() {
               {
                 id: "row1",
                 label: "grid[1]",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["4, 5, 6", "`grid + 1` points at this row"],
               },
               {
@@ -1135,7 +1135,7 @@ int main() {
               {
                 id: "flat",
                 label: "data[6]",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["0 1 2 | 3 4 5", "Each row has 3 values"],
               },
               {
@@ -1505,7 +1505,7 @@ int main() {
     id: "completion",
     title: "Pointer Completion Test",
     icon: "✓",
-    color: "#b8ff00",
+    color: "#ffe566",
     lessons: [
       {
         id: "ptr-final-1",

@@ -12,7 +12,7 @@ export const CHAPTERS = [
     id: "intro",
     title: "What is OOP?",
     icon: "🧠",
-    color: "#b8ff00",
+    color: "#ffe566",
     lessons: [
       {
         id: "intro-1",
@@ -43,7 +43,7 @@ export const CHAPTERS = [
               {
                 id: "oop",
                 label: "OOP",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["Object = Data + Methods", "Encapsulated", "Reusable"],
               },
             ],
@@ -715,13 +715,13 @@ int main() {
               {
                 id: "obj1",
                 label: "obj1",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["id = 1", "count → same"],
               },
               {
                 id: "obj2",
                 label: "obj2",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["id = 2", "count → same"],
                 parent: "class",
               },
@@ -1357,7 +1357,7 @@ int main() {
               {
                 id: "living",
                 label: "LivingThing",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["breathe()"],
               },
               {
@@ -2015,7 +2015,7 @@ int main() {
               {
                 id: "crypto",
                 label: "Crypto",
-                color: "#b8ff00",
+                color: "#ffe566",
                 items: ["processPayment() ✓", "getMethod() ✓", "✅ Concrete"],
                 parent: "payment",
               },

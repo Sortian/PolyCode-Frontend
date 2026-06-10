@@ -23,14 +23,11 @@ export default function CTASection() {
             your code with PolyGuard — all in one ecosystem.
           </p>
           <div className="landing-cta-actions">
-            <OpenAssistantButton className="landing-btn-indigo">
+            <OpenAssistantButton className="landing-btn-accent">
               Chat with PolyMentor
             </OpenAssistantButton>
             <a href="#get-started" className="landing-btn-secondary">
               Choose your language
-            </a>
-            <a href="#modules" className="landing-btn-secondary">
-              View all modules
             </a>
           </div>
         </motion.div>

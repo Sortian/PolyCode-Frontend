@@ -74,7 +74,7 @@ textarea {
 
 /* Focus outline (accessibility) */
 :focus-visible {
-  outline: 2px solid #b8ff00;
+  outline: 2px solid #ffe566;
   outline-offset: 2px;
 }
 
@@ -217,7 +217,7 @@ textarea {
 }
 
 .auth-field input:focus {
-  border-color: var(--acid, #b8ff00);
+  border-color: var(--acid, #ffe566);
   box-shadow: 0 0 0 3px var(--acid-dim, rgba(184, 255, 0, 0.1));
 }
 
@@ -252,7 +252,7 @@ textarea {
 }
 
 .auth-link {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   text-decoration: none;
   font-weight: 600;
   transition: opacity 0.15s;
@@ -303,7 +303,7 @@ textarea {
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--ink, #03050a);
-  background: var(--acid, #b8ff00);
+  background: var(--acid, #ffe566);
   padding: 5px 12px;
   border-radius: 6px;
   text-decoration: none;
@@ -365,7 +365,7 @@ textarea {
   height: 32px;
   border-radius: 50%;
   background: var(--acid-dim, rgba(184, 255, 0, 0.12));
-  border: 1px solid var(--acid, #b8ff00);
+  border: 1px solid var(--acid, #ffe566);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -380,7 +380,7 @@ textarea {
 .navbar-avatar-initials {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   font-family: var(--font-mono);
 }
 

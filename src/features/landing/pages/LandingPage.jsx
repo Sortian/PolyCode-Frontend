@@ -6,7 +6,6 @@ import Footer from "../components/Footer";
 import Hero from "../components/Hero";
 import HowItWorksSection from "../components/HowItWorksSection";
 import LanguagePickerSection from "../components/LanguagePickerSection";
-import ModulesSection from "../components/ModulesSection";
 import Navbar from "../components/Navbar";
 import VisionSection from "../components/VisionSection";
 import "../landing.css";
@@ -19,7 +18,6 @@ export default function LandingPage({ onLanguageSelect, continueLanguage }) {
         <Navbar />
         <main>
           <Hero />
-          <ModulesSection />
           <HowItWorksSection />
           <VisionSection />
           <CTASection />

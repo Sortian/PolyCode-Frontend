@@ -2,9 +2,9 @@ import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const NAV_LINKS = [
-  { href: "#modules", label: "Modules" },
   { href: "#how-it-works", label: "How it works" },
   { href: "#vision", label: "Vision" },
+  { href: "#get-started", label: "Get started" },
 ];
 
 export default function Navbar() {

@@ -86,7 +86,7 @@ export default function ConceptCard({
   // ── Callout block ────────────────────────────────────────
   if (block.type === "callout") {
     const icons = { info: "💡", tip: "✨", warning: "⚠️" };
-    const colors = { info: "#00d4ff", tip: "#b8ff00", warning: "#f59e0b" };
+    const colors = { info: "#00d4ff", tip: "#ffe566", warning: "#f59e0b" };
     return (
       <div
         className={`oops-callout oops-callout-${block.variant}`}

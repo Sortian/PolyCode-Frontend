@@ -23,7 +23,7 @@ export default function AssistantAvatar({ size = "md", alt = "" }) {
         flexShrink: 0,
         overflow: "hidden",
         borderRadius: size === "lg" ? "1rem" : "0.75rem",
-        border: "1px solid rgba(16, 185, 129, 0.35)",
+        border: "1px solid var(--border)",
         background: "#ececef",
         padding: 2,
       }}

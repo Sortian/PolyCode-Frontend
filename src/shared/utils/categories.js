@@ -10,7 +10,7 @@ export const CATEGORY_META = {
   examples:         { icon: '🧪', color: '#14b8a6', bg: 'rgba(20,184,166,0.1)' },
   getting_started:  { icon: '🚀', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
   projects:         { icon: '🏗️', color: '#a78bfa', bg: 'rgba(167,139,250,0.1)' },
-  advanced_python:  { icon: '🔥', color: '#ccff00', bg: 'rgba(204,255,0,0.1)' },
+  advanced_python:  { icon: '🔥', color: '#ffe566', bg: 'rgba(255,229,102,0.1)' },
   concurrency:      { icon: '🧵', color: '#00f2ff', bg: 'rgba(0,242,255,0.1)' },
   data_science:     { icon: '📊', color: '#bf66ff', bg: 'rgba(191,102,255,0.1)' },
   database:         { icon: '🛢️', color: '#ffcc00', bg: 'rgba(255,204,0,0.1)' },

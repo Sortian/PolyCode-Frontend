@@ -29,11 +29,12 @@
   --txt-2: #a0a0b8;
   --txt-3: #60607a;
 
-  /* Accent spectrum - Technical Neons */
-  --acid: #ccff00;
+  /* Accent spectrum - lemon yellow (warm, not lime) */
+  --acid: #ffe566;
+  --acid-rgb: 255, 229, 102;
   --accent: var(--acid);
-  --acid-glow: rgba(204, 255, 0, 0.25);
-  --acid-dim: rgba(204, 255, 0, 0.12);
+  --acid-glow: rgba(255, 229, 102, 0.25);
+  --acid-dim: rgba(255, 229, 102, 0.12);
   --cyan: #00f2ff;
   --cyan-dim: rgba(0, 242, 255, 0.12);
   --violet: #8b5cf6;
@@ -49,7 +50,7 @@
   --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.18);
   --shadow-lg: 0 22px 44px rgba(0, 0, 0, 0.24);
-  --glow-acid: 0 0 24px rgba(204, 255, 0, 0.35);
+  --glow-acid: 0 0 24px rgba(255, 229, 102, 0.35);
 
   /* Fonts */
   --font-display: "Inter", "Clash Display", "Outfit", sans-serif;
@@ -167,7 +168,7 @@ body {
     ),
     radial-gradient(
       circle at 50% 100%,
-      rgba(204, 255, 0, 0.03) 0%,
+      rgba(var(--acid-rgb), 0.03) 0%,
       transparent 50%
     );
 }
@@ -212,7 +213,7 @@ body {
   border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(0, 242, 255, 0.08), transparent 35%),
-    linear-gradient(315deg, rgba(204, 255, 0, 0.08), transparent 38%),
+    linear-gradient(315deg, rgba(var(--acid-rgb), 0.08), transparent 38%),
     rgba(255, 255, 255, 0.03);
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(18px) saturate(150%);
@@ -4323,7 +4324,7 @@ body {
 }
 
 .oops-search-result span {
-  color: var(--ch-color, var(--acid, #b8ff00));
+  color: var(--ch-color, var(--acid, #ffe566));
   font-size: 0.76rem;
 }
 
@@ -4432,12 +4433,12 @@ body {
 
 .oops-path-step.active,
 .oops-path-step.done {
-  border-color: var(--ch-color, var(--acid, #b8ff00));
-  background: color-mix(in srgb, var(--ch-color, var(--acid, #b8ff00)) 9%, var(--ink-2));
+  border-color: var(--ch-color, var(--acid, #ffe566));
+  background: color-mix(in srgb, var(--ch-color, var(--acid, #ffe566)) 9%, var(--ink-2));
 }
 
 .oops-path-step.done span {
-  background: var(--ch-color, var(--acid, #b8ff00));
+  background: var(--ch-color, var(--acid, #ffe566));
   color: var(--ink, #03050a);
 }
 
@@ -4460,7 +4461,7 @@ body {
 }
 
 .oops-chapter-card:hover {
-  border-color: var(--ch-color, var(--acid, #b8ff00));
+  border-color: var(--ch-color, var(--acid, #ffe566));
   transform: translateY(-2px);
 }
 
@@ -4497,7 +4498,7 @@ body {
   margin-left: auto;
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   background: rgba(184, 255, 0, 0.1);
   padding: 2px 8px;
   border-radius: 4px;
@@ -4513,7 +4514,7 @@ body {
 
 .oops-chapter-progress-fill {
   height: 100%;
-  background: var(--ch-color, var(--acid, #b8ff00));
+  background: var(--ch-color, var(--acid, #ffe566));
   border-radius: 99px;
   transition: width 0.4s ease;
 }
@@ -4551,7 +4552,7 @@ body {
 }
 
 .oops-lesson-item.done .oops-lesson-status {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .oops-lesson-status {
@@ -4651,7 +4652,7 @@ body {
   margin-left: auto;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   background: rgba(184, 255, 0, 0.1);
   padding: 3px 10px;
   border-radius: 99px;
@@ -4822,7 +4823,7 @@ body {
 }
 
 .learn-profile-progress strong {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .learn-profile-track {
@@ -4835,7 +4836,7 @@ body {
 .learn-profile-track div {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--acid, #b8ff00), var(--cyan, #00d4ff));
+  background: linear-gradient(90deg, var(--acid, #ffe566), var(--cyan, #00d4ff));
 }
 
 .learn-profile-grid {
@@ -5015,7 +5016,7 @@ body {
 }
 
 .profile-hero-stat:hover strong {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .profile-hero-message-btn {
@@ -5036,7 +5037,7 @@ body {
 
 .profile-hero-notice {
   margin: 10px 0 0;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   font-size: 0.82rem;
 }
 
@@ -5220,7 +5221,7 @@ body {
 .profile-edit-btn-primary {
   border-color: rgba(184, 255, 0, 0.35);
   background: rgba(184, 255, 0, 0.12);
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .profile-edit-btn:disabled {
@@ -5230,7 +5231,7 @@ body {
 
 .profile-edit-message {
   margin: 12px 0 0;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .profile-edit-error,
@@ -5300,7 +5301,7 @@ body {
   border-radius: 8px;
   border: 1px solid rgba(184, 255, 0, 0.35);
   background: rgba(184, 255, 0, 0.12);
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   font-weight: 700;
   cursor: pointer;
 }
@@ -5344,7 +5345,7 @@ body {
   border-radius: 8px;
   border: 1px solid rgba(184, 255, 0, 0.35);
   background: rgba(184, 255, 0, 0.12);
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   font: inherit;
   font-weight: 800;
   cursor: pointer;
@@ -5408,7 +5409,7 @@ body {
 
 .profile-total-progress strong {
   display: block;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   font-size: 1.45rem;
   margin-top: 4px;
 }
@@ -5533,7 +5534,7 @@ body {
 
 .profile-activity-cell[data-level="4"],
 .profile-activity-legend i[data-level="4"] {
-  background: #b8ff00;
+  background: #ffe566;
 }
 
 .profile-activity-footer {
@@ -5579,7 +5580,7 @@ body {
 }
 
 .profile-track-head > strong {
-  color: var(--profile-accent, var(--acid, #b8ff00));
+  color: var(--profile-accent, var(--acid, #ffe566));
   font-size: 1.4rem;
 }
 
@@ -5873,13 +5874,13 @@ body {
 
 .oops-tab.active {
   color: var(--txt-0, #f0f0ff);
-  border-bottom-color: var(--acid, #b8ff00);
+  border-bottom-color: var(--acid, #ffe566);
 }
 
 .oops-tab-xp {
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   background: rgba(184, 255, 0, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -5975,7 +5976,7 @@ body {
   font-family: var(--font-mono, monospace);
   font-size: 0.82em;
   background: rgba(184, 255, 0, 0.08);
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   padding: 1px 5px;
   border-radius: 3px;
 }
@@ -5987,7 +5988,7 @@ body {
   gap: 10px;
   padding: 12px 16px;
   border-radius: 8px;
-  border-left: 3px solid var(--callout-color, var(--acid, #b8ff00));
+  border-left: 3px solid var(--callout-color, var(--acid, #ffe566));
   background: rgba(255, 255, 255, 0.03);
   margin: 0 0 16px;
   font-size: 0.88rem;
@@ -6030,7 +6031,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--ink, #03050a);
-  background: var(--acid, #b8ff00);
+  background: var(--acid, #ffe566);
   border: 1px solid rgba(184, 255, 0, 0.42);
   padding: 3px 8px;
   border-radius: 4px;
@@ -6077,7 +6078,7 @@ body {
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--ink, #03050a);
-  background: var(--accent, var(--acid, #b8ff00));
+  background: var(--accent, var(--acid, #ffe566));
   border: 1px solid rgba(255, 255, 255, 0.12);
   cursor: pointer;
   padding: 5px 10px;
@@ -6237,7 +6238,7 @@ body {
 
 .oops-interactive-label {
   width: fit-content;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
   background: rgba(184, 255, 0, 0.09);
   border: 1px solid rgba(184, 255, 0, 0.18);
   border-radius: 4px;
@@ -6295,10 +6296,10 @@ body {
 
 .oops-diagram-node:hover,
 .oops-diagram-node.active {
-  border-color: var(--node-color, var(--acid, #b8ff00));
+  border-color: var(--node-color, var(--acid, #ffe566));
   background: color-mix(
     in srgb,
-    var(--node-color, var(--acid, #b8ff00)) 12%,
+    var(--node-color, var(--acid, #ffe566)) 12%,
     transparent
   );
   color: var(--txt-0, #f0f0ff);
@@ -6314,7 +6315,7 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: var(--node-color, var(--acid, #b8ff00));
+  background: var(--node-color, var(--acid, #ffe566));
   flex-shrink: 0;
 }
 
@@ -6327,7 +6328,7 @@ body {
 }
 
 .oops-diagram-detail-title {
-  color: var(--node-color, var(--acid, #b8ff00));
+  color: var(--node-color, var(--acid, #ffe566));
   font-weight: 800;
   margin-bottom: 10px;
 }
@@ -6368,12 +6369,12 @@ body {
 
 .oops-step-tab.active {
   color: var(--txt-0, #f0f0ff);
-  border-color: var(--acid, #b8ff00);
+  border-color: var(--acid, #ffe566);
   background: rgba(184, 255, 0, 0.06);
 }
 
 .oops-step-tab.active span {
-  background: var(--acid, #b8ff00);
+  background: var(--acid, #ffe566);
   color: var(--ink, #03050a);
 }
 
@@ -6463,12 +6464,12 @@ body {
 }
 
 .oops-quiz-option.answer {
-  border-color: var(--acid, #b8ff00);
+  border-color: var(--acid, #ffe566);
   background: rgba(184, 255, 0, 0.07);
 }
 
 .oops-quiz-option.answer span:first-child {
-  background: var(--acid, #b8ff00);
+  background: var(--acid, #ffe566);
   color: var(--ink, #03050a);
 }
 
@@ -6481,7 +6482,7 @@ body {
   margin-top: 12px;
   color: var(--txt-1, #c0c8e0);
   background: rgba(255, 255, 255, 0.03);
-  border-left: 3px solid var(--acid, #b8ff00);
+  border-left: 3px solid var(--acid, #ffe566);
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 0.86rem;
@@ -6657,7 +6658,7 @@ body {
 }
 
 .oops-notes-panel textarea:focus {
-  border-color: var(--acid, #b8ff00);
+  border-color: var(--acid, #ffe566);
 }
 
 .oops-notes-panel button {
@@ -6665,7 +6666,7 @@ body {
   border: none;
   border-radius: 8px;
   padding: 8px 14px;
-  background: var(--acid, #b8ff00);
+  background: var(--acid, #ffe566);
   color: var(--ink, #03050a);
   font-weight: 800;
   cursor: pointer;
@@ -6709,13 +6710,13 @@ body {
 
 .oops-confidence-options button:hover,
 .oops-confidence-options button.active {
-  border-color: var(--acid, #b8ff00);
+  border-color: var(--acid, #ffe566);
   background: rgba(184, 255, 0, 0.08);
   color: var(--txt-0, #f0f0ff);
 }
 
 .oops-cta-btn {
-  background: var(--acid, #b8ff00);
+  background: var(--acid, #ffe566);
   color: var(--ink, #03050a);
   border: none;
   padding: 12px 24px;
@@ -6858,7 +6859,7 @@ body {
 }
 
 .oops-test-pass .oops-test-icon {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 .oops-test-fail .oops-test-icon {
   color: var(--red, #ff4d6d);
@@ -6929,7 +6930,7 @@ body {
 }
 
 .oops-output-pass .oops-output-head span {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .oops-output-fail {
@@ -7052,7 +7053,7 @@ body {
 }
 
 .oops-verdict-pass {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 .oops-verdict-fail {
   color: var(--red, #ff4d6d);
@@ -7217,7 +7218,7 @@ body {
 }
 
 .oops-sidebar-chapter-btn.done .oops-sb-check {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .oops-sb-icon {
@@ -7272,12 +7273,12 @@ body {
 }
 
 .oops-sidebar-lesson-btn.current {
-  color: var(--ch-color, var(--acid, #b8ff00));
+  color: var(--ch-color, var(--acid, #ffe566));
   font-weight: 600;
 }
 
 .oops-sidebar-lesson-btn.done .oops-sb-check {
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .oops-sb-check {
@@ -7424,7 +7425,7 @@ body {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .numpy-path-label small {
@@ -7936,7 +7937,7 @@ body {
 .numpy-confidence-options button.active {
   border-color: rgba(184, 255, 0, 0.45);
   background: rgba(184, 255, 0, 0.1);
-  color: var(--acid, #b8ff00);
+  color: var(--acid, #ffe566);
 }
 
 .numpy-theory-footer {
