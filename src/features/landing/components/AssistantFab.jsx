@@ -197,20 +197,24 @@ export default function AssistantFab() {
     let cancelled = false;
 
     async function hydrateFromServer() {
-      const current = loadSession();
-      const data = await fetchAssistantSession(current.sessionId);
-      if (cancelled || !data?.messages?.length) return;
+      try {
+        const current = loadSession();
+        const data = await fetchAssistantSession(current.sessionId);
+        if (cancelled || !data?.messages?.length) return;
 
-      const serverMessages = data.messages.map((m, index) => ({
-        id: `server-${index}-${m.createdAt || Date.now()}`,
-        role: m.role,
-        content: m.content,
-      }));
+        const serverMessages = data.messages.map((m, index) => ({
+          id: `server-${index}-${m.createdAt || Date.now()}`,
+          role: m.role,
+          content: m.content,
+        }));
 
-      setSession({
-        sessionId: current.sessionId,
-        messages: [WELCOME_MESSAGE, ...serverMessages],
-      });
+        setSession({
+          sessionId: current.sessionId,
+          messages: [WELCOME_MESSAGE, ...serverMessages],
+        });
+      } catch {
+        /* use local session from localStorage */
+      }
     }
 
     hydrateFromServer();

@@ -55,22 +55,31 @@ export async function postAssistantChat({ message, history, session_id, context 
 export async function fetchAssistantSession(sessionId) {
   const url = `${getApiBase()}/chat/assistant/session/${encodeURIComponent(sessionId)}`;
 
-  const res = await fetch(url, {
-    headers: getAuthHeaders(),
-  });
+  try {
+    const res = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
 
-  if (!res.ok) {
+    if (!res.ok) {
+      return null;
+    }
+
+    return res.json();
+  } catch {
+    // Backend offline, CORS, or network issue — fall back to local session
     return null;
   }
-
-  return res.json();
 }
 
 export async function clearAssistantSession(sessionId) {
   const url = `${getApiBase()}/chat/assistant/session/${encodeURIComponent(sessionId)}`;
 
-  await fetch(url, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
+  try {
+    await fetch(url, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+  } catch {
+    /* ignore when backend is unreachable */
+  }
 }
