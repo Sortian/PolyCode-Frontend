@@ -1,5 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Eraser, MousePointer2, Pencil, Trash2, Type, Zap } from "lucide-react";
+import {
+  Eraser,
+  GripVertical,
+  MousePointer2,
+  Pencil,
+  PenLine,
+  Trash2,
+  Type,
+  X,
+  Zap,
+} from "lucide-react";
 import {
   DEFAULT_PENCIL_COLOR,
   getPencilCursor,
@@ -17,8 +27,17 @@ const TOOLS = {
   ERASER: "eraser",
 };
 
+const TOOL_ITEMS = [
+  { id: TOOLS.POINTER, label: "Pointer", Icon: MousePointer2 },
+  { id: TOOLS.PENCIL, label: "Pencil", Icon: Pencil },
+  { id: TOOLS.LASER, label: "Laser", Icon: Zap },
+  { id: TOOLS.TEXT, label: "Text", Icon: Type },
+  { id: TOOLS.ERASER, label: "Eraser", Icon: Eraser },
+];
+
 const STROKE_WIDTH = 3;
 const ERASER_RADIUS = 14;
+const DRAG_THRESHOLD = 4;
 
 function loadAnnotations(storageKey) {
   if (!storageKey) return { strokes: [], labels: [] };
@@ -94,14 +113,17 @@ function normalizeHex(color = "") {
   return color.trim().toLowerCase();
 }
 
-function ColorPicker({ label, value, onChange }) {
+function ColorPicker({ label, value, onChange, compact }) {
   const paletteInputRef = useRef(null);
   const isCustomColor = !MAIN_COLOR_PRESETS.some(
     (preset) => normalizeHex(preset) === normalizeHex(value),
   );
 
   return (
-    <div className="lesson-annotator-color-picker" aria-label={`${label} color`}>
+    <div
+      className={`lesson-annotator-color-picker${compact ? " lesson-annotator-color-picker--compact" : ""}`}
+      aria-label={`${label} color`}
+    >
       {MAIN_COLOR_PRESETS.map((color) => (
         <button
           key={color}
@@ -136,15 +158,187 @@ function ColorPicker({ label, value, onChange }) {
   );
 }
 
+function AnnotationLabel({
+  label,
+  canAdjust,
+  isEditing,
+  onStartEdit,
+  onSave,
+  onDelete,
+  onMove,
+  stageRef,
+}) {
+  const [draft, setDraft] = useState(label.text);
+  const [livePos, setLivePos] = useState(null);
+  const dragState = useRef(null);
+
+  useEffect(() => {
+    if (isEditing) setDraft(label.text);
+  }, [isEditing, label.text]);
+
+  const finishDrag = useCallback(
+    (event) => {
+      const state = dragState.current;
+      dragState.current = null;
+      setLivePos(null);
+
+      if (!state?.moved) return;
+
+      const stage = stageRef.current;
+      if (!stage) return;
+      const point = getPoint(event, stage);
+      onMove(label.id, {
+        x: state.originX + (point.x - state.startX),
+        y: state.originY + (point.y - state.startY),
+      });
+    },
+    [label.id, onMove, stageRef],
+  );
+
+  useEffect(() => {
+    const onMoveEvent = (event) => {
+      const state = dragState.current;
+      if (!state) return;
+
+      const stage = stageRef.current;
+      if (!stage) return;
+      const point = getPoint(event, stage);
+      const dx = point.x - state.startX;
+      const dy = point.y - state.startY;
+
+      if (!state.moved && Math.hypot(dx, dy) >= DRAG_THRESHOLD) {
+        state.moved = true;
+      }
+
+      if (state.moved) {
+        setLivePos({
+          x: state.originX + dx,
+          y: state.originY + dy,
+        });
+      }
+    };
+
+    const onUp = (event) => finishDrag(event);
+
+    window.addEventListener("mousemove", onMoveEvent);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMoveEvent);
+    window.addEventListener("touchend", onUp);
+
+    return () => {
+      window.removeEventListener("mousemove", onMoveEvent);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMoveEvent);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [finishDrag, stageRef]);
+
+  const handleDragStart = (event) => {
+    if (!canAdjust || isEditing) return;
+    if (event.target.closest(".lesson-annotator-label-edit")) return;
+    event.stopPropagation();
+    event.preventDefault();
+
+    const stage = stageRef.current;
+    if (!stage) return;
+    const point = getPoint(event, stage);
+    dragState.current = {
+      startX: point.x,
+      startY: point.y,
+      originX: label.x,
+      originY: label.y,
+      moved: false,
+    };
+  };
+
+  const position = livePos || { x: label.x, y: label.y };
+
+  if (isEditing) {
+    return (
+      <div
+        className="lesson-annotator-label lesson-annotator-label--editing"
+        style={{ left: position.x, top: position.y }}
+        onMouseDown={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
+      >
+        <textarea
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          rows={3}
+          autoFocus
+          aria-label="Edit note"
+        />
+        <div className="lesson-annotator-label-actions">
+          <button
+            type="button"
+            onClick={() => onSave(label.id, draft)}
+            disabled={!draft.trim()}
+          >
+            Save
+          </button>
+          <button type="button" onClick={() => onStartEdit(null)}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="lesson-annotator-label-delete"
+            onClick={() => onDelete(label.id)}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`lesson-annotator-label${canAdjust ? " lesson-annotator-label--interactive" : ""}${livePos ? " lesson-annotator-label--dragging" : ""}`}
+      style={{ left: position.x, top: position.y }}
+      onMouseDown={handleDragStart}
+      onTouchStart={handleDragStart}
+      onDoubleClick={(event) => {
+        if (!canAdjust) return;
+        event.stopPropagation();
+        onStartEdit(label.id);
+      }}
+    >
+      {canAdjust ? (
+        <span className="lesson-annotator-label-grip" aria-hidden>
+          <GripVertical size={12} />
+        </span>
+      ) : null}
+      <span className="lesson-annotator-label-text">{label.text}</span>
+      {canAdjust ? (
+        <button
+          type="button"
+          className="lesson-annotator-label-edit"
+          onMouseDown={(event) => event.stopPropagation()}
+          onTouchStart={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            onStartEdit(label.id);
+          }}
+          aria-label="Edit note"
+        >
+          <PenLine size={12} />
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 export default function LessonAnnotator({ storageKey, children }) {
   const stageRef = useRef(null);
   const contentRef = useRef(null);
   const canvasRef = useRef(null);
+  const fabRef = useRef(null);
   const drawingRef = useRef(false);
   const currentStrokeRef = useRef(null);
   const prefsRef = useRef(loadAnnotationPrefs());
 
   const [tool, setTool] = useState(TOOLS.POINTER);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [pencilColor, setPencilColor] = useState(prefsRef.current.pencilColor);
   const [laserColor, setLaserColor] = useState(prefsRef.current.laserColor);
   const [strokes, setStrokes] = useState([]);
@@ -152,6 +346,7 @@ export default function LessonAnnotator({ storageKey, children }) {
   const [textDraft, setTextDraft] = useState("");
   const [pendingTextPoint, setPendingTextPoint] = useState(null);
   const [laserPoint, setLaserPoint] = useState(null);
+  const [editingLabelId, setEditingLabelId] = useState(null);
 
   const redrawCanvas = useCallback((nextStrokes) => {
     const canvas = canvasRef.current;
@@ -223,7 +418,24 @@ export default function LessonAnnotator({ storageKey, children }) {
     setPendingTextPoint(null);
     setTextDraft("");
     setLaserPoint(null);
+    setEditingLabelId(null);
   }, [tool, storageKey]);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const handleOutside = (event) => {
+      if (fabRef.current?.contains(event.target)) return;
+      setMenuOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("touchstart", handleOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
+  }, [menuOpen]);
 
   const eraseAt = useCallback((point) => {
     setStrokes((prev) =>
@@ -235,6 +447,7 @@ export default function LessonAnnotator({ storageKey, children }) {
   }, []);
 
   const isMarkupTool = tool !== TOOLS.POINTER;
+  const canAdjustLabels = tool === TOOLS.POINTER;
 
   const stageCursor = useMemo(() => {
     if (tool === TOOLS.PENCIL) return getPencilCursor(pencilColor);
@@ -243,8 +456,22 @@ export default function LessonAnnotator({ storageKey, children }) {
     return undefined;
   }, [tool, pencilColor]);
 
+  const activeToolItem = TOOL_ITEMS.find((item) => item.id === tool) || TOOL_ITEMS[0];
+  const ActiveIcon = activeToolItem.Icon;
+
+  const selectTool = (nextTool) => {
+    setTool(nextTool);
+    setMenuOpen(false);
+  };
+
   const handleStageMove = (event) => {
-    if (event.target.closest(".lesson-annotator-text-input")) return;
+    if (
+      event.target.closest(
+        ".lesson-annotator-text-input, .lesson-annotator-label, .lesson-annotator-fab-wrap",
+      )
+    ) {
+      return;
+    }
 
     const stage = stageRef.current;
     if (!stage) return;
@@ -261,7 +488,11 @@ export default function LessonAnnotator({ storageKey, children }) {
 
   const handlePointerDown = (event) => {
     if (tool === TOOLS.POINTER) return;
-    if (event.target.closest(".lesson-annotator-toolbar, .lesson-annotator-text-input")) {
+    if (
+      event.target.closest(
+        ".lesson-annotator-fab-wrap, .lesson-annotator-text-input, .lesson-annotator-label",
+      )
+    ) {
       return;
     }
 
@@ -295,6 +526,7 @@ export default function LessonAnnotator({ storageKey, children }) {
     if (tool === TOOLS.TEXT) {
       setPendingTextPoint(point);
       setTextDraft("");
+      setEditingLabelId(null);
     }
   };
 
@@ -350,10 +582,11 @@ export default function LessonAnnotator({ storageKey, children }) {
     const text = textDraft.trim();
     if (!text || !pendingTextPoint) return;
 
+    const newId = `${Date.now()}`;
     setLabels((prev) => [
       ...prev,
       {
-        id: `${Date.now()}`,
+        id: newId,
         x: pendingTextPoint.x,
         y: pendingTextPoint.y,
         text,
@@ -361,6 +594,32 @@ export default function LessonAnnotator({ storageKey, children }) {
     ]);
     setPendingTextPoint(null);
     setTextDraft("");
+    setTool(TOOLS.POINTER);
+    setEditingLabelId(newId);
+  };
+
+  const handleSaveLabel = (labelId, text) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    setLabels((prev) =>
+      prev.map((label) =>
+        label.id === labelId ? { ...label, text: trimmed } : label,
+      ),
+    );
+    setEditingLabelId(null);
+  };
+
+  const handleMoveLabel = (labelId, position) => {
+    setLabels((prev) =>
+      prev.map((label) =>
+        label.id === labelId ? { ...label, ...position } : label,
+      ),
+    );
+  };
+
+  const handleDeleteLabel = (labelId) => {
+    setLabels((prev) => prev.filter((label) => label.id !== labelId));
+    setEditingLabelId(null);
   };
 
   const handleClearAll = () => {
@@ -369,6 +628,7 @@ export default function LessonAnnotator({ storageKey, children }) {
     setPendingTextPoint(null);
     setTextDraft("");
     setLaserPoint(null);
+    setEditingLabelId(null);
   };
 
   return (
@@ -377,79 +637,6 @@ export default function LessonAnnotator({ storageKey, children }) {
         isMarkupTool ? " lesson-annotator--active" : ""
       }`}
     >
-      <div className="lesson-annotator-toolbar" role="toolbar" aria-label="Lesson markup tools">
-        <button
-          type="button"
-          className={tool === TOOLS.POINTER ? "active" : ""}
-          onClick={() => setTool(TOOLS.POINTER)}
-          title="Read and scroll normally"
-        >
-          <MousePointer2 size={16} aria-hidden />
-          <span>Pointer</span>
-        </button>
-        <button
-          type="button"
-          className={tool === TOOLS.PENCIL ? "active" : ""}
-          onClick={() => setTool(TOOLS.PENCIL)}
-          title="Draw on the lesson"
-        >
-          <Pencil size={16} aria-hidden />
-          <span>Pencil</span>
-        </button>
-        <button
-          type="button"
-          className={tool === TOOLS.LASER ? "active" : ""}
-          onClick={() => setTool(TOOLS.LASER)}
-          title="Laser pointer — highlight while presenting"
-        >
-          <Zap size={16} aria-hidden />
-          <span>Laser</span>
-        </button>
-        <button
-          type="button"
-          className={tool === TOOLS.TEXT ? "active" : ""}
-          onClick={() => setTool(TOOLS.TEXT)}
-          title="Click to add a text note"
-        >
-          <Type size={16} aria-hidden />
-          <span>Text</span>
-        </button>
-        <button
-          type="button"
-          className={tool === TOOLS.ERASER ? "active" : ""}
-          onClick={() => setTool(TOOLS.ERASER)}
-          title="Erase drawings and text notes"
-        >
-          <Eraser size={16} aria-hidden />
-          <span>Eraser</span>
-        </button>
-        <button
-          type="button"
-          className="lesson-annotator-clear"
-          onClick={handleClearAll}
-          title="Clear all markup on this lesson"
-        >
-          <Trash2 size={16} aria-hidden />
-          <span>Clear</span>
-        </button>
-
-        {tool === TOOLS.PENCIL ? (
-          <ColorPicker
-            label="Pencil"
-            value={pencilColor}
-            onChange={setPencilColor}
-          />
-        ) : null}
-
-        {tool === TOOLS.LASER ? (
-          <ColorPicker
-            label="Laser"
-            value={laserColor}
-            onChange={setLaserColor}
-          />
-        ) : null}
-      </div>
-
       <div
         ref={stageRef}
         className="lesson-annotator-stage"
@@ -488,15 +675,21 @@ export default function LessonAnnotator({ storageKey, children }) {
           />
         ) : null}
 
-        <div className="lesson-annotator-labels" aria-hidden={!labels.length}>
+        <div
+          className={`lesson-annotator-labels${canAdjustLabels ? " lesson-annotator-labels--interactive" : ""}`}
+        >
           {labels.map((label) => (
-            <div
+            <AnnotationLabel
               key={label.id}
-              className="lesson-annotator-label"
-              style={{ left: label.x, top: label.y }}
-            >
-              {label.text}
-            </div>
+              label={label}
+              canAdjust={canAdjustLabels}
+              isEditing={editingLabelId === label.id}
+              onStartEdit={setEditingLabelId}
+              onSave={handleSaveLabel}
+              onDelete={handleDeleteLabel}
+              onMove={handleMoveLabel}
+              stageRef={stageRef}
+            />
           ))}
         </div>
 
@@ -504,24 +697,102 @@ export default function LessonAnnotator({ storageKey, children }) {
           <div
             className="lesson-annotator-text-input"
             style={{ left: pendingTextPoint.x, top: pendingTextPoint.y }}
+            onMouseDown={(event) => event.stopPropagation()}
+            onTouchStart={(event) => event.stopPropagation()}
           >
-            <input
-              type="text"
+            <textarea
               value={textDraft}
               onChange={(event) => setTextDraft(event.target.value)}
               onKeyDown={(event) => {
-                if (event.key === "Enter") handleAddLabel();
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  handleAddLabel();
+                }
                 if (event.key === "Escape") setPendingTextPoint(null);
               }}
               placeholder="Type a note..."
+              rows={3}
               autoFocus
             />
-            <button type="button" onClick={handleAddLabel}>
-              Add
+            <div className="lesson-annotator-label-actions">
+              <button type="button" onClick={handleAddLabel} disabled={!textDraft.trim()}>
+                Add
+              </button>
+              <button type="button" onClick={() => setPendingTextPoint(null)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      <div ref={fabRef} className="lesson-annotator-fab-wrap">
+        <button
+          type="button"
+          className={`lesson-annotator-fab${menuOpen ? " lesson-annotator-fab--open" : ""}`}
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? "Close markup tools" : "Open markup tools"}
+          aria-expanded={menuOpen}
+        >
+          <ActiveIcon size={18} aria-hidden />
+        </button>
+
+        {menuOpen ? (
+          <div className="lesson-annotator-fab-menu" role="menu" aria-label="Markup tools">
+            <div className="lesson-annotator-fab-menu-head">
+              <span>Markup</span>
+              <button
+                type="button"
+                className="lesson-annotator-fab-close"
+                onClick={() => setMenuOpen(false)}
+                aria-label="Close tools"
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            <div className="lesson-annotator-fab-tools">
+              {TOOL_ITEMS.map(({ id, label, Icon }) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="menuitem"
+                  className={tool === id ? "active" : ""}
+                  onClick={() => selectTool(id)}
+                  title={label}
+                >
+                  <Icon size={16} aria-hidden />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </div>
+
+            {tool === TOOLS.PENCIL || tool === TOOLS.LASER ? (
+              <div className="lesson-annotator-fab-colors">
+                <span>{tool === TOOLS.PENCIL ? "Pencil color" : "Laser color"}</span>
+                <ColorPicker
+                  label={tool === TOOLS.PENCIL ? "Pencil" : "Laser"}
+                  value={tool === TOOLS.PENCIL ? pencilColor : laserColor}
+                  onChange={tool === TOOLS.PENCIL ? setPencilColor : setLaserColor}
+                  compact
+                />
+              </div>
+            ) : null}
+
+            <button
+              type="button"
+              className="lesson-annotator-fab-clear"
+              onClick={handleClearAll}
+            >
+              <Trash2 size={14} aria-hidden />
+              Clear all markup
             </button>
-            <button type="button" onClick={() => setPendingTextPoint(null)}>
-              Cancel
-            </button>
+
+            {canAdjustLabels ? (
+              <p className="lesson-annotator-fab-hint">
+                Drag notes to move · double-click or ✎ to edit
+              </p>
+            ) : null}
           </div>
         ) : null}
       </div>
