@@ -20,9 +20,7 @@ import "./styles/theme-light.css";
 import "./styles/stack-picker-dark.css";
 import "./styles/responsive.css";
 
-const LandingPage = lazy(
-  () => import("./features/landing/pages/LandingPage"),
-);
+const LandingPage = lazy(() => import("./features/landing/pages/LandingPage"));
 const LanguageLandingPage = lazy(
   () => import("./features/language/pages/LanguageLandingPage"),
 );
@@ -49,9 +47,7 @@ const PointersHub = lazy(
 const PointersLessonPage = lazy(
   () => import("./features/learn/pointers-cpp/pages/PointersLessonPage"),
 );
-const NumpyHub = lazy(
-  () => import("./features/learn/numpy-py/pages/NumpyHub"),
-);
+const NumpyHub = lazy(() => import("./features/learn/numpy-py/pages/NumpyHub"));
 const NumpyLessonPage = lazy(
   () => import("./features/learn/numpy-py/pages/NumpyLessonPage"),
 );
@@ -161,7 +157,6 @@ function MainApp({
         <main className="main-content">
           <Suspense fallback={<PageFallback />}>
             <Routes>
-              <Route path="/" element={<Navigate to="/hub" replace />} />
               <Route
                 path="/hub"
                 element={<HomePage selectedLanguage={selectedLanguage} />}
@@ -370,6 +365,17 @@ function AppRoutes() {
           element={
             <ThemedShell theme={theme}>
               <LoginPage />
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <ThemedShell theme={theme}>
+              <LandingPage
+                onLanguageSelect={handleLanguageSelect}
+                continueLanguage={selectedLanguage}
+              />
             </ThemedShell>
           }
         />
