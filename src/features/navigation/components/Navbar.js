@@ -92,7 +92,7 @@ export default function Navbar({
         onClick={onGoToStackPicker}
         title="Back to all languages"
       >
-        <img src="/logo.png" alt="PolyCode Logo" className="navbar-logo" />
+        <img src="/images/polycode-logo.png" alt="PolyCode Logo" className="navbar-logo" />
         <div className="navbar-brand-text">
           <span className="logo-text">PolyCode</span>
           <span className="logo-sub">v2.0 docs</span>

@@ -26,7 +26,7 @@ export default function Navbar() {
           <a href="#top" className="landing-brand">
             <div className="landing-brand-mark">
               <img
-                src="/images/logo.png"
+                src="/images/polycode-logo.png"
                 alt="PolyCode Logo"
                 className="landing-logo"
               />

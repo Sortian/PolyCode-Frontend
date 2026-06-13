@@ -43,7 +43,7 @@ export default function SignupPage() {
       <div className="auth-card fade-up">
         {/* Brand */}
         <div className="auth-brand">
-          <img src="/logo.png" alt="PolyCode" className="auth-logo" />
+          <img src="/images/polycode-logo.png" alt="PolyCode" className="auth-logo" />
           <span className="auth-brand-name">PolyCode</span>
         </div>
 
