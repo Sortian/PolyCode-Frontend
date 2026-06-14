@@ -57,6 +57,12 @@ const PandasHub = lazy(
 const PandasLessonPage = lazy(
   () => import("./features/learn/pandas-py/pages/PandasLessonPage"),
 );
+const JsFundamentalsHub = lazy(
+  () => import("./features/learn/js-fundamentals/pages/JsFundamentalsHub"),
+);
+const JsFundamentalsLessonPage = lazy(
+  () => import("./features/learn/js-fundamentals/pages/JsFundamentalsLessonPage"),
+);
 
 const PageFallback = () => (
   <div className="loading">
@@ -340,6 +346,8 @@ function AppRoutes() {
       path.startsWith("/learn/pandas-py")
     ) {
       handleLanguageSelect("Python", { stay: true });
+    } else if (path.startsWith("/learn/js-fundamentals")) {
+      handleLanguageSelect("JavaScript", { stay: true });
     } else if (
       path.startsWith("/learn/oops-cpp") ||
       path.startsWith("/learn/pointers-cpp")
@@ -592,6 +600,51 @@ function AppRoutes() {
                 selectedLanguage={selectedLanguage}
               >
                 <PandasLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/js-fundamentals"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsFundamentalsHub />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/js-fundamentals/lesson/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsFundamentalsLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/js-fundamentals/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsFundamentalsLessonPage />
               </LearnShell>
             </ThemedShell>
           }

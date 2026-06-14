@@ -35,7 +35,7 @@ export const NUMPY_VIDEO_LINKS = {
 
   // ── Ch 5: Linear Algebra ─────────────────────────────────────────────
   "numpy-9": "https://youtu.be/uvzY1ChOw68?si=isxXY0IqC_6tGLMn", // Dot Product
-  "numpy-10": "", // Matrix Multiply @
+  "numpy-10": "https://youtu.be/4g6rNSphePo?si=c_2izCYl0Jpt2NLF", // Matrix Multiply @
   "numpy-18": "", // Solve & Determinants
 
   // ── Ch 6: Aggregations ───────────────────────────────────────────────

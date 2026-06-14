@@ -8266,6 +8266,13 @@ body {
   z-index: 1;
 }
 
+.lesson-annotator-content .numpy-notes-panel,
+.lesson-annotator-content .oops-notes-panel,
+.lesson-annotator-content .numpy-confidence-panel {
+  position: relative;
+  z-index: 3;
+}
+
 .lesson-annotator-canvas {
   position: absolute;
   top: 0;

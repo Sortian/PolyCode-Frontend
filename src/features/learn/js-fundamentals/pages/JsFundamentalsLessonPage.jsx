@@ -4,18 +4,18 @@ import NumpyIntroTheory from "../../numpy-py/components/NumpyIntroTheory";
 import OopsSidebar from "../../oops-cpp/components/OopsSidebar";
 import LearnProfileMenu from "../../shared/LearnProfileMenu";
 import LessonContentShell from "../../shared/LessonContentShell";
-import PythonCodeChallenge from "../../numpy-py/components/PythonCodeChallenge";
+import JavaScriptCodeChallenge from "../components/JavaScriptCodeChallenge";
 import {
-  PANDAS_CHAPTERS,
-  PANDAS_LESSONS,
-  PANDAS_TOTAL_XP,
-} from "../data/pandasCurriculum";
-import usePandasProgress from "../hooks/usePandasProgress";
+  JS_FUNDAMENTALS_CHAPTERS,
+  JS_FUNDAMENTALS_LESSONS,
+  JS_FUNDAMENTALS_TOTAL_XP,
+} from "../data/jsFundamentalsCurriculum";
+import useJsFundamentalsProgress from "../hooks/useJsFundamentalsProgress";
 import { useLessonAssistantContext } from "../../../assistant/hooks/useLessonAssistantContext";
 
-const BASE_PATH = "/learn/pandas-py";
+const BASE_PATH = "/learn/js-fundamentals";
 
-export default function PandasLessonPage() {
+export default function JsFundamentalsLessonPage() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const [tab, setTab] = useState("theory");
@@ -33,18 +33,20 @@ export default function PandasLessonPage() {
     saveCode,
     saveNote,
     toggleBookmark,
-  } = usePandasProgress();
+  } = useJsFundamentalsProgress();
   const [noteDraft, setNoteDraft] = useState("");
   const codeSaveTimer = useRef(null);
 
-  const lesson = PANDAS_LESSONS.find((item) => item.id === lessonId);
-  const lessonIdx = PANDAS_LESSONS.findIndex((item) => item.id === lessonId);
-  const prev = PANDAS_LESSONS[lessonIdx - 1];
-  const next = PANDAS_LESSONS[lessonIdx + 1];
+  const lesson = JS_FUNDAMENTALS_LESSONS.find((item) => item.id === lessonId);
+  const lessonIdx = JS_FUNDAMENTALS_LESSONS.findIndex(
+    (item) => item.id === lessonId,
+  );
+  const prev = JS_FUNDAMENTALS_LESSONS[lessonIdx - 1];
+  const next = JS_FUNDAMENTALS_LESSONS[lessonIdx + 1];
 
   useLessonAssistantContext({
-    course: "Pandas",
-    language: "Python",
+    course: "JavaScript Fundamentals",
+    language: "JavaScript",
     lesson,
     chapter: lesson?.chapterTitle,
     tab,
@@ -65,7 +67,7 @@ export default function PandasLessonPage() {
 
   useEffect(() => {
     setConfidence(
-      localStorage.getItem(`pandas_py_confidence_${lessonId}`) || "",
+      localStorage.getItem(`js_fundamentals_confidence_${lessonId}`) || "",
     );
   }, [lessonId]);
 
@@ -79,9 +81,9 @@ export default function PandasLessonPage() {
   if (!lesson) {
     return (
       <div className="oops-not-found">
-        <p>Pandas lesson not found.</p>
+        <p>JavaScript lesson not found.</p>
         <button type="button" onClick={() => navigate(BASE_PATH)}>
-          ← Back to Pandas
+          ← Back to JavaScript Fundamentals
         </button>
       </div>
     );
@@ -90,7 +92,7 @@ export default function PandasLessonPage() {
   const isCompleted = isAuthenticated && !!progress[lessonId];
   const isBookmarked = bookmarks.includes(lessonId);
   const completedCount = Object.keys(progress).length;
-  const earnedXP = PANDAS_LESSONS.filter((item) => progress[item.id]).reduce(
+  const earnedXP = JS_FUNDAMENTALS_LESSONS.filter((item) => progress[item.id]).reduce(
     (sum, item) => sum + item.xp,
     0,
   );
@@ -112,7 +114,7 @@ export default function PandasLessonPage() {
 
   function handleConfidenceChange(value) {
     setConfidence(value);
-    localStorage.setItem(`pandas_py_confidence_${lessonId}`, value);
+    localStorage.setItem(`js_fundamentals_confidence_${lessonId}`, value);
   }
 
   return (
@@ -120,9 +122,9 @@ export default function PandasLessonPage() {
       <OopsSidebar
         currentLessonId={lessonId}
         progress={progress}
-        chapters={PANDAS_CHAPTERS}
+        chapters={JS_FUNDAMENTALS_CHAPTERS}
         basePath={BASE_PATH}
-        title="Pandas · py"
+        title="JavaScript Fundamentals"
       />
 
       <div className="oops-lesson-main">
@@ -132,7 +134,7 @@ export default function PandasLessonPage() {
             className="oops-back-btn"
             onClick={() => navigate(BASE_PATH)}
           >
-            ← Pandas · Python
+            ← JavaScript Fundamentals
           </button>
           <div className="oops-lesson-breadcrumb">
             <span style={{ color: lesson.chapterColor }}>
@@ -160,16 +162,16 @@ export default function PandasLessonPage() {
           </button>
           <LearnProfileMenu
             user={user}
-            trackTitle="Pandas · py"
+            trackTitle="JavaScript Fundamentals"
             syncLabel={
               isAuthenticated
-                ? "Pandas progress saved to your account"
+                ? "JavaScript progress saved to your account"
                 : "Sign in to save progress"
             }
             completedCount={completedCount}
-            totalLessons={PANDAS_LESSONS.length}
+            totalLessons={JS_FUNDAMENTALS_LESSONS.length}
             earnedXP={earnedXP}
-            totalXP={PANDAS_TOTAL_XP}
+            totalXP={JS_FUNDAMENTALS_TOTAL_XP}
             bookmarksCount={bookmarks.length}
             streak={0}
           />
@@ -193,9 +195,9 @@ export default function PandasLessonPage() {
         </div>
 
         <LessonContentShell
-          storageKey={`pandas-py:${lessonId}`}
+          storageKey={`js-fundamentals:${lessonId}`}
           videoUrl={lesson.videoUrl}
-          videoTitle={`${lesson.title} — Pandas`}
+          videoTitle={`${lesson.title} — JavaScript`}
         >
           {tab === "theory" ? (
             <NumpyIntroTheory
@@ -208,7 +210,7 @@ export default function PandasLessonPage() {
               onGoChallenge={() => setTab("challenge")}
             />
           ) : (
-            <PythonCodeChallenge
+            <JavaScriptCodeChallenge
               challenge={lesson.challenge}
               accentColor={lesson.chapterColor}
               isCompleted={isCompleted}

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useAuth } from "../../../auth/context/AuthContext";
 
 const LOCAL_KEY = "pandas_py_progress";
@@ -17,14 +17,23 @@ function readJson(key, fallback) {
 
 export default function usePandasProgress() {
   const { user, isAuthenticated } = useAuth();
-  const [, setLocalVersion] = useState(0);
+  const [localVersion, setLocalVersion] = useState(0);
   const refreshLocal = useCallback(() => setLocalVersion((v) => v + 1), []);
 
-  const localCompletedMap = readJson(LOCAL_KEY, {});
+  const localCompletedMap = useMemo(
+    () => readJson(LOCAL_KEY, {}),
+    [localVersion],
+  );
   const completedMap = isAuthenticated ? localCompletedMap : {};
-  const savedCodeMap = isAuthenticated ? readJson(LOCAL_CODE_KEY, {}) : {};
-  const notesMap = readJson(LOCAL_NOTES_KEY, {});
-  const bookmarks = readJson(LOCAL_BOOKMARKS_KEY, []);
+  const savedCodeMap = useMemo(
+    () => (isAuthenticated ? readJson(LOCAL_CODE_KEY, {}) : {}),
+    [isAuthenticated, localVersion],
+  );
+  const notesMap = useMemo(() => readJson(LOCAL_NOTES_KEY, {}), [localVersion]);
+  const bookmarks = useMemo(
+    () => readJson(LOCAL_BOOKMARKS_KEY, []),
+    [localVersion],
+  );
   const lastLessonId = localStorage.getItem(LOCAL_LAST_KEY);
 
   const completeLesson = useCallback(

@@ -13,6 +13,11 @@ import {
   runCppCode,
 } from "./runCpp";
 import {
+  formatJavaScriptOutput,
+  getJavaScriptRuntimeError,
+  runJavaScriptCode,
+} from "./runJavaScript";
+import {
   formatPythonOutput,
   getPythonRuntimeError,
   runPythonCode,
@@ -21,28 +26,36 @@ import {
 function normalizeLang(lang = "python") {
   const value = lang.toLowerCase();
   if (value === "c++" || value === "cpp") return "cpp";
+  if (value === "javascript" || value === "js") return "javascript";
   return value;
 }
 
 function monacoLanguage(lang) {
-  return lang === "cpp" ? "cpp" : "python";
+  if (lang === "cpp") return "cpp";
+  if (lang === "javascript") return "javascript";
+  return "python";
 }
 
 async function executeTheoryCode(source, lang) {
   if (lang === "cpp") {
     return runCppCode(source);
   }
+  if (lang === "javascript") {
+    return runJavaScriptCode(source);
+  }
   return runPythonCode(source);
 }
 
 function formatTheoryOutput(result, lang) {
-  return lang === "cpp" ? formatCppOutput(result) : formatPythonOutput(result);
+  if (lang === "cpp") return formatCppOutput(result);
+  if (lang === "javascript") return formatJavaScriptOutput(result);
+  return formatPythonOutput(result);
 }
 
 function getTheoryRuntimeError(result, lang) {
-  return lang === "cpp"
-    ? getCppRuntimeError(result)
-    : getPythonRuntimeError(result);
+  if (lang === "cpp") return getCppRuntimeError(result);
+  if (lang === "javascript") return getJavaScriptRuntimeError(result);
+  return getPythonRuntimeError(result);
 }
 
 export default function RunnableCodeBlock({

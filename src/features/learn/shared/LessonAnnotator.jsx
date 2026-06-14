@@ -25,6 +25,9 @@ import {
   TOOL_CURSORS,
 } from "./annotationCursors";
 
+const STAGE_INTERACTIVE_SELECTOR =
+  ".lesson-annotator-text-input, .lesson-annotator-label, .lesson-annotator-fab-wrap, .numpy-notes-panel, .oops-notes-panel, .numpy-confidence-panel, textarea, input, select, button, a";
+
 const TOOLS = {
   POINTER: "pointer",
   PENCIL: "pencil",
@@ -474,11 +477,7 @@ export default function LessonAnnotator({ storageKey, children }) {
   };
 
   const handleStageMove = (event) => {
-    if (
-      event.target.closest(
-        ".lesson-annotator-text-input, .lesson-annotator-label, .lesson-annotator-fab-wrap",
-      )
-    ) {
+    if (event.target.closest(STAGE_INTERACTIVE_SELECTOR)) {
       return;
     }
 
@@ -497,11 +496,7 @@ export default function LessonAnnotator({ storageKey, children }) {
 
   const handlePointerDown = (event) => {
     if (tool === TOOLS.POINTER) return;
-    if (
-      event.target.closest(
-        ".lesson-annotator-fab-wrap, .lesson-annotator-text-input, .lesson-annotator-label",
-      )
-    ) {
+    if (event.target.closest(STAGE_INTERACTIVE_SELECTOR)) {
       return;
     }
 

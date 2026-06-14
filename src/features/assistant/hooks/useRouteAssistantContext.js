@@ -5,6 +5,7 @@ import { useAssistant } from "../context/AssistantContext";
 const COURSE_BY_PREFIX = [
   { prefix: "/learn/numpy-py", course: "NumPy", language: "Python" },
   { prefix: "/learn/pandas-py", course: "Pandas", language: "Python" },
+  { prefix: "/learn/js-fundamentals", course: "JavaScript Fundamentals", language: "JavaScript" },
   { prefix: "/learn/oops-cpp", course: "OOP C++", language: "C++" },
   { prefix: "/learn/pointers-cpp", course: "Pointers C++", language: "C++" },
 ];

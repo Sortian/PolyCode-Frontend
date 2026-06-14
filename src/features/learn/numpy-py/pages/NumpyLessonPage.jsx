@@ -114,7 +114,7 @@ export default function NumpyLessonPage() {
 
   useEffect(() => {
     setNoteDraft(notesMap[lessonId] || "");
-  }, [lessonId, notesMap]);
+  }, [lessonId]);
 
   useEffect(() => {
     setConfidence(localStorage.getItem(`numpy_py_confidence_${lessonId}`) || "");

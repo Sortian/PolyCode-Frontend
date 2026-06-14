@@ -127,7 +127,7 @@ export default function LessonPage() {
 
   useEffect(() => {
     setNoteDraft(notesMap[lessonId] || "");
-  }, [lessonId, notesMap]);
+  }, [lessonId]);
 
   useEffect(() => {
     setConfidence(localStorage.getItem(`oops_confidence_${lessonId}`) || "");

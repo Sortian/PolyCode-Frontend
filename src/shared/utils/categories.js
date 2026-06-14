@@ -22,6 +22,13 @@ export const CATEGORY_META = {
   utilities:        { icon: '🛠️', color: '#f43f5e', bg: 'rgba(244,63,94,0.1)' },
   web_development:  { icon: '🌐', color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)' },
   src:              { icon: '📂', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)' },
+  // JavaScript certificate course modules
+  '00-certification': { icon: '🎓', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
+  '01-beginner':      { icon: '🌱', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
+  '02-intermediate':  { icon: '📘', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
+  '03-advanced':      { icon: '🔥', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+  '04-professional':  { icon: '💼', color: '#06b6d4', bg: 'rgba(6,182,212,0.1)' },
+  '05-mastery':       { icon: '🏆', color: '#ffe566', bg: 'rgba(255,229,102,0.1)' },
 };
 
 export function getCategoryMeta(cat) {
@@ -30,6 +37,8 @@ export function getCategoryMeta(cat) {
 
 export function formatCategory(cat) {
   return (cat || '')
+    .replace(/^\d{2}-/, '') // strip leading module number for display
     .replace(/_/g, ' ')
+    .replace(/-/g, ' ')
     .replace(/\b\w/g, c => c.toUpperCase());
 }

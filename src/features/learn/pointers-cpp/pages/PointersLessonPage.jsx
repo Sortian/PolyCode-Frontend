@@ -125,7 +125,7 @@ export default function PointersLessonPage() {
 
   useEffect(() => {
     setNoteDraft(notesMap[lessonId] || "");
-  }, [lessonId, notesMap]);
+  }, [lessonId]);
 
   useEffect(() => {
     setConfidence(localStorage.getItem(`pointers_cpp_confidence_${lessonId}`) || "");

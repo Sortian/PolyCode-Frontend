@@ -64,22 +64,22 @@ export default function useOopsProgress() {
   const completedMap = useMemo(() => {
     if (remoteProgress) return progressToMap(remoteProgress);
     return readJson(LOCAL_KEY, {});
-  }, [remoteProgress]);
+  }, [remoteProgress, localVersion]);
 
   const savedCodeMap = useMemo(() => {
     if (remoteProgress) return savedCodeToMap(remoteProgress);
     return readJson(LOCAL_CODE_KEY, {});
-  }, [remoteProgress]);
+  }, [remoteProgress, localVersion]);
 
   const notesMap = useMemo(() => {
     if (remoteProgress) return notesToMap(remoteProgress);
     return readJson(LOCAL_NOTES_KEY, {});
-  }, [remoteProgress]);
+  }, [remoteProgress, localVersion]);
 
   const bookmarks = useMemo(() => {
     if (remoteProgress) return remoteProgress.bookmarks || [];
     return readJson(LOCAL_BOOKMARKS_KEY, []);
-  }, [remoteProgress]);
+  }, [remoteProgress, localVersion]);
 
   const lastLessonId = remoteProgress
     ? remoteProgress.lastLessonId

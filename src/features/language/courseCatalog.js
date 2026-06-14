@@ -99,6 +99,17 @@ export const languageCourses = {
       accent: "#059669",
     },
   ],
+  javascript: [
+    {
+      title: "JavaScript Fundamentals",
+      tag: "Interactive Course",
+      icon: Grid3x3,
+      description:
+        "Variables, logic, functions, arrays, and objects with friendly theory and hands-on JS challenges.",
+      href: "/learn/js-fundamentals",
+      accent: "#f59e0b",
+    },
+  ],
 };
 
 /** Navbar learn links per language (mirrors languageCourses). */
@@ -115,6 +126,7 @@ export const learnNavByLanguage = {
     { label: "NumPy", to: "/learn/numpy-py" },
     { label: "Pandas", to: "/learn/pandas-py" },
   ],
+  javascript: [{ label: "JS Basics", to: "/learn/js-fundamentals" }],
 };
 
 /** Infer stack from an active /learn/* route when language is not set. */
@@ -130,6 +142,9 @@ export function inferLanguageFromLearnPath(pathname = "") {
     pathname.startsWith("/learn/pandas-py")
   ) {
     return "python";
+  }
+  if (pathname.startsWith("/learn/js-fundamentals")) {
+    return "javascript";
   }
   return null;
 }

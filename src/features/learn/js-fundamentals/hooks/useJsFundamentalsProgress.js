@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAuth } from "../../../auth/context/AuthContext";
 
-const LOCAL_KEY = "pointers_cpp_progress";
-const LOCAL_CODE_KEY = "pointers_cpp_saved_code";
-const LOCAL_NOTES_KEY = "pointers_cpp_notes";
-const LOCAL_BOOKMARKS_KEY = "pointers_cpp_bookmarks";
-const LOCAL_LAST_KEY = "pointers_cpp_last_lesson";
+const LOCAL_KEY = "js_fundamentals_progress";
+const LOCAL_CODE_KEY = "js_fundamentals_saved_code";
+const LOCAL_NOTES_KEY = "js_fundamentals_notes";
+const LOCAL_BOOKMARKS_KEY = "js_fundamentals_bookmarks";
+const LOCAL_LAST_KEY = "js_fundamentals_last_lesson";
 
 function readJson(key, fallback) {
   try {
@@ -15,15 +15,19 @@ function readJson(key, fallback) {
   }
 }
 
-export default function usePointersProgress() {
-  const { user } = useAuth();
+export default function useJsFundamentalsProgress() {
+  const { user, isAuthenticated } = useAuth();
   const [localVersion, setLocalVersion] = useState(0);
-  const refreshLocal = useCallback(() => setLocalVersion((value) => value + 1), []);
+  const refreshLocal = useCallback(() => setLocalVersion((v) => v + 1), []);
 
-  const completedMap = useMemo(() => readJson(LOCAL_KEY, {}), [localVersion]);
-  const savedCodeMap = useMemo(
-    () => readJson(LOCAL_CODE_KEY, {}),
+  const localCompletedMap = useMemo(
+    () => readJson(LOCAL_KEY, {}),
     [localVersion],
+  );
+  const completedMap = isAuthenticated ? localCompletedMap : {};
+  const savedCodeMap = useMemo(
+    () => (isAuthenticated ? readJson(LOCAL_CODE_KEY, {}) : {}),
+    [isAuthenticated, localVersion],
   );
   const notesMap = useMemo(() => readJson(LOCAL_NOTES_KEY, {}), [localVersion]);
   const bookmarks = useMemo(
@@ -34,13 +38,14 @@ export default function usePointersProgress() {
 
   const completeLesson = useCallback(
     async (lesson) => {
+      if (!isAuthenticated) return;
       const current = readJson(LOCAL_KEY, {});
       current[lesson.id] = { xp: lesson.xp, at: Date.now() };
       localStorage.setItem(LOCAL_KEY, JSON.stringify(current));
       localStorage.setItem(LOCAL_LAST_KEY, lesson.id);
       refreshLocal();
     },
-    [refreshLocal],
+    [isAuthenticated, refreshLocal],
   );
 
   const rememberLesson = useCallback(
@@ -53,12 +58,13 @@ export default function usePointersProgress() {
 
   const saveCode = useCallback(
     async (lessonId, code) => {
+      if (!isAuthenticated) return;
       const current = readJson(LOCAL_CODE_KEY, {});
       current[lessonId] = code;
       localStorage.setItem(LOCAL_CODE_KEY, JSON.stringify(current));
       refreshLocal();
     },
-    [refreshLocal],
+    [isAuthenticated, refreshLocal],
   );
 
   const saveNote = useCallback(
@@ -87,7 +93,8 @@ export default function usePointersProgress() {
 
   return {
     user,
-    syncState: "local",
+    isAuthenticated,
+    syncState: isAuthenticated ? "local" : "guest",
     remoteProgress: null,
     completedMap,
     savedCodeMap,
