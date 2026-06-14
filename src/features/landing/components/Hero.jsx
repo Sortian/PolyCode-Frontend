@@ -1,4 +1,5 @@
 import React from "react";
+import LanguagePickerSection from "./LanguagePickerSection";
 import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
@@ -28,9 +29,9 @@ export default function Hero() {
             mentoring, and built-in security analysis in one platform.
           </p>
           <div className="landing-hero-actions">
-            <button className="landing-btn-primary">Get Started</button>
-
-            <button className="landing-btn-secondary">Watch Demo</button>
+            <a href="#get-started" className="landing-btn-primary">
+              Get Started
+            </a>
           </div>
         </motion.div>
 

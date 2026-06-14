@@ -338,6 +338,7 @@ NAVBAR
   );
   border-bottom-color: var(--acid, #ffe566);
 }
+
 /* ── Primary CTA button ── */
 .landing-btn-primary {
   display: inline-flex;
@@ -377,6 +378,188 @@ NAVBAR
   .landing-navbar-inner {
     justify-content: space-between;
   }
+}
+.ln-dropdown--languages {
+  width: 340px;
+}
+
+.ln-lang-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.ln-lang-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 9px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.ln-lang-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ln-lang-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f0f0ff;
+}
+
+.ln-lang-arrow {
+  color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition:
+    color 0.15s,
+    transform 0.15s;
+}
+
+.ln-lang-item:hover .ln-lang-arrow {
+  color: #a78bfa;
+  transform: translateX(3px);
+}
+/* ══════════════════════════════════════════════
+   Courses DROPDOWN
+══════════════════════════════════════════════ */
+
+.ln-dropdown-wrap {
+  position: relative;
+}
+
+.ln-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ln-chevron {
+  transition: transform 0.2s ease;
+  opacity: 0.6;
+}
+
+.ln-dropdown-trigger--open .ln-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* dropdown panel */
+.ln-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  background: rgba(8, 11, 20, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 0.6rem;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  animation: ln-dropdown-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  z-index: 200;
+}
+
+@keyframes ln-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.ln-dropdown-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 0.25rem 0.75rem 0.5rem;
+  margin: 0;
+}
+
+/* dropdown item */
+.ln-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 9px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.ln-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ln-dropdown-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--lang-accent) 12%, transparent);
+  color: var(--lang-accent);
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+
+.ln-dropdown-item:hover .ln-dropdown-icon {
+  background: color-mix(in srgb, var(--lang-accent) 22%, transparent);
+  transform: scale(1.08);
+}
+
+.ln-dropdown-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.ln-dropdown-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #f0f0ff;
+}
+
+.ln-dropdown-sub {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.ln-dropdown-arrow {
+  color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition:
+    color 0.15s,
+    transform 0.15s;
+}
+
+.ln-dropdown-item:hover .ln-dropdown-arrow {
+  color: var(--lang-accent);
+  transform: translateX(3px);
 }
 
 /* ==========================================
@@ -3169,6 +3352,73 @@ NAVBAR
   }
 }
 
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+}
+
+.lang-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.18s;
+}
+
+.lang-card:hover {
+  border-color: var(--lang-color);
+  background: var(--lang-color-alpha);
+  transform: translateY(-3px);
+}
+
+.lang-card.selected {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.lang-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-icon-wrapper img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.lang-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.lang-card:hover .lang-name {
+  color: var(--lang-color);
+}
+
+@media (max-width: 900px) {
+  .lang-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .lang-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 /* ============================================================
      HOW IT WORKS — connected horizontal flow
      ============================================================ */
