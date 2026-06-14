@@ -65,7 +65,7 @@ export default function NumpyLessonPage() {
     isAuthenticated,
     completedMap: progress,
     savedCodeMap,
-    notesMap,
+    getLessonNote,
     bookmarks,
     completeLesson,
     rememberLesson,
@@ -113,8 +113,8 @@ export default function NumpyLessonPage() {
   }, [lessonId, rememberLesson]);
 
   useEffect(() => {
-    setNoteDraft(notesMap[lessonId] || "");
-  }, [lessonId]);
+    setNoteDraft(getLessonNote(lessonId));
+  }, [lessonId, getLessonNote]);
 
   useEffect(() => {
     setConfidence(localStorage.getItem(`numpy_py_confidence_${lessonId}`) || "");

@@ -26,7 +26,7 @@ export default function PandasLessonPage() {
     isAuthenticated,
     completedMap: progress,
     savedCodeMap,
-    notesMap,
+    getLessonNote,
     bookmarks,
     completeLesson,
     rememberLesson,
@@ -60,8 +60,8 @@ export default function PandasLessonPage() {
   }, [lessonId, rememberLesson]);
 
   useEffect(() => {
-    setNoteDraft(notesMap[lessonId] || "");
-  }, [lessonId]);
+    setNoteDraft(getLessonNote(lessonId));
+  }, [lessonId, getLessonNote]);
 
   useEffect(() => {
     setConfidence(

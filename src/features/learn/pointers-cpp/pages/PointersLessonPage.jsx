@@ -75,7 +75,7 @@ export default function PointersLessonPage() {
     user,
     completedMap: progress,
     savedCodeMap,
-    notesMap,
+    getLessonNote,
     bookmarks,
     completeLesson,
     rememberLesson,
@@ -124,8 +124,8 @@ export default function PointersLessonPage() {
   }, [lessonId, rememberLesson]);
 
   useEffect(() => {
-    setNoteDraft(notesMap[lessonId] || "");
-  }, [lessonId]);
+    setNoteDraft(getLessonNote(lessonId));
+  }, [lessonId, getLessonNote]);
 
   useEffect(() => {
     setConfidence(localStorage.getItem(`pointers_cpp_confidence_${lessonId}`) || "");

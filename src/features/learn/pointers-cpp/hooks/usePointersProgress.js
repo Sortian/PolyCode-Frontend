@@ -20,17 +20,26 @@ export default function usePointersProgress() {
   const [localVersion, setLocalVersion] = useState(0);
   const refreshLocal = useCallback(() => setLocalVersion((value) => value + 1), []);
 
-  const completedMap = useMemo(() => readJson(LOCAL_KEY, {}), [localVersion]);
-  const savedCodeMap = useMemo(
-    () => readJson(LOCAL_CODE_KEY, {}),
-    [localVersion],
-  );
-  const notesMap = useMemo(() => readJson(LOCAL_NOTES_KEY, {}), [localVersion]);
-  const bookmarks = useMemo(
-    () => readJson(LOCAL_BOOKMARKS_KEY, []),
-    [localVersion],
-  );
+  const localSnapshot = useMemo(() => {
+    void localVersion;
+    return {
+      completed: readJson(LOCAL_KEY, {}),
+      savedCode: readJson(LOCAL_CODE_KEY, {}),
+      notes: readJson(LOCAL_NOTES_KEY, {}),
+      bookmarks: readJson(LOCAL_BOOKMARKS_KEY, []),
+    };
+  }, [localVersion]);
+
+  const completedMap = localSnapshot.completed;
+  const savedCodeMap = localSnapshot.savedCode;
+  const notesMap = localSnapshot.notes;
+  const bookmarks = localSnapshot.bookmarks;
   const lastLessonId = localStorage.getItem(LOCAL_LAST_KEY);
+
+  const getLessonNote = useCallback(
+    (id) => localSnapshot.notes[id] || "",
+    [localSnapshot],
+  );
 
   const completeLesson = useCallback(
     async (lesson) => {
@@ -100,5 +109,6 @@ export default function usePointersProgress() {
     saveNote,
     toggleBookmark,
     addTime,
+    getLessonNote,
   };
 }

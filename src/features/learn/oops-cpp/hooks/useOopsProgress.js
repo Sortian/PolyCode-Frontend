@@ -62,21 +62,25 @@ export default function useOopsProgress() {
   }, [token, localVersion]);
 
   const completedMap = useMemo(() => {
+    void localVersion;
     if (remoteProgress) return progressToMap(remoteProgress);
     return readJson(LOCAL_KEY, {});
   }, [remoteProgress, localVersion]);
 
   const savedCodeMap = useMemo(() => {
+    void localVersion;
     if (remoteProgress) return savedCodeToMap(remoteProgress);
     return readJson(LOCAL_CODE_KEY, {});
   }, [remoteProgress, localVersion]);
 
   const notesMap = useMemo(() => {
+    void localVersion;
     if (remoteProgress) return notesToMap(remoteProgress);
     return readJson(LOCAL_NOTES_KEY, {});
   }, [remoteProgress, localVersion]);
 
   const bookmarks = useMemo(() => {
+    void localVersion;
     if (remoteProgress) return remoteProgress.bookmarks || [];
     return readJson(LOCAL_BOOKMARKS_KEY, []);
   }, [remoteProgress, localVersion]);
@@ -195,6 +199,11 @@ export default function useOopsProgress() {
     [token],
   );
 
+  const getLessonNote = useCallback(
+    (id) => notesMap[id] || "",
+    [notesMap],
+  );
+
   return {
     user,
     syncState,
@@ -210,5 +219,6 @@ export default function useOopsProgress() {
     saveNote,
     toggleBookmark,
     addTime,
+    getLessonNote,
   };
 }

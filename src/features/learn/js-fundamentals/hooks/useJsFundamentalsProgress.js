@@ -20,21 +20,26 @@ export default function useJsFundamentalsProgress() {
   const [localVersion, setLocalVersion] = useState(0);
   const refreshLocal = useCallback(() => setLocalVersion((v) => v + 1), []);
 
-  const localCompletedMap = useMemo(
-    () => readJson(LOCAL_KEY, {}),
-    [localVersion],
-  );
-  const completedMap = isAuthenticated ? localCompletedMap : {};
-  const savedCodeMap = useMemo(
-    () => (isAuthenticated ? readJson(LOCAL_CODE_KEY, {}) : {}),
-    [isAuthenticated, localVersion],
-  );
-  const notesMap = useMemo(() => readJson(LOCAL_NOTES_KEY, {}), [localVersion]);
-  const bookmarks = useMemo(
-    () => readJson(LOCAL_BOOKMARKS_KEY, []),
-    [localVersion],
-  );
+  const localSnapshot = useMemo(() => {
+    void localVersion;
+    return {
+      completed: readJson(LOCAL_KEY, {}),
+      savedCode: readJson(LOCAL_CODE_KEY, {}),
+      notes: readJson(LOCAL_NOTES_KEY, {}),
+      bookmarks: readJson(LOCAL_BOOKMARKS_KEY, []),
+    };
+  }, [localVersion]);
+
+  const completedMap = isAuthenticated ? localSnapshot.completed : {};
+  const savedCodeMap = isAuthenticated ? localSnapshot.savedCode : {};
+  const notesMap = localSnapshot.notes;
+  const bookmarks = localSnapshot.bookmarks;
   const lastLessonId = localStorage.getItem(LOCAL_LAST_KEY);
+
+  const getLessonNote = useCallback(
+    (id) => localSnapshot.notes[id] || "",
+    [localSnapshot],
+  );
 
   const completeLesson = useCallback(
     async (lesson) => {
@@ -107,5 +112,6 @@ export default function useJsFundamentalsProgress() {
     saveNote,
     toggleBookmark,
     addTime,
+    getLessonNote,
   };
 }

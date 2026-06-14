@@ -77,7 +77,7 @@ export default function LessonPage() {
     remoteProgress,
     completedMap: progress,
     savedCodeMap,
-    notesMap,
+    getLessonNote,
     bookmarks,
     completeLesson,
     rememberLesson,
@@ -126,8 +126,8 @@ export default function LessonPage() {
   }, [lessonId, rememberLesson]);
 
   useEffect(() => {
-    setNoteDraft(notesMap[lessonId] || "");
-  }, [lessonId]);
+    setNoteDraft(getLessonNote(lessonId));
+  }, [lessonId, getLessonNote]);
 
   useEffect(() => {
     setConfidence(localStorage.getItem(`oops_confidence_${lessonId}`) || "");

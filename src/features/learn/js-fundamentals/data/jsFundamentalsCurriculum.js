@@ -30,10 +30,6 @@ function diagram(title, nodes) {
   return { type: "diagram", title, nodes };
 }
 
-function code(label, content) {
-  return { type: "code", lang: "javascript", label, content };
-}
-
 export const JS_FUNDAMENTALS_CHAPTERS = [
   {
     id: "intro",
