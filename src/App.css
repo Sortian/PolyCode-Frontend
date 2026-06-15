@@ -8839,14 +8839,14 @@ body {
 .certificate-awarded {
   text-align: center;
 
-  margin-top: 10px;
+  margin-top: 5px;
 
   color: #6b7280;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .certificate-name {
-  font-size: 62px;
+  font-size: 48px;
 
   font-family: "Times New Roman", serif;
   font-style: italic;
@@ -8856,7 +8856,7 @@ body {
 
   text-align: center;
 
-  margin: 15px 0;
+  margin: 8px 0;
 }
 
 .certificate-text {
@@ -8869,7 +8869,7 @@ body {
 }
 
 .certificate-course {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 700;
 
   text-transform: uppercase;
@@ -8879,7 +8879,7 @@ body {
 
   text-align: center;
 
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* =========================
@@ -8888,9 +8888,9 @@ body {
 .certificate-stats {
   display: flex;
   justify-content: center;
-  gap: 100px;
+  gap: 60px;
 
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .certificate-stats div {
@@ -8900,7 +8900,7 @@ body {
 }
 
 .certificate-stats strong {
-  font-size: 30px;
+  font-size: 24px;
   color: #10b981;
 }
 
@@ -8916,9 +8916,9 @@ body {
   display: flex;
   justify-content: space-between;
 
-  margin-top: 30px;
+  margin-top: 12px;
 
-  padding: 0 80px;
+  padding: 0 60px;
 
   text-align: center;
 
@@ -8943,9 +8943,8 @@ body {
   justify-content: space-between;
   align-items: flex-end;
 
-  margin-top: auto;
-
-  padding-top: 20px;
+  margin-top: 10px;
+  padding-top: 10px;
 }
 
 .signature-block {
@@ -8955,12 +8954,12 @@ body {
 }
 
 .signature-image {
-  height: 100px;
+  height: 70px;
   margin-bottom: -15px;
 }
 
 .signature-line {
-  width: 220px;
+  width: 180px;
   border-bottom: 2px solid #111827;
 }
 
@@ -8975,8 +8974,8 @@ body {
 }
 
 .official-stamp {
-  width: 140px;
-  height: 140px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
 }
 
