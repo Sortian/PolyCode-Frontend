@@ -22,7 +22,7 @@ export const CATEGORY_META = {
   utilities:        { icon: '🛠️', color: '#f43f5e', bg: 'rgba(244,63,94,0.1)' },
   web_development:  { icon: '🌐', color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)' },
   src:              { icon: '📂', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)' },
-  // JavaScript certificate course modules
+  // Certificate course modules (all languages)
   '00-certification': { icon: '🎓', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
   '01-beginner':      { icon: '🌱', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
   '02-intermediate':  { icon: '📘', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },

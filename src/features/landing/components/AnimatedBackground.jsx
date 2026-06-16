@@ -17,8 +17,12 @@ const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   delay: i * 0.4,
 }));
 
-export default function AnimatedBackground() {
+export default function AnimatedBackground({ theme = "dark" }) {
   const reduceMotion = useReducedMotion();
+
+  if (theme === "light") {
+    return null;
+  }
 
   if (reduceMotion) {
     return <div className="landing-bg-wrap" />;
