@@ -10,15 +10,24 @@ import TryPythonSection from "../components/PythonCompiler";
 
 import "../landing.css";
 
-export default function LandingPage({ onLanguageSelect, continueLanguage }) {
+export default function LandingPage({
+  onLanguageSelect,
+  continueLanguage,
+  theme = "dark",
+  onToggleTheme,
+}) {
+  const isLight = theme === "light";
+
   return (
-    <div className="polycode-landing">
-      <AnimatedBackground />
+    <div
+      className={`polycode-landing${isLight ? " polycode-landing--light" : ""}`}
+    >
+      <AnimatedBackground theme={theme} />
       <div
         className="polycode-grid"
         style={{ position: "relative", minHeight: "100vh" }}
       >
-        <Navbar />
+        <Navbar theme={theme} onToggleTheme={onToggleTheme} />
         <main>
           <Hero />
 

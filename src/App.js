@@ -20,6 +20,8 @@ import "./styles/theme-light.css";
 import "./styles/stack-picker-dark.css";
 import "./styles/responsive.css";
 
+import LandingShell from "./features/landing/LandingShell";
+
 const LandingPage = lazy(() => import("./features/landing/pages/LandingPage"));
 const LanguageLandingPage = lazy(
   () => import("./features/language/pages/LanguageLandingPage"),
@@ -358,9 +360,10 @@ function AppRoutes() {
 
   React.useEffect(() => {
     localStorage.setItem("theme", theme);
-    // Bug fix: always apply the theme attribute, even on /select-language.
-    // StackPickerShell forces "dark" via its own useLayoutEffect and restores
-    // the real theme on unmount, so we don't need to skip this update.
+    // LandingShell and StackPickerShell manage document theme while mounted.
+    if (location.pathname === "/" || location.pathname === "/select-language") {
+      return;
+    }
     document.documentElement.setAttribute("data-theme", theme);
     document.body.classList.toggle("light-theme", theme === "light");
   }, [theme, location.pathname]);
@@ -379,12 +382,12 @@ function AppRoutes() {
         <Route
           path="/"
           element={
-            <ThemedShell theme={theme}>
-              <LandingPage
-                onLanguageSelect={handleLanguageSelect}
-                continueLanguage={selectedLanguage}
-              />
-            </ThemedShell>
+            <LandingShell
+              savedTheme={theme}
+              footer={<AppFooter />}
+              onLanguageSelect={handleLanguageSelect}
+              continueLanguage={selectedLanguage}
+            />
           }
         />
         <Route

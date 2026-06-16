@@ -8,6 +8,8 @@ import {
   Grid3x3,
   Table2,
   FileText,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { getLanguages } from "../../docs/services/api";
 
@@ -54,7 +56,7 @@ const COURSES = [
   },
 ];
 
-export default function Navbar() {
+export default function Navbar({ theme = "dark", onToggleTheme }) {
   const [coursesOpen, setCoursesOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [languages, setLanguages] = useState([]);
@@ -215,11 +217,31 @@ export default function Navbar() {
             </div>
           </nav>
 
-          {/* CTA */}
-          <a href="#get-started" className="landing-btn-primary">
-            Start Learning
-            <ArrowRight size={15} />
-          </a>
+          {/* Theme + CTA */}
+          <div className="landing-navbar-actions">
+            {onToggleTheme ? (
+              <button
+                type="button"
+                className="landing-theme-toggle"
+                onClick={onToggleTheme}
+                aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+                title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              >
+                {theme === "dark" ? (
+                  <Sun size={16} aria-hidden />
+                ) : (
+                  <Moon size={16} aria-hidden />
+                )}
+                <span className="landing-theme-toggle-label">
+                  {theme === "dark" ? "Light" : "Dark"}
+                </span>
+              </button>
+            ) : null}
+            <a href="#get-started" className="landing-btn-primary">
+              Start Learning
+              <ArrowRight size={15} />
+            </a>
+          </div>
         </div>
       </div>
     </header>
