@@ -1,9 +1,19 @@
-// src/features/learn/shared/CourseCertificate.jsx
-
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../auth/context/AuthContext";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import QRCode from "qrcode";
+
+function generateLocalCertId(userId, courseName) {
+  const slug = courseName
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "-")
+    .slice(0, 20);
+  const suffix = String(userId || "guest")
+    .slice(-6)
+    .toUpperCase();
+  return `PC-${slug}-${suffix}-${Date.now().toString(36).toUpperCase()}`;
+}
 
 export default function CourseCertificate({
   courseName,
@@ -13,14 +23,17 @@ export default function CourseCertificate({
 }) {
   const { user } = useAuth();
   const certificateRef = useRef();
-  const [shareUrl, setShareUrl] = useState(null); // 👈 add here
+  const certId = useRef(null);
+
+  const [qrDataUrl, setQrDataUrl] = useState(null);
+  const [downloading, setDownloading] = useState(false);
 
   const isComplete = completedCount >= totalLessons;
 
-  if (!isComplete) return null;
-
-  const username =
-    user?.name || user?.username || user?.email?.split("@")[0] || "Learner";
+  const userName =
+    user?.firstName && user?.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user?.username || "Learner";
 
   const issueDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
@@ -28,48 +41,60 @@ export default function CourseCertificate({
     day: "numeric",
   });
 
-  const certificateId = `PC-${courseName
-    .replace(/\s+/g, "-")
-    .toUpperCase()}-${Date.now().toString().slice(-6)}`;
+  useEffect(() => {
+    if (!isComplete) return;
 
-  const downloadPDF = async () => {
-    const canvas = await html2canvas(certificateRef.current, {
-      scale: 4,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-    });
+    if (!certId.current) {
+      certId.current = generateLocalCertId(user?._id || user?.id, courseName);
+    }
 
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "landscape",
-      unit: "mm",
-      format: "a4",
-    });
-    pdf.addImage(
-      imgData,
-      "PNG",
-      0,
-      0,
-      pdf.internal.pageSize.getWidth(),
-      pdf.internal.pageSize.getHeight(),
-    );
+    const courseSlug = courseName.toLowerCase().replace(/\s+/g, "-");
+    const qrUrl = `https://code.quantumlogicslimited.com/certificate/${courseSlug}/${certId.current}`;
 
-    // 👇 ADD FROM HERE
-    const blob = pdf.output("blob");
-    const formData = new FormData();
-    formData.append("certificate", blob, `${certificateId}.pdf`);
+    QRCode.toDataURL(qrUrl, {
+      width: 120,
+      margin: 1,
+      color: { dark: "#1e293b", light: "#ffffff" },
+    }).then(setQrDataUrl);
+  }, [isComplete, courseName, user]);
 
-    const res = await fetch("http://localhost:5000/api/certificates/upload", {
-      method: "POST",
-      body: formData,
-    });
+  async function downloadPDF() {
+    if (!certificateRef.current) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(certificateRef.current, {
+        scale: 4,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+      pdf.addImage(
+        imgData,
+        "PNG",
+        0,
+        0,
+        pdf.internal.pageSize.getWidth(),
+        pdf.internal.pageSize.getHeight(),
+      );
+      pdf.setProperties({
+        title: `${courseName} Certificate`,
+        subject: `Certificate ID: ${certId.current}`,
+        author: "PolyCode",
+      });
+      pdf.save(`${courseName.replace(/\s+/g, "-")}-${certId.current}.pdf`);
+    } catch (err) {
+      console.error("PDF error:", err.message);
+    } finally {
+      setDownloading(false);
+    }
+  }
 
-    const { url } = await res.json();
-    setShareUrl(url);
-    // 👆 TO HERE
-
-    pdf.save(`${courseName}-certificate.pdf`);
-  };
+  if (!isComplete) return null;
 
   return (
     <div className="certificate-wrapper">
@@ -84,7 +109,6 @@ export default function CourseCertificate({
             alt="PolyCode"
             className="certificate-logo1"
           />
-
           <img
             src="/images/logo.png"
             alt="QuantumLogics"
@@ -95,18 +119,13 @@ export default function CourseCertificate({
         <div className="certificate-company">
           PolyCode powered by QuantumLogics
         </div>
-
         <h1 className="certificate-title">CERTIFICATE OF COMPLETION</h1>
         <div className="cert-divider">✦ ✦ ✦</div>
-
         <p className="certificate-awarded">
           This certificate is proudly awarded to
         </p>
-
-        <h2 className="certificate-name">{username}</h2>
-
+        <h2 className="certificate-name">{userName}</h2>
         <p className="certificate-text">For successfully completing</p>
-
         <h3 className="certificate-course">{courseName}</h3>
 
         <div className="certificate-stats">
@@ -114,7 +133,6 @@ export default function CourseCertificate({
             <strong>{completedCount}</strong>
             <span>Lessons Completed</span>
           </div>
-
           <div>
             <strong>{earnedXP}</strong>
             <span>XP Earned</span>
@@ -126,12 +144,14 @@ export default function CourseCertificate({
             <strong>Issued On</strong>
             <p>{issueDate}</p>
           </div>
-
           <div>
             <strong>Certificate ID</strong>
-            <p>{certificateId}</p>
+            <p style={{ fontSize: "0.7em", wordBreak: "break-all" }}>
+              {certId.current}
+            </p>
           </div>
         </div>
+
         <div className="certificate-footer">
           <div className="signature-block">
             <img
@@ -139,26 +159,40 @@ export default function CourseCertificate({
               alt="Signature"
               className="signature-image"
             />
-            <div className="signature-line"></div>
+            <div className="signature-line" />
             <p className="signature-name">Amina</p>
-            <p className="signature-role">Course Instructor</p>{" "}
+            <p className="signature-role">Course Instructor</p>
           </div>
+
+          {qrDataUrl && (
+            <div className="certificate-qr-footer">
+              <img
+                src={qrDataUrl}
+                alt="Scan to verify"
+                width={80}
+                height={80}
+              />
+              <p>Scan to verify</p>
+            </div>
+          )}
+
           <img
             src="/images/stamp.png"
             alt="Official Stamp"
             className="official-stamp"
-          />{" "}
+          />
         </div>
       </div>
-      <button className="download-btn" onClick={downloadPDF}>
-        Download PDF Certificate
-      </button>
-      {shareUrl && (
-        <a href={shareUrl} target="_blank" rel="noopener noreferrer">
-          Share Certificate
-        </a>
-      )}{" "}
-      {/* 👈 add here */}
+
+      <div className="certificate-actions">
+        <button
+          className="download-btn"
+          onClick={downloadPDF}
+          disabled={downloading}
+        >
+          {downloading ? "Generating PDF…" : "⬇ Download PDF"}
+        </button>
+      </div>
     </div>
   );
 }

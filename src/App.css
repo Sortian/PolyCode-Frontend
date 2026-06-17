@@ -9022,3 +9022,11 @@ body {
 .download-btn:hover {
   opacity: 0.9;
 }
+.certificate-qr-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.6rem;
+  color: #64748b;
+  gap: 0.25rem;
+}
