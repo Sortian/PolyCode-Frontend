@@ -67,6 +67,12 @@ const JsFundamentalsLessonPage = lazy(
   () =>
     import("./features/learn/js-fundamentals/pages/JsFundamentalsLessonPage"),
 );
+const CsharpHub = lazy(
+  () => import("./features/learn/csharp-fundamentals/pages/CsharpHub"),
+);
+const CsharpLessonPage = lazy(
+  () => import("./features/learn/csharp-fundamentals/pages/CsharpLessonPage"),
+);
 
 const PageFallback = () => (
   <div className="loading">
@@ -356,6 +362,8 @@ function AppRoutes() {
       handleLanguageSelect("Python", { stay: true });
     } else if (path.startsWith("/learn/js-fundamentals")) {
       handleLanguageSelect("JavaScript", { stay: true });
+    } else if (path.startsWith("/learn/c-sharp-fundamentals")) {
+      handleLanguageSelect("C#", { stay: true });
     } else if (
       path.startsWith("/learn/oops-cpp") ||
       path.startsWith("/learn/pointers-cpp")
@@ -654,6 +662,37 @@ function AppRoutes() {
                 selectedLanguage={selectedLanguage}
               >
                 <JsFundamentalsLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+
+        <Route
+          path="/learn/c-sharp-fundamentals"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <CsharpHub />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/c-sharp-fundamentals/lesson/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <CsharpLessonPage />
               </LearnShell>
             </ThemedShell>
           }
