@@ -6,6 +6,7 @@ import {
   Play,
   Brain,
   Table2,
+  Terminal,
 } from "lucide-react";
 
 export function languageKey(value = "") {
@@ -108,6 +109,28 @@ export const languageCourses = {
         "Variables, logic, functions, arrays, and objects with friendly theory and hands-on JS challenges.",
       href: "/learn/js-fundamentals",
       accent: "#f59e0b",
+    },
+  ],
+  csharp: [
+    {
+      title: "C# Fundamentals",
+      tag: "Interactive Course",
+      icon: Terminal,
+      description:
+        "Master Object-Oriented syntax, variables, switch patterns, collections, and class encapsulation templates locally.",
+      href: "/learn/c-sharp-fundamentals",
+      accent: "#179c24",
+    },
+  ],
+  "c#": [
+    {
+      title: "C# Fundamentals",
+      tag: "Interactive Course",
+      icon: Terminal,
+      description:
+        "Master Object-Oriented syntax, variables, switch patterns, collections, and class encapsulation templates locally.",
+      href: "/learn/c-sharp-fundamentals",
+      accent: "#179c24",
     },
   ],
 };
