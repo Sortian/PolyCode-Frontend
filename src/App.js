@@ -12,7 +12,7 @@ import VerifyCertificatePage from "./features/learn/shared/VerifyCertificatePage
 import Navbar from "./features/navigation/components/Navbar";
 import Sidebar from "./features/navigation/components/Sidebar";
 import { PlaygroundProvider } from "./features/playground/context/PlaygroundContext";
-import { AuthProvider } from "./features/auth/context/AuthContext";
+import { AuthProvider, useAuth } from "./features/auth/context/AuthContext";
 import SelectionPins from "./shared/components/SelectionPins";
 import { LearnNavProvider } from "./features/learn/shared/LearnNavContext";
 import GlobalAssistant from "./features/assistant/components/GlobalAssistant";
@@ -290,6 +290,20 @@ function ThemedShell({ theme, children }) {
       <AppFooter />
     </div>
   );
+}
+
+function ProfileRedirect() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <PageFallback />;
+  }
+
+  if (user?.username) {
+    return <Navigate to={`/@${user.username}`} replace />;
+  }
+
+  return <Navigate to="/login" replace />;
 }
 
 /** Language picker is always dark — overrides global light theme on html/body */
@@ -705,6 +719,10 @@ function AppRoutes() {
         />
         <Route
           path="/profile"
+          element={<ProfileRedirect />}
+        />
+        <Route
+          path="/@:username"
           element={
             <ThemedShell theme={theme}>
               <LearnShell

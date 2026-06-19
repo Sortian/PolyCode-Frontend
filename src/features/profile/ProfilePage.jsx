@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../auth/context/AuthContext";
 import ProfileEditSection from "./components/ProfileEditSection";
 import ProfileHero from "./components/ProfileHero";
@@ -21,6 +21,7 @@ import {
 } from "../learn/pandas-py/data/pandasCurriculum";
 import usePandasProgress from "../learn/pandas-py/hooks/usePandasProgress";
 import CourseCertificate from "../learn/shared/CourseCertificate";
+import { getProfileByUsername } from "./services/profileApi";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MIN_ACTIVITY_DAYS = 30;
@@ -226,8 +227,17 @@ function getCompletedTrackCertificate(track) {
 }
 
 export default function ProfilePage() {
-  const { user, isAuthenticated } = useAuth();
+  const { username } = useParams();
+  const { user, isAuthenticated, loading } = useAuth();
   const [editOpen, setEditOpen] = React.useState(false);
+  const [publicUser, setPublicUser] = React.useState(null);
+  const [profileLoading, setProfileLoading] = React.useState(false);
+  const [profileError, setProfileError] = React.useState("");
+  const routeUsername = username?.trim().toLowerCase();
+  const signedInUsername = user?.username?.toLowerCase();
+  const isOwnProfile =
+    !routeUsername || Boolean(signedInUsername && routeUsername === signedInUsername);
+  const profileUser = isOwnProfile ? user : publicUser;
   const oops = useOopsProgress();
   const pointers = usePointersProgress();
   const numpy = useNumpyProgress();
@@ -292,6 +302,36 @@ export default function ProfilePage() {
   ].filter(Boolean);
 
   React.useEffect(() => {
+    if (!routeUsername || routeUsername === signedInUsername) {
+      setPublicUser(null);
+      setProfileError("");
+      return undefined;
+    }
+
+    let cancelled = false;
+    setProfileLoading(true);
+    setProfileError("");
+
+    getProfileByUsername(routeUsername)
+      .then((data) => {
+        if (!cancelled) setPublicUser(data.user);
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setPublicUser(null);
+          setProfileError(error.message || "Profile not found");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setProfileLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [routeUsername, signedInUsername]);
+
+  React.useEffect(() => {
     const node = activityWrapRef.current;
     if (!node) return undefined;
 
@@ -315,20 +355,44 @@ export default function ProfilePage() {
     };
   }, []);
 
+  if (loading || profileLoading) {
+    return (
+      <main className="profile-page">
+        <section className="profile-empty-state">
+          <h1>Loading profile...</h1>
+        </section>
+      </main>
+    );
+  }
+
+  if (profileError || !profileUser) {
+    return (
+      <main className="profile-page">
+        <section className="profile-empty-state">
+          <h1>Profile not found</h1>
+          <p>{profileError || "This user does not exist or is not active."}</p>
+          <Link to="/">Go home</Link>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="profile-page">
       <ProfileHero
-        user={user}
-        isAuthenticated={isAuthenticated}
+        user={profileUser}
+        isAuthenticated={isAuthenticated && isOwnProfile}
         totalStreak={totalStreak}
         editOpen={editOpen}
         onToggleEdit={() => setEditOpen((open) => !open)}
       />
 
-      <ProfileEditSection
-        open={editOpen}
-        onClose={() => setEditOpen(false)}
-      />
+      {isOwnProfile && (
+        <ProfileEditSection
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+        />
+      )}
 
       <section className="profile-overview-grid">
         <div>

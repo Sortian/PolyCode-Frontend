@@ -5607,6 +5607,30 @@ body {
   gap: 22px;
 }
 
+.profile-empty-state {
+  border: 1px solid var(--border, #1e2433);
+  border-radius: 16px;
+  background: var(--ink-2, #0d1117);
+  padding: 36px 24px;
+  text-align: center;
+}
+
+.profile-empty-state h1 {
+  margin: 0 0 10px;
+  color: var(--txt-0, #f8fafc);
+}
+
+.profile-empty-state p {
+  margin: 0 0 18px;
+  color: var(--txt-2, #94a3b8);
+}
+
+.profile-empty-state a {
+  color: var(--acid, #10b981);
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .profile-track-card {
   padding: 18px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);

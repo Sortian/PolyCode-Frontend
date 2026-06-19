@@ -28,6 +28,14 @@ export async function updateProfile(token, userId, payload) {
   return readResponse(res, "Could not update profile");
 }
 
+export async function getProfileByUsername(username) {
+  const cleanUsername = String(username || "").replace(/^@/, "").trim();
+  const res = await fetch(
+    `${getApiBase()}/auth/username/${encodeURIComponent(cleanUsername)}`,
+  );
+  return readResponse(res, "Could not load profile");
+}
+
 export async function uploadProfileAvatar(token, userId, imageBase64) {
   const res = await fetch(`${getApiBase()}/auth/user/${userId}/avatar`, {
     method: "POST",

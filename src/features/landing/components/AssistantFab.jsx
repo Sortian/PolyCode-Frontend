@@ -323,7 +323,6 @@ export default function AssistantFab() {
   const sessionRef = useRef(session);
   const dockRef = useRef(null);
   const dragStateRef = useRef(null);
-  const ignoreNextDockClickRef = useRef(false);
   const [dockPosition, setDockPosition] = useState(() => loadDockPosition());
   const [draggingDock, setDraggingDock] = useState(false);
 
@@ -611,7 +610,6 @@ export default function AssistantFab() {
     setDraggingDock(false);
 
     if (state.moved) {
-      ignoreNextDockClickRef.current = true;
       const rect = dockRef.current?.getBoundingClientRect();
       const nextPosition = clampDockPosition(
         {
@@ -622,14 +620,22 @@ export default function AssistantFab() {
       );
       setDockPosition(nextPosition);
       saveDockPosition(nextPosition);
+      return;
     }
+
+    setOpen(true);
+  };
+
+  const handleDockPointerCancel = (event) => {
+    const state = dragStateRef.current;
+    if (!state || state.pointerId !== event.pointerId) return;
+
+    dragStateRef.current = null;
+    dockRef.current?.releasePointerCapture?.(event.pointerId);
+    setDraggingDock(false);
   };
 
   const openFromDock = () => {
-    if (ignoreNextDockClickRef.current) {
-      ignoreNextDockClickRef.current = false;
-      return;
-    }
     setOpen(true);
   };
 
@@ -875,7 +881,7 @@ export default function AssistantFab() {
           onPointerDown={handleDockPointerDown}
           onPointerMove={handleDockPointerMove}
           onPointerUp={handleDockPointerUp}
-          onPointerCancel={handleDockPointerUp}
+          onPointerCancel={handleDockPointerCancel}
           initial={reduceMotion ? {} : { x: 40, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 24 }}
