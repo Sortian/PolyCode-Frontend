@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ChevronDown, Moon, Sun } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { getLanguages } from "../../docs/services/api";
 import { ALL_COURSES as COURSES } from "../../learn/shared/allCourses";
+import ThemeSettingsMenu from "../../../shared/theme/ThemeSettingsMenu";
 
 const NAV_LINKS = [
   { href: "#modules", label: "Features" },
   { href: "/hub", label: "Docs" },
 ];
 
-export default function Navbar({ theme = "dark", onToggleTheme }) {
+export default function Navbar({ theme = "dark", onThemeChange }) {
   const [coursesOpen, setCoursesOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [languages, setLanguages] = useState([]);
@@ -171,24 +172,12 @@ export default function Navbar({ theme = "dark", onToggleTheme }) {
 
           {/* Theme + CTA */}
           <div className="landing-navbar-actions">
-            {onToggleTheme ? (
-              <button
-                type="button"
-                className="landing-theme-toggle"
-                onClick={onToggleTheme}
-                aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-                title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-              >
-                {theme === "dark" ? (
-                  <Sun size={16} aria-hidden />
-                ) : (
-                  <Moon size={16} aria-hidden />
-                )}
-                <span className="landing-theme-toggle-label">
-                  {theme === "dark" ? "Light" : "Dark"}
-                </span>
-              </button>
-            ) : null}
+            <ThemeSettingsMenu
+              theme={theme}
+              onThemeChange={onThemeChange}
+              buttonClassName="landing-theme-settings-btn"
+              panelClassName="landing-theme-settings-panel"
+            />
             <a href="#get-started" className="landing-btn-primary">
               Start Learning
               <ArrowRight size={15} />

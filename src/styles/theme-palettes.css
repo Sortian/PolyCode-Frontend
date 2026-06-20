@@ -1,0 +1,89 @@
+/* Alternate dark palettes — scoped under .app.theme-* */
+
+.app.theme-classic {
+  --ink: #0c0a06;
+  --ink-2: #12100a;
+  --ink-3: #18140c;
+  --ink-4: #1e1910;
+  --border: rgba(255, 176, 0, 0.14);
+  --border-2: rgba(255, 176, 0, 0.22);
+  --txt-0: #fff8e7;
+  --txt-1: #e8dcc0;
+  --txt-2: #a89878;
+  --txt-3: #6f6248;
+  --acid: #ffb000;
+  --acid-rgb: 255, 176, 0;
+  --accent: #ffb000;
+  --acid-glow: rgba(255, 176, 0, 0.22);
+  --acid-dim: rgba(255, 176, 0, 0.12);
+  --cyan: #33ff99;
+  --cyan-dim: rgba(51, 255, 153, 0.12);
+  --violet: #d4a017;
+  --bg-card: #141008;
+}
+
+.app.theme-midnight {
+  --ink: #0b0f1a;
+  --ink-2: #0f1424;
+  --ink-3: #131a2e;
+  --ink-4: #171f38;
+  --border: rgba(129, 140, 248, 0.16);
+  --border-2: rgba(129, 140, 248, 0.24);
+  --txt-0: #eef2ff;
+  --txt-1: #c7d2fe;
+  --txt-2: #94a3b8;
+  --txt-3: #64748b;
+  --acid: #818cf8;
+  --acid-rgb: 129, 140, 248;
+  --accent: #818cf8;
+  --acid-glow: rgba(129, 140, 248, 0.24);
+  --acid-dim: rgba(129, 140, 248, 0.12);
+  --cyan: #a5b4fc;
+  --cyan-dim: rgba(165, 180, 252, 0.12);
+  --violet: #c4b5fd;
+  --bg-card: #12182b;
+}
+
+.app.theme-ocean {
+  --ink: #041016;
+  --ink-2: #061820;
+  --ink-3: #082028;
+  --ink-4: #0a2830;
+  --border: rgba(45, 212, 191, 0.14);
+  --border-2: rgba(45, 212, 191, 0.22);
+  --txt-0: #ecfeff;
+  --txt-1: #cffafe;
+  --txt-2: #7dd3fc;
+  --txt-3: #5eead4;
+  --acid: #2dd4bf;
+  --acid-rgb: 45, 212, 191;
+  --accent: #2dd4bf;
+  --acid-glow: rgba(45, 212, 191, 0.22);
+  --acid-dim: rgba(45, 212, 191, 0.12);
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34, 211, 238, 0.12);
+  --violet: #38bdf8;
+  --bg-card: #071820;
+}
+
+.app.theme-slate {
+  --ink: #111318;
+  --ink-2: #151820;
+  --ink-3: #191c24;
+  --ink-4: #1d212c;
+  --border: rgba(148, 163, 184, 0.14);
+  --border-2: rgba(148, 163, 184, 0.22);
+  --txt-0: #f8fafc;
+  --txt-1: #e2e8f0;
+  --txt-2: #94a3b8;
+  --txt-3: #64748b;
+  --acid: #cbd5e1;
+  --acid-rgb: 203, 213, 225;
+  --accent: #e2e8f0;
+  --acid-glow: rgba(226, 232, 240, 0.16);
+  --acid-dim: rgba(226, 232, 240, 0.08);
+  --cyan: #94a3b8;
+  --cyan-dim: rgba(148, 163, 184, 0.12);
+  --violet: #cbd5e1;
+  --bg-card: #171a22;
+}

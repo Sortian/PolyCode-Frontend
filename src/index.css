@@ -400,7 +400,7 @@ textarea {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 200px;
+  min-width: 260px;
   background: var(--ink-2, #0d1117);
   border: 1px solid var(--border, #1e2433);
   border-radius: 10px;
@@ -447,6 +447,165 @@ textarea {
 
 .navbar-dropdown-logout {
   color: var(--red, #ff4d6d);
+}
+
+/* Theme settings menu */
+.theme-settings {
+  position: relative;
+}
+
+.theme-settings-btn,
+.landing-theme-settings-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--txt-1, #c0c8e0);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.theme-settings-btn:hover,
+.landing-theme-settings-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--txt-0, #fff);
+}
+
+.theme-settings-panel,
+.landing-theme-settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(280px, calc(100vw - 24px));
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  background: var(--ink-2, #0d1117);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  z-index: 220;
+}
+
+.theme-settings-panel--in-dropdown {
+  position: static;
+  width: 100%;
+  margin-top: 0.25rem;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.theme-settings-heading,
+.theme-settings-dropdown-label {
+  padding: 0.35rem 0.65rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--txt-3, #60607a);
+}
+
+.theme-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.theme-settings-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--txt-1, #c0c8e0);
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+}
+
+.theme-settings-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.theme-settings-option--active {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.theme-settings-swatch {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.theme-settings-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.theme-settings-copy strong {
+  font-size: 0.82rem;
+  color: var(--txt-0, #fff);
+}
+
+.theme-settings-copy small {
+  font-size: 0.72rem;
+  color: var(--txt-2, #a0a0b8);
+}
+
+.theme-settings-check {
+  color: var(--accent, #ffe566);
+  flex-shrink: 0;
+}
+
+.navbar-dropdown-theme {
+  padding: 0.35rem 0.5rem 0.65rem;
+  border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+}
+
+.app.theme-light .theme-settings-btn,
+.app.theme-light .landing-theme-settings-btn {
+  background: #fff;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+.app.theme-light .theme-settings-btn:hover,
+.app.theme-light .landing-theme-settings-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.app.theme-light .theme-settings-panel,
+.app.theme-light .landing-theme-settings-panel {
+  background: #fff;
+  border-color: #e2e8f0;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+}
+
+.app.theme-light .theme-settings-option--active {
+  background: rgba(79, 70, 229, 0.08);
+  border-color: rgba(79, 70, 229, 0.18);
 }
 
 /* Light theme overrides */

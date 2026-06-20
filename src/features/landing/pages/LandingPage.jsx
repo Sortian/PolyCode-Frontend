@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import StatsSection from "../components/StatsSection";
 import CourseSlider from "../components/CourseSlider";
 import TryPythonSection from "../components/PythonCompiler";
+import { isLightTheme } from "../../../shared/theme/themes";
 
 import "../landing.css";
 
@@ -14,9 +15,9 @@ export default function LandingPage({
   onLanguageSelect,
   continueLanguage,
   theme = "dark",
-  onToggleTheme,
+  onThemeChange,
 }) {
-  const isLight = theme === "light";
+  const isLight = isLightTheme(theme);
 
   return (
     <div
@@ -27,7 +28,7 @@ export default function LandingPage({
         className="polycode-grid"
         style={{ position: "relative", minHeight: "100vh" }}
       >
-        <Navbar theme={theme} onToggleTheme={onToggleTheme} />
+        <Navbar theme={theme} onThemeChange={onThemeChange} />
         <main>
           <Hero />
 

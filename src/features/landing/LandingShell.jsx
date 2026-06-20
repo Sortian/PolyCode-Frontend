@@ -1,8 +1,13 @@
 import React from "react";
 import LandingPage from "./pages/LandingPage";
+import {
+  applyDocumentTheme,
+  clearDocumentThemeInlineStyles,
+  getAppThemeClass,
+} from "../../shared/theme/themes";
 
 /**
- * Landing page theme follows the global app theme and stays in sync when toggled.
+ * Landing page theme follows the global app theme and stays in sync when changed.
  */
 export default function LandingShell({
   savedTheme,
@@ -10,50 +15,20 @@ export default function LandingShell({
   onLanguageSelect,
   continueLanguage,
 }) {
-  const [landingTheme, setLandingTheme] = React.useState(savedTheme);
-
-  React.useEffect(() => {
-    setLandingTheme(savedTheme);
+  React.useLayoutEffect(() => {
+    applyDocumentTheme(savedTheme, { landing: true });
+    return () => clearDocumentThemeInlineStyles();
   }, [savedTheme]);
 
-  React.useLayoutEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-
-    html.setAttribute("data-theme", landingTheme);
-    body.classList.toggle("light-theme", landingTheme === "light");
-
-    if (landingTheme === "light") {
-      html.style.backgroundColor = "#f4f6fa";
-      body.style.backgroundColor = "#f4f6fa";
-    } else {
-      html.style.backgroundColor = "#07090f";
-      body.style.backgroundColor = "#07090f";
-    }
-
-    return () => {
-      html.style.backgroundColor = "";
-      body.style.backgroundColor = "";
-      html.setAttribute("data-theme", savedTheme);
-      body.classList.toggle("light-theme", savedTheme === "light");
-    };
-  }, [landingTheme, savedTheme]);
-
-  const toggleLandingTheme = React.useCallback(() => {
-    setLandingTheme((current) => {
-      const next = current === "dark" ? "light" : "dark";
-      onThemeChange?.(next);
-      return next;
-    });
-  }, [onThemeChange]);
+  const themeClass = getAppThemeClass(savedTheme);
 
   return (
-    <div className={`app ${landingTheme === "light" ? "theme-light" : ""}`}>
+    <div className={`app${themeClass ? ` ${themeClass}` : ""}`}>
       <LandingPage
         onLanguageSelect={onLanguageSelect}
         continueLanguage={continueLanguage}
-        theme={landingTheme}
-        onToggleTheme={toggleLandingTheme}
+        theme={savedTheme}
+        onThemeChange={onThemeChange}
       />
     </div>
   );

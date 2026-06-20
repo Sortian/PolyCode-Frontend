@@ -1,0 +1,116 @@
+/* Learn hub + certificate surfaces — theme-aware tokens */
+
+.app {
+  --learn-hero-bg:
+    linear-gradient(135deg, rgba(0, 122, 204, 0.14), transparent 42%),
+    var(--vscode-panel, #252526);
+  --learn-hero-border: var(--vscode-border, #3c3c3c);
+  --learn-card-bg: color-mix(in srgb, var(--vscode-panel, #252526) 92%, transparent);
+  --learn-card-bg-solid: rgba(37, 37, 38, 0.92);
+  --learn-card-border: var(--vscode-border, #3c3c3c);
+  --learn-card-title: var(--txt-0, #f0f0ff);
+  --learn-card-muted: var(--txt-2, #6e7891);
+  --learn-action-bg: var(--vscode-blue, #007acc);
+  --learn-action-text: #ffffff;
+  --learn-pill-bg: rgba(0, 212, 255, 0.08);
+  --learn-pill-border: rgba(0, 212, 255, 0.22);
+  --learn-pill-text: var(--cyan, #00d4ff);
+  --learn-tile-bg: var(--ink-2, #0d1117);
+  --learn-tile-border: var(--border, #1e2433);
+  --learn-cert-bg:
+    linear-gradient(135deg, rgba(var(--acid-rgb), 0.1), transparent 42%),
+    color-mix(in srgb, var(--bg-card, #080a14) 92%, transparent);
+  --learn-cert-label: var(--accent, var(--acid, #ffe566));
+  --learn-cert-title: var(--txt-0, #f8fafc);
+  --learn-cert-muted: var(--txt-2, #94a3b8);
+  --learn-cert-btn-bg: var(--accent, var(--acid, #ffe566));
+  --learn-cert-btn-text: #05070f;
+}
+
+.app.theme-light {
+  --learn-hero-bg:
+    linear-gradient(135deg, rgba(79, 70, 229, 0.08), transparent 46%),
+    #ffffff;
+  --learn-hero-border: rgba(15, 23, 42, 0.1);
+  --learn-card-bg: #ffffff;
+  --learn-card-bg-solid: #ffffff;
+  --learn-card-border: rgba(15, 23, 42, 0.1);
+  --learn-card-title: #0f172a;
+  --learn-card-muted: #64748b;
+  --learn-action-bg: #2563eb;
+  --learn-action-text: #ffffff;
+  --learn-pill-bg: rgba(37, 99, 235, 0.08);
+  --learn-pill-border: rgba(37, 99, 235, 0.18);
+  --learn-pill-text: #2563eb;
+  --learn-tile-bg: #ffffff;
+  --learn-tile-border: rgba(15, 23, 42, 0.1);
+  --learn-cert-bg:
+    linear-gradient(135deg, rgba(79, 70, 229, 0.07), transparent 42%),
+    #ffffff;
+  --learn-cert-label: #4f46e5;
+  --learn-cert-title: #0f172a;
+  --learn-cert-muted: #64748b;
+  --learn-cert-btn-bg: #4f46e5;
+  --learn-cert-btn-text: #ffffff;
+}
+
+.app.theme-light .oops-hero,
+.app.theme-light .oops-resume-panel,
+.app.theme-light .oops-tool-panel,
+.app.theme-light .oops-chapter-card,
+.app.theme-light .profile-certificate-card {
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.app.theme-classic {
+  --learn-hero-bg:
+    linear-gradient(135deg, rgba(255, 176, 0, 0.12), transparent 44%),
+    var(--bg-card, #141008);
+  --learn-card-bg-solid: rgba(24, 20, 12, 0.94);
+  --learn-pill-bg: rgba(51, 255, 153, 0.08);
+  --learn-pill-border: rgba(51, 255, 153, 0.2);
+  --learn-pill-text: #33ff99;
+  --learn-action-bg: #ffb000;
+  --learn-action-text: #1a1200;
+  --learn-cert-btn-bg: #ffb000;
+  --learn-cert-btn-text: #1a1200;
+}
+
+.app.theme-midnight {
+  --learn-hero-bg:
+    linear-gradient(135deg, rgba(129, 140, 248, 0.16), transparent 44%),
+    var(--bg-card, #12182b);
+  --learn-card-bg-solid: rgba(19, 26, 46, 0.94);
+  --learn-pill-bg: rgba(165, 180, 252, 0.1);
+  --learn-pill-border: rgba(165, 180, 252, 0.22);
+  --learn-pill-text: #a5b4fc;
+  --learn-action-bg: #6366f1;
+  --learn-cert-btn-bg: #6366f1;
+  --learn-cert-btn-text: #ffffff;
+}
+
+.app.theme-ocean {
+  --learn-hero-bg:
+    linear-gradient(135deg, rgba(45, 212, 191, 0.14), transparent 44%),
+    var(--bg-card, #071820);
+  --learn-card-bg-solid: rgba(8, 32, 40, 0.94);
+  --learn-pill-bg: rgba(34, 211, 238, 0.1);
+  --learn-pill-border: rgba(34, 211, 238, 0.22);
+  --learn-pill-text: #22d3ee;
+  --learn-action-bg: #0891b2;
+  --learn-cert-btn-bg: #0891b2;
+  --learn-cert-btn-text: #ffffff;
+}
+
+.app.theme-slate {
+  --learn-hero-bg:
+    linear-gradient(135deg, rgba(148, 163, 184, 0.12), transparent 44%),
+    var(--bg-card, #171a22);
+  --learn-card-bg-solid: rgba(25, 28, 36, 0.94);
+  --learn-pill-bg: rgba(148, 163, 184, 0.1);
+  --learn-pill-border: rgba(148, 163, 184, 0.22);
+  --learn-pill-text: #cbd5e1;
+  --learn-action-bg: #475569;
+  --learn-cert-btn-bg: #e2e8f0;
+  --learn-cert-btn-text: #0f172a;
+}

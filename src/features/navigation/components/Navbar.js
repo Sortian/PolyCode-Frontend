@@ -3,13 +3,15 @@ import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/context/AuthContext";
 import { getLearnNavLinks } from "../../language/courseCatalog";
 import ProfileAvatar from "../../profile/components/ProfileAvatar";
+import ThemeSettingsMenu from "../../../shared/theme/ThemeSettingsMenu";
+import { THEMES } from "../../../shared/theme/themes";
 
 export default function Navbar({
   toggleSidebar,
   showMobileMenu = true,
   mobileMenuOpen = false,
   theme = "dark",
-  onToggleTheme,
+  onThemeChange,
   onGoToStackPicker,
   selectedLanguage,
 }) {
@@ -156,20 +158,12 @@ export default function Navbar({
           ⌕
         </Link>
 
-        <button
-          type="button"
-          className="theme-toggle-btn"
-          onClick={onToggleTheme}
-          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-          title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-        >
-          <span className="theme-toggle-icon" aria-hidden="true">
-            {theme === "dark" ? "☀" : "🌙"}
-          </span>
-          <span className="theme-toggle-label">
-            {theme === "dark" ? "Light" : "Dark"}
-          </span>
-        </button>
+        <ThemeSettingsMenu
+          theme={theme}
+          onThemeChange={onThemeChange}
+          buttonClassName="theme-settings-btn"
+          panelClassName="theme-settings-panel"
+        />
 
         {user ? (
           <div className="navbar-user" ref={dropdownRef}>
@@ -196,6 +190,40 @@ export default function Navbar({
                 >
                   View profile
                 </Link>
+                <div className="navbar-dropdown-theme">
+                  <p className="theme-settings-dropdown-label">Theme</p>
+                  <div className="theme-settings-list">
+                    {THEMES.map((item) => {
+                      const active = item.id === theme;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          className={`theme-settings-option${active ? " theme-settings-option--active" : ""}`}
+                          onClick={() => {
+                            onThemeChange?.(item.id);
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          <span
+                            className="theme-settings-swatch"
+                            style={{ background: item.swatch }}
+                            aria-hidden
+                          />
+                          <span className="theme-settings-copy">
+                            <strong>{item.label}</strong>
+                            <small>{item.description}</small>
+                          </span>
+                          {active ? (
+                            <span className="theme-settings-check" aria-hidden>
+                              ✓
+                            </span>
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
                 <button
                   type="button"
                   className="navbar-dropdown-item navbar-dropdown-logout"

@@ -71,6 +71,16 @@ const LANGUAGES = [
 
 const OUTPUT_HINT = "Run your code to see output here";
 
+const DEMO_FONT_SIZE = 15;
+const DEMO_LINE_HEIGHT = 24;
+const DEMO_VERTICAL_PADDING = 36;
+
+function getDemoEditorHeight(source) {
+  const lineCount = source.split("\n").length;
+  const contentHeight = lineCount * DEMO_LINE_HEIGHT + DEMO_VERTICAL_PADDING;
+  return Math.min(Math.max(contentHeight, 168), 280);
+}
+
 async function runForLanguage(langId, code) {
   if (langId === "python") {
     const { result } = await runPythonCode(code);
@@ -101,17 +111,17 @@ async function runForLanguage(langId, code) {
 
 export default function TryItSection({ theme = "dark" }) {
   const [activeLang, setActiveLang] = useState(LANGUAGES[0]);
-  const [code, setCode] = useState(LANGUAGES[0].code);
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
 
   const isLight = theme === "light";
   const hasOutput = Boolean(output);
   const isError = output.startsWith("Error:");
+  const demoCode = activeLang.code;
+  const editorHeight = getDemoEditorHeight(demoCode);
 
   const switchLang = (lang) => {
     setActiveLang(lang);
-    setCode(lang.code);
     setOutput("");
   };
 
@@ -120,14 +130,14 @@ export default function TryItSection({ theme = "dark" }) {
     setRunning(true);
     setOutput("");
     try {
-      const out = await runForLanguage(activeLang.id, code);
+      const out = await runForLanguage(activeLang.id, demoCode);
       setOutput(out);
     } catch (e) {
       setOutput("Error: " + e.message);
     } finally {
       setRunning(false);
     }
-  }, [activeLang.id, code, running]);
+  }, [activeLang.id, demoCode, running]);
 
   const editorTheme = isLight
     ? POLYCODE_PLAYGROUND_LIGHT_THEME
@@ -140,7 +150,7 @@ export default function TryItSection({ theme = "dark" }) {
           <p className="landing-sec-label">Live Playground</p>
           <h2 className="landing-sec-title">Try Code Instantly</h2>
           <p className="landing-sec-sub tryit-header-sub">
-            Switch languages, edit in the editor, and run — no setup required.
+            Switch languages and run the built-in sample — open the full playground to write your own code.
           </p>
         </div>
 
@@ -208,23 +218,30 @@ export default function TryItSection({ theme = "dark" }) {
               </aside>
 
               <div className="tryit-right">
-                <div className="tryit-editor-wrap">
+                <div className="tryit-editor-wrap tryit-editor-wrap--demo">
                   <Editor
-                    height="280px"
+                    height={`${editorHeight}px`}
                     language={activeLang.monacoLang}
-                    value={code}
-                    onChange={(value) => setCode(value ?? "")}
+                    value={demoCode}
                     theme={editorTheme}
                     beforeMount={(monaco) => {
                       definePolycodeMonacoTheme(monaco);
                       definePolycodeMonacoLightTheme(monaco);
                       definePolycodePlaygroundThemes(monaco);
                     }}
-                    options={getVSCodeEditorOptions({
-                      fontSize: 14,
-                      wordWrap: true,
-                      minimap: { enabled: false },
-                    })}
+                    options={{
+                      ...getVSCodeEditorOptions({
+                        fontSize: DEMO_FONT_SIZE,
+                        wordWrap: true,
+                        readOnly: true,
+                        minimap: { enabled: false },
+                      }),
+                      lineHeight: DEMO_LINE_HEIGHT,
+                      padding: { top: 18, bottom: 18 },
+                      domReadOnly: true,
+                      scrollbar: { vertical: "hidden", handleMouseWheel: false },
+                      overviewRulerLanes: 0,
+                    }}
                   />
                 </div>
 

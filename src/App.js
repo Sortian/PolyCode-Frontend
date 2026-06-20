@@ -19,6 +19,15 @@ import GlobalAssistant from "./features/assistant/components/GlobalAssistant";
 import { AssistantProvider } from "./features/assistant/context/AssistantContext";
 import "./App.css";
 import "./styles/theme-light.css";
+import "./styles/theme-palettes.css";
+import "./styles/theme-learn-surfaces.css";
+import {
+  applyDocumentTheme,
+  clearDocumentThemeInlineStyles,
+  getAppThemeClass,
+  isLightTheme,
+  normalizeThemeId,
+} from "./shared/theme/themes";
 import "./styles/stack-picker-dark.css";
 import "./styles/responsive.css";
 
@@ -199,7 +208,7 @@ function MainApp({
   onLanguageSelect,
   onGoToStackPicker,
   theme,
-  onToggleTheme,
+  onThemeChange,
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const toggleSidebar = () => setIsSidebarOpen((o) => !o);
@@ -221,7 +230,7 @@ function MainApp({
       <Navbar
         toggleSidebar={toggleSidebar}
         theme={theme}
-        onToggleTheme={onToggleTheme}
+        onThemeChange={onThemeChange}
         onGoToStackPicker={onGoToStackPicker}
         selectedLanguage={selectedLanguage}
       />
@@ -284,7 +293,7 @@ function MainApp({
 
 function LearnShell({
   theme,
-  onToggleTheme,
+  onThemeChange,
   onGoToStackPicker,
   selectedLanguage,
   children,
@@ -330,7 +339,7 @@ function LearnShell({
         showMobileMenu={isLessonRoute}
         mobileMenuOpen={learnMenuOpen}
         theme={theme}
-        onToggleTheme={onToggleTheme}
+        onThemeChange={onThemeChange}
         onGoToStackPicker={onGoToStackPicker}
         selectedLanguage={selectedLanguage}
       />
@@ -348,7 +357,7 @@ function LearnShell({
 
 function ProfileOrMainFallback({
   theme,
-  onToggleTheme,
+  onThemeChange,
   onGoToStackPicker,
   selectedLanguage,
   onLanguageSelect,
@@ -360,7 +369,7 @@ function ProfileOrMainFallback({
       <ThemedShell theme={theme}>
         <LearnShell
           theme={theme}
-          onToggleTheme={onToggleTheme}
+          onThemeChange={onThemeChange}
           onGoToStackPicker={onGoToStackPicker}
           selectedLanguage={selectedLanguage}
         >
@@ -378,7 +387,7 @@ function ProfileOrMainFallback({
           onLanguageSelect={onLanguageSelect}
           onGoToStackPicker={onGoToStackPicker}
           theme={theme}
-          onToggleTheme={onToggleTheme}
+          onThemeChange={onThemeChange}
         />
       ) : (
         <Navigate to="/select-language" replace />
@@ -388,8 +397,9 @@ function ProfileOrMainFallback({
 }
 
 function ThemedShell({ theme, children }) {
+  const themeClass = getAppThemeClass(theme);
   return (
-    <div className={`app ${theme === "light" ? "theme-light" : ""}`}>
+    <div className={`app${themeClass ? ` ${themeClass}` : ""}`}>
       {children}
       <AppFooter />
     </div>
@@ -415,38 +425,26 @@ function ProfileRedirect() {
 }
 
 /** Language picker respects global theme (dark styling only when theme is dark). */
-function StackPickerShell({ children, savedTheme, onToggleTheme }) {
+function StackPickerShell({ children, savedTheme, onThemeChange }) {
   React.useLayoutEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const isLight = savedTheme === "light";
-
-    html.setAttribute("data-theme", savedTheme);
-    body.classList.toggle("light-theme", isLight);
-
-    if (isLight) {
-      html.style.backgroundColor = "#f8f9fb";
-      body.style.backgroundColor = "#f8f9fb";
-    } else {
-      html.style.backgroundColor = "#03050a";
-      body.style.backgroundColor = "#03050a";
-    }
-
-    return () => {
-      html.style.backgroundColor = "";
-      body.style.backgroundColor = "";
-    };
+    applyDocumentTheme(savedTheme);
+    return () => clearDocumentThemeInlineStyles();
   }, [savedTheme]);
 
-  const shellClass =
-    savedTheme === "light" ? "app theme-light" : "app stack-picker-dark";
+  const shellClass = [
+    "app",
+    isLightTheme(savedTheme) ? "theme-light" : "stack-picker-dark",
+    getAppThemeClass(savedTheme),
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={shellClass}>
       {React.isValidElement(children)
         ? React.cloneElement(children, {
             theme: savedTheme,
-            onToggleTheme,
+            onThemeChange,
           })
         : children}
     </div>
@@ -459,8 +457,8 @@ function AppRoutes() {
   const [selectedLanguage, setSelectedLanguage] = React.useState(
     () => localStorage.getItem("selectedLanguage") || null,
   );
-  const [theme, setTheme] = React.useState(
-    () => localStorage.getItem("theme") || "dark",
+  const [theme, setTheme] = React.useState(() =>
+    normalizeThemeId(localStorage.getItem("theme")),
   );
 
   const handleLanguageSelect = React.useCallback(
@@ -480,8 +478,8 @@ function AppRoutes() {
     navigate("/select-language");
   }, [navigate]);
 
-  const toggleTheme = React.useCallback(() => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  const handleThemeChange = React.useCallback((nextTheme) => {
+    setTheme(normalizeThemeId(nextTheme));
   }, []);
 
   React.useEffect(() => {
@@ -510,8 +508,7 @@ function AppRoutes() {
     if (location.pathname === "/" || location.pathname === "/select-language") {
       return;
     }
-    document.documentElement.setAttribute("data-theme", theme);
-    document.body.classList.toggle("light-theme", theme === "light");
+    applyDocumentTheme(theme);
   }, [theme, location.pathname]);
 
   return (
@@ -555,7 +552,7 @@ function AppRoutes() {
         <Route
           path="/select-language"
           element={
-            <StackPickerShell savedTheme={theme} onToggleTheme={toggleTheme}>
+            <StackPickerShell savedTheme={theme} onThemeChange={handleThemeChange}>
               <LandingPage
                 onLanguageSelect={handleLanguageSelect}
                 continueLanguage={selectedLanguage}
@@ -569,7 +566,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -587,7 +584,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -602,7 +599,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -617,7 +614,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -632,7 +629,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -647,7 +644,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -662,7 +659,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -677,7 +674,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -692,7 +689,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -707,7 +704,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -722,7 +719,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -737,7 +734,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -752,7 +749,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -768,7 +765,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -784,7 +781,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -799,7 +796,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -814,7 +811,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -829,7 +826,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -845,7 +842,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -860,7 +857,7 @@ function AppRoutes() {
             <ThemedShell theme={theme}>
               <LearnShell
                 theme={theme}
-                onToggleTheme={toggleTheme}
+                onThemeChange={handleThemeChange}
                 onGoToStackPicker={goToStackPicker}
                 selectedLanguage={selectedLanguage}
               >
@@ -875,7 +872,7 @@ function AppRoutes() {
           element={
             <ProfileOrMainFallback
               theme={theme}
-              onToggleTheme={toggleTheme}
+              onThemeChange={handleThemeChange}
               onGoToStackPicker={goToStackPicker}
               selectedLanguage={selectedLanguage}
               onLanguageSelect={handleLanguageSelect}
