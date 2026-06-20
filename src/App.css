@@ -8156,6 +8156,19 @@ body {
   color: var(--acid, #ffe566);
 }
 
+.numpy-theory-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.numpy-theory-actions-left {
+  flex-shrink: 0;
+}
+
 .numpy-theory-footer {
   margin-top: 24px;
   margin-bottom: 0;
@@ -8176,9 +8189,190 @@ body {
     filter 0.15s;
 }
 
-.numpy-challenge-cta:hover {
+.numpy-challenge-cta:hover:not(:disabled) {
   transform: translateY(-2px);
   filter: brightness(1.08);
+}
+
+.numpy-challenge-cta:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  filter: grayscale(0.2);
+}
+
+.numpy-mark-read-panel {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+
+.numpy-mark-read-hint {
+  margin: 0 0 12px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #9aa3b8;
+}
+
+.numpy-mark-read-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.numpy-mark-read-btn {
+  padding: 8px 16px;
+  border: 1px solid color-mix(in srgb, var(--numpy-accent, #818cf8) 60%, #fff);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #f8fafc;
+  background: color-mix(in srgb, var(--numpy-accent, #818cf8) 35%, #1e1e2e);
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    background 0.15s;
+  white-space: nowrap;
+}
+
+.numpy-mark-read-btn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--numpy-accent, #818cf8) 50%, #1e1e2e);
+}
+
+/* Shared lesson read gate — all courses */
+.lesson-read-gate {
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lesson-read-gate-hint {
+  margin: 0 0 14px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #9aa3b8;
+}
+
+.lesson-mark-read-btn {
+  padding: 9px 18px;
+  border: 1px solid color-mix(in srgb, var(--lesson-accent, #818cf8) 60%, #fff);
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #f8fafc;
+  background: color-mix(in srgb, var(--lesson-accent, #818cf8) 35%, #1e1e2e);
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    background 0.15s;
+  white-space: nowrap;
+}
+
+.lesson-mark-read-btn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--lesson-accent, #818cf8) 50%, #1e1e2e);
+}
+
+.lesson-mark-read-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  background: rgba(74, 222, 128, 0.08);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4ade80;
+  white-space: nowrap;
+}
+
+.lesson-confidence-panel {
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lesson-confidence-panel h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: var(--txt-0, #f0f0ff);
+}
+
+.lesson-confidence-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lesson-confidence-options button {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: var(--txt-1, #c0c8e0);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.lesson-confidence-options button.active {
+  border-color: rgba(184, 255, 0, 0.45);
+  background: rgba(184, 255, 0, 0.1);
+  color: var(--acid, #ffe566);
+}
+
+.lesson-read-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.lesson-challenge-cta {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #0a0a0f;
+  background: var(--lesson-accent, #818cf8);
+  transition:
+    transform 0.15s,
+    filter 0.15s;
+}
+
+.lesson-challenge-cta:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.lesson-challenge-cta:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  filter: grayscale(0.2);
+}
+
+.oops-tab-locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.oops-tab:disabled {
+  cursor: not-allowed;
 }
 
 @media (max-width: 640px) {
@@ -8431,7 +8625,12 @@ body {
 
 .lesson-annotator-content .numpy-notes-panel,
 .lesson-annotator-content .oops-notes-panel,
-.lesson-annotator-content .numpy-confidence-panel {
+.lesson-annotator-content .numpy-confidence-panel,
+.lesson-annotator-content .numpy-mark-read-panel,
+.lesson-annotator-content .numpy-theory-actions,
+.lesson-annotator-content .lesson-read-gate,
+.lesson-annotator-content .lesson-confidence-panel,
+.lesson-annotator-content .lesson-read-actions {
   position: relative;
   z-index: 3;
 }

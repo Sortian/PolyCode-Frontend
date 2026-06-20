@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import RunnableCodeBlock from "../../shared/RunnableCodeBlock";
+import LessonReadGate from "../../shared/LessonReadGate";
 
 function plainText(text = "") {
   return text.replace(/\*\*/g, "").replace(/`/g, "");
@@ -602,6 +603,8 @@ export default function NumpyIntroTheory({
   onSaveNote,
   confidence,
   onConfidenceChange,
+  markedAsRead = false,
+  onMarkAsRead = () => {},
   onGoChallenge,
 }) {
   const accentColor = lesson.chapterColor || "#4f46e5";
@@ -651,6 +654,15 @@ export default function NumpyIntroTheory({
         })}
       </div>
 
+      <LessonReadGate
+        markedAsRead={markedAsRead}
+        onMarkAsRead={onMarkAsRead}
+        confidence={confidence}
+        onConfidenceChange={onConfidenceChange}
+        onGoChallenge={onGoChallenge}
+        accentColor={accentColor}
+      />
+
       <div className="numpy-notes-panel">
         <h3>📝 Your notes</h3>
         <p className="numpy-notes-hint">
@@ -663,37 +675,6 @@ export default function NumpyIntroTheory({
         />
         <button type="button" className="numpy-notes-save" onClick={onSaveNote}>
           Save note
-        </button>
-      </div>
-
-      <div className="numpy-confidence-panel">
-        <h3>How do you feel about this lesson?</h3>
-        <div className="numpy-confidence-options">
-          {[
-            ["review", "😅 Need another read"],
-            ["almost", "🙂 Getting it"],
-            ["ready", "🚀 Ready for the challenge"],
-          ].map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              className={confidence === value ? "active" : ""}
-              onClick={() => onConfidenceChange(value)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="numpy-theory-footer">
-        <button
-          type="button"
-          className="numpy-challenge-cta"
-          style={{ "--numpy-accent": accentColor }}
-          onClick={onGoChallenge}
-        >
-          Ready? Try the coding challenge →
         </button>
       </div>
     </div>

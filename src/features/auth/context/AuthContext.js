@@ -4,8 +4,19 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
 } from "react";
-import { getApiBase } from "../../../config/apiBase";
+import {
+  clearStoredSession,
+  getStoredToken,
+  rememberSignedInUser,
+  setStoredToken,
+} from "../../../lib/authSession";
+import {
+  apiFetch,
+  ApiError,
+  networkErrorMessage,
+} from "../../../lib/apiClient";
 import {
   updateProfile as updateProfileApi,
   uploadProfileAvatar,
@@ -13,95 +24,77 @@ import {
 
 const AuthContext = createContext(null);
 
-function networkErrorMessage(error) {
-  if (error?.message === "Failed to fetch") {
-    return "Cannot reach the server. Check your internet connection or try again in a moment.";
-  }
-  return error?.message || "Request failed";
+function applySession(setToken, setUser, token, user) {
+  setStoredToken(token);
+  rememberSignedInUser(user);
+  setToken(token);
+  setUser(user);
 }
 
-function rememberSignedInUser(user) {
-  if (user?.username) {
-    localStorage.setItem("username", user.username);
-    localStorage.setItem("profilePath", `/@${user.username}`);
-  }
-}
-
-function forgetSignedInUser() {
-  localStorage.removeItem("username");
-  localStorage.removeItem("profilePath");
-}
-
-async function readApiResponse(res, fallbackMessage) {
-  const text = await res.text();
-  let data = {};
-
-  if (text) {
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { error: text };
-    }
-  }
-
-  if (!res.ok) {
-    throw new Error(data.error || data.message || fallbackMessage);
-  }
-
-  return data;
+function clearSession(setToken, setUser) {
+  clearStoredSession();
+  setToken(null);
+  setUser(null);
 }
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(() => getStoredToken());
   const [loading, setLoading] = useState(true);
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const bootstrapRequestId = useRef(0);
 
-  /** Fetch current user from the backend using the stored token */
-  const fetchMe = useCallback(async (storedToken) => {
+  const bootstrapSession = useCallback(async (storedToken) => {
+    const requestId = ++bootstrapRequestId.current;
+
     if (!storedToken) {
       setLoading(false);
       return;
     }
+
+    setLoading(true);
+
     try {
-      const res = await fetch(`${getApiBase()}/auth/me`, {
-        headers: { Authorization: `Bearer ${storedToken}` },
+      const data = await apiFetch("/auth/me", {
+        token: storedToken,
+        fallbackMessage: "Could not restore session",
       });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-        rememberSignedInUser(data.user);
-      } else {
-        localStorage.removeItem("token");
-        forgetSignedInUser();
-        setToken(null);
-        setUser(null);
+
+      if (requestId !== bootstrapRequestId.current) return;
+
+      rememberSignedInUser(data.user);
+      setToken(storedToken);
+      setUser(data.user);
+    } catch (error) {
+      if (requestId !== bootstrapRequestId.current) return;
+
+      if (error instanceof ApiError && error.status === 401) {
+        clearSession(setToken, setUser);
       }
-    } catch {
-      // Backend unreachable — treat as signed out for UI until /auth/me succeeds
-      forgetSignedInUser();
-      setUser(null);
+      // Network / 5xx: keep token in storage; user stays signed out until /me succeeds.
     } finally {
-      setLoading(false);
+      if (requestId === bootstrapRequestId.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    fetchMe(token);
-  }, [fetchMe, token]);
+    bootstrapSession(getStoredToken());
+  }, [bootstrapSession]);
 
   const login = useCallback(async (email, password) => {
     try {
-      const res = await fetch(`${getApiBase()}/auth/login`, {
+      const data = await apiFetch("/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        auth: false,
         body: JSON.stringify({ email, password }),
+        fallbackMessage: "Login failed",
       });
-      const data = await readApiResponse(res, "Login failed");
-      localStorage.setItem("token", data.token);
-      rememberSignedInUser(data.user);
-      setToken(data.token);
-      setUser(data.user);
+
+      bootstrapRequestId.current += 1;
+      applySession(setToken, setUser, data.token, data.user);
+      setLoading(false);
       return data.user;
     } catch (error) {
       throw new Error(networkErrorMessage(error));
@@ -111,9 +104,9 @@ export function AuthProvider({ children }) {
   const register = useCallback(
     async ({ email, username, password, firstName, lastName }) => {
       try {
-        const res = await fetch(`${getApiBase()}/auth/register`, {
+        const data = await apiFetch("/auth/register", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          auth: false,
           body: JSON.stringify({
             email,
             username,
@@ -121,12 +114,12 @@ export function AuthProvider({ children }) {
             firstName,
             lastName,
           }),
+          fallbackMessage: "Registration failed",
         });
-        const data = await readApiResponse(res, "Registration failed");
-        localStorage.setItem("token", data.token);
-        rememberSignedInUser(data.user);
-        setToken(data.token);
-        setUser(data.user);
+
+        bootstrapRequestId.current += 1;
+        applySession(setToken, setUser, data.token, data.user);
+        setLoading(false);
         return data.user;
       } catch (error) {
         throw new Error(networkErrorMessage(error));
@@ -136,10 +129,9 @@ export function AuthProvider({ children }) {
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    forgetSignedInUser();
-    setToken(null);
-    setUser(null);
+    bootstrapRequestId.current += 1;
+    clearSession(setToken, setUser);
+    setLoading(false);
   }, []);
 
   const updateProfile = useCallback(
@@ -175,7 +167,7 @@ export function AuthProvider({ children }) {
     [token, user],
   );
 
-  const isAuthenticated = !loading && Boolean(user && token);
+  const isAuthenticated = Boolean(token && user);
 
   return (
     <AuthContext.Provider

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getProfilePathForUser } from "../../../lib/authSession";
 
 export default function SignupPage() {
   const { register } = useAuth();
@@ -30,7 +31,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const user = await register(form);
-      navigate(user?.username ? `/@${user.username}` : "/hub");
+      navigate(getProfilePathForUser(user));
     } catch (err) {
       setError(err.message);
     } finally {
