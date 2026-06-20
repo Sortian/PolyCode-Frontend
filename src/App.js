@@ -370,11 +370,15 @@ function ProfileRedirect() {
     return <PageFallback />;
   }
 
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   if (user?.username) {
     return <Navigate to={`/@${user.username}`} replace />;
   }
 
-  return <Navigate to="/login" replace />;
+  return <Navigate to="/hub" replace />;
 }
 
 /** Language picker is always dark — overrides global light theme on html/body */
