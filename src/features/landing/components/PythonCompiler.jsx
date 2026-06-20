@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Editor from "@monaco-editor/react";
+import { Sparkles } from "lucide-react";
 import {
   runPythonCode,
   formatPythonOutput,
@@ -23,9 +24,10 @@ import {
 import {
   definePolycodeMonacoLightTheme,
   definePolycodeMonacoTheme,
+  definePolycodePlaygroundThemes,
   getVSCodeEditorOptions,
-  POLYCODE_VSCODE_LIGHT_THEME,
-  POLYCODE_VSCODE_THEME,
+  POLYCODE_PLAYGROUND_DARK_THEME,
+  POLYCODE_PLAYGROUND_LIGHT_THEME,
 } from "../../../shared/utils/monacoTheme";
 
 const LANGUAGES = [
@@ -35,7 +37,7 @@ const LANGUAGES = [
     accent: "#3776ab",
     monacoLang: "python",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
-    desc: "A versatile, beginner-friendly language used in AI, data science, and web development.",
+    desc: "Versatile and beginner-friendly — great for AI, data science, and automation.",
     code: `# Python Example\nname = "PolyCode"\nprint(f"Welcome to {name}!")`,
   },
   {
@@ -44,7 +46,7 @@ const LANGUAGES = [
     accent: "#d97706",
     monacoLang: "javascript",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
-    desc: "The language of the web. Power interactive UIs, servers, and everything in between.",
+    desc: "The language of the web — build interactive UIs, APIs, and full-stack apps.",
     code: `// JavaScript Example\nconst name = "PolyCode";\nconsole.log(\`Welcome to \${name}!\`);`,
   },
   {
@@ -53,7 +55,7 @@ const LANGUAGES = [
     accent: "#f34b7d",
     monacoLang: "cpp",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg",
-    desc: "High-performance systems language used in games, operating systems, and embedded software.",
+    desc: "High-performance systems language for games, OS internals, and embedded software.",
     code: `// C++ Example\n#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << "Welcome to PolyCode!" << endl;\n  return 0;\n}`,
   },
   {
@@ -62,12 +64,12 @@ const LANGUAGES = [
     accent: "#9b4f96",
     monacoLang: "csharp",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg",
-    desc: "A modern, object-oriented language by Microsoft, widely used for apps, games, and enterprise software.",
+    desc: "Modern OOP from Microsoft — apps, games, and enterprise backends.",
     code: `// C# Example\nstring name = "PolyCode";\nConsole.WriteLine("Welcome to " + name + "!");`,
   },
 ];
 
-const OUTPUT_HINT = 'Click "Run Code" to see output here';
+const OUTPUT_HINT = "Run your code to see output here";
 
 async function runForLanguage(langId, code) {
   if (langId === "python") {
@@ -113,7 +115,8 @@ export default function TryItSection({ theme = "dark" }) {
     setOutput("");
   };
 
-  const run = async () => {
+  const run = useCallback(async () => {
+    if (running) return;
     setRunning(true);
     setOutput("");
     try {
@@ -124,106 +127,142 @@ export default function TryItSection({ theme = "dark" }) {
     } finally {
       setRunning(false);
     }
-  };
+  }, [activeLang.id, code, running]);
 
   const editorTheme = isLight
-    ? POLYCODE_VSCODE_LIGHT_THEME
-    : POLYCODE_VSCODE_THEME;
+    ? POLYCODE_PLAYGROUND_LIGHT_THEME
+    : POLYCODE_PLAYGROUND_DARK_THEME;
 
   return (
     <section className="tryit-section">
       <div className="landing-container">
-        <p className="landing-sec-label">Live Playground</p>
-        <h2 className="landing-sec-title">Code Without Leaving the Page</h2>
-        <p className="landing-sec-sub">
-          Pick a language, edit the code, and run it instantly.
-        </p>
+        <div className="tryit-header">
+          <p className="landing-sec-label">Live Playground</p>
+          <h2 className="landing-sec-title">Try Code Instantly</h2>
+          <p className="landing-sec-sub tryit-header-sub">
+            Switch languages, edit in the editor, and run — no setup required.
+          </p>
+        </div>
 
-        <div className="tryit-tabs">
+        <div
+          className="tryit-tabs"
+          role="tablist"
+          aria-label="Languages"
+        >
           {LANGUAGES.map((lang) => (
             <button
               key={lang.id}
               type="button"
+              role="tab"
+              aria-selected={activeLang.id === lang.id}
               className={`tryit-tab ${activeLang.id === lang.id ? "tryit-tab--active" : ""}`}
               style={{ "--tab-accent": lang.accent }}
               onClick={() => switchLang(lang)}
             >
               <img
                 src={lang.icon}
-                alt={lang.label}
+                alt=""
                 className="tryit-tab-icon"
+                aria-hidden
               />
               {lang.label}
             </button>
           ))}
         </div>
 
-        <div className="tryit-panel">
-          <div
-            className="tryit-left"
-            style={{ "--lang-accent": activeLang.accent }}
-          >
-            <img
-              src={activeLang.icon}
-              alt={activeLang.label}
-              className="tryit-lang-logo"
-            />
-            <h3 className="tryit-lang-name">{activeLang.label}</h3>
-            <p className="tryit-lang-desc">{activeLang.desc}</p>
-            <button
-              type="button"
-              className="tryit-run-btn"
-              onClick={run}
-              disabled={running}
-            >
-              {running ? "▶ Running…" : "▶ Run Code"}
-            </button>
-            <a href={`/language/${activeLang.id}`} className="tryit-learn-btn">
-              Learn {activeLang.label} →
-            </a>
-          </div>
+        <div className="tryit-shell">
+          <div className="tryit-panel">
+            <div className="tryit-body">
+              <aside
+                className="tryit-left"
+                style={{ "--lang-accent": activeLang.accent }}
+              >
+                <div className="tryit-lang-badge">
+                  <img
+                    src={activeLang.icon}
+                    alt=""
+                    className="tryit-lang-logo"
+                    aria-hidden
+                  />
+                </div>
+                <div>
+                  <h3 className="tryit-lang-name">{activeLang.label}</h3>
+                  <p className="tryit-lang-desc">{activeLang.desc}</p>
+                </div>
+                <div className="tryit-sidebar-actions">
+                  <button
+                    type="button"
+                    className="tryit-run-btn"
+                    onClick={run}
+                    disabled={running}
+                  >
+                    {running ? "▶ Running…" : "▶ Run Code"}
+                  </button>
+                  <a
+                    href={`/language/${activeLang.id}`}
+                    className="tryit-learn-btn"
+                  >
+                    Learn {activeLang.label} →
+                  </a>
+                </div>
+              </aside>
 
-          <div className="tryit-right">
-            <div className="tryit-terminal-head">
-              <span className="landing-dot landing-dot-r" />
-              <span className="landing-dot landing-dot-y" />
-              <span className="landing-dot landing-dot-g" />
-              <span className="tryit-terminal-title">
-                {activeLang.label.toLowerCase()}_playground
-              </span>
-            </div>
+              <div className="tryit-right">
+                <div className="tryit-editor-wrap">
+                  <Editor
+                    height="280px"
+                    language={activeLang.monacoLang}
+                    value={code}
+                    onChange={(value) => setCode(value ?? "")}
+                    theme={editorTheme}
+                    beforeMount={(monaco) => {
+                      definePolycodeMonacoTheme(monaco);
+                      definePolycodeMonacoLightTheme(monaco);
+                      definePolycodePlaygroundThemes(monaco);
+                    }}
+                    options={getVSCodeEditorOptions({
+                      fontSize: 14,
+                      wordWrap: true,
+                      minimap: { enabled: false },
+                    })}
+                  />
+                </div>
 
-            <div className="tryit-editor-wrap">
-              <Editor
-                height="300px"
-                language={activeLang.monacoLang}
-                value={code}
-                onChange={(value) => setCode(value ?? "")}
-                theme={editorTheme}
-                beforeMount={(monaco) => {
-                  definePolycodeMonacoTheme(monaco);
-                  definePolycodeMonacoLightTheme(monaco);
-                }}
-                options={getVSCodeEditorOptions({
-                  fontSize: 15,
-                  wordWrap: true,
-                })}
-              />
-            </div>
-
-            <div
-              className={[
-                "tryit-output",
-                !hasOutput && "tryit-output--empty",
-                isError && "tryit-output--error",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              <span className="tryit-output-label">Output</span>
-              <pre className="tryit-output-pre">
-                {hasOutput ? output : OUTPUT_HINT}
-              </pre>
+                <div
+                  className={[
+                    "tryit-output",
+                    !hasOutput && "tryit-output--empty",
+                    isError && "tryit-output--error",
+                    running && "tryit-output--running",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  <div className="tryit-output-head">
+                    <span className="tryit-output-label">
+                      <Sparkles size={12} />
+                      Output
+                    </span>
+                    {hasOutput && !isError ? (
+                      <span className="tryit-output-badge tryit-output-badge--ok">
+                        Success
+                      </span>
+                    ) : null}
+                    {isError ? (
+                      <span className="tryit-output-badge tryit-output-badge--err">
+                        Failed
+                      </span>
+                    ) : null}
+                  </div>
+                  <pre className="tryit-output-pre">
+                    {running
+                      ? "Executing your code…"
+                      : hasOutput
+                        ? output
+                        : OUTPUT_HINT}
+                  </pre>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -78,6 +78,11 @@ textarea {
   outline-offset: 2px;
 }
 
+.monaco-editor:focus-visible,
+.monaco-editor :focus-visible {
+  outline: none;
+}
+
 :root[data-theme="light"] :focus-visible {
   outline-color: #4f46e5;
 }
