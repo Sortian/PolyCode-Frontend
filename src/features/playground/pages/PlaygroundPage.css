@@ -150,7 +150,7 @@
 
   .playground-page-body .playground-root {
     height: auto;
-    min-height: 700px;
+    min-height: min(560px, 70vh);
   }
 
   .playground-page-header {

@@ -1,5 +1,6 @@
-/* Alternate dark palettes — scoped under .app.theme-* */
+/* Alternate dark palettes — scoped under .app.theme-* and html[data-theme] (PolyMentor) */
 
+html[data-theme="classic"],
 .app.theme-classic {
   --ink: #0c0a06;
   --ink-2: #12100a;
@@ -22,6 +23,7 @@
   --bg-card: #141008;
 }
 
+html[data-theme="midnight"],
 .app.theme-midnight {
   --ink: #0b0f1a;
   --ink-2: #0f1424;
@@ -44,6 +46,7 @@
   --bg-card: #12182b;
 }
 
+html[data-theme="ocean"],
 .app.theme-ocean {
   --ink: #041016;
   --ink-2: #061820;
@@ -66,6 +69,7 @@
   --bg-card: #071820;
 }
 
+html[data-theme="slate"],
 .app.theme-slate {
   --ink: #111318;
   --ink-2: #151820;

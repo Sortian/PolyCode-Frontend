@@ -396,9 +396,86 @@
     height: auto;
     overflow: visible;
   }
-  
+
   .editor-pane {
-    height: 600px;
+    height: min(600px, 70vh);
+  }
+}
+
+@media (max-width: 768px) {
+  .challenge-card {
+    padding: 20px 16px;
+  }
+
+  .challenge-title-area {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .challenge-title-area h1 {
+    font-size: clamp(1.35rem, 6vw, 2rem);
+  }
+
+  .badge-group {
+    flex-wrap: wrap;
+  }
+
+  .editor-header {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+
+  .lang-selector-wrapper {
+    flex: 1 1 100%;
+  }
+
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .editor-pane {
+    height: min(520px, 65vh);
+  }
+
+  .result-area-detailed {
+    padding: 16px;
+    max-height: 240px;
+  }
+
+  .status-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .status-stats {
+    flex-wrap: wrap;
+  }
+
+  .test-case-tooltip {
+    width: min(280px, calc(100vw - 32px));
+  }
+}
+
+@media (max-width: 480px) {
+  .daily-challenges-container {
+    gap: 12px;
+  }
+
+  .challenge-description {
+    font-size: 0.9375rem;
+  }
+
+  .editor-pane {
+    height: min(460px, 58vh);
+    border-radius: var(--radius-sm);
+  }
+
+  .example-box {
+    padding: 12px;
   }
 }
 

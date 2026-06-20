@@ -1143,11 +1143,11 @@ body {
 }
 
 .grid-2 {
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
 }
 
 .grid-3 {
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
 }
 
 /* ══════════════════════════════════════════════
@@ -6847,7 +6847,7 @@ body {
   grid-column: 1 / -1;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .oops-guide-tools,
   .oops-hero-grid,
   .oops-dashboard-strip,
@@ -9310,6 +9310,8 @@ body {
   flex-direction: column;
   align-items: center;
   margin-top: 30px;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* =========================
@@ -9616,5 +9618,76 @@ body {
   font-size: 0.6rem;
   color: #64748b;
   gap: 0.25rem;
-  margin-left: 600px;
+  margin-left: 0;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1240px) {
+  .certificate-wrapper {
+    --cert-scale: min(1, calc((100vw - 48px) / 1200));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .certificate-wrapper .certificate {
+    transform: scale(var(--cert-scale));
+    transform-origin: top center;
+    margin-bottom: calc(794px * (var(--cert-scale) - 1));
+  }
+}
+
+@media (max-width: 900px) {
+  .certificate {
+    padding: 24px 20px;
+  }
+
+  .certificate-title {
+    font-size: clamp(1.25rem, 5vw, 34px);
+    letter-spacing: 0.08em;
+  }
+
+  .certificate-name {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+  }
+
+  .certificate-course {
+    font-size: clamp(1rem, 4vw, 1.5rem);
+  }
+
+  .certificate-footer {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .official-stamp {
+    margin-right: 0;
+    width: 72px;
+    height: 72px;
+  }
+
+  .certificate-logo1 {
+    height: clamp(40px, 10vw, 70px);
+  }
+
+  .certificate-logo2 {
+    height: clamp(32px, 8vw, 55px);
+  }
+
+  .certificate-watermark img {
+    width: min(650px, 70vw);
+  }
+
+  .profile-certificate-modal-content {
+    width: 100%;
+    max-height: 94vh;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .profile-certificate-modal-head {
+    flex-wrap: wrap;
+  }
 }
