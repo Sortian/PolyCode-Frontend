@@ -4996,6 +4996,37 @@ body {
   font-style: italic;
 }
 
+.profile-language-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.profile-language-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 148, 255, 0.35);
+  background: rgba(55, 148, 255, 0.12);
+  color: var(--txt-0, #f0f0ff);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.profile-language-badge-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .profile-hero-social {
   display: flex;
   flex-wrap: wrap;
@@ -5189,22 +5220,55 @@ body {
 .profile-edit-lang-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .profile-edit-lang-chip {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 10px;
-  border-radius: 999px;
+  min-width: 78px;
+  padding: 10px 8px 8px;
+  border-radius: 12px;
   border: 1px solid var(--border, #1e2433);
-  color: var(--txt-1, #c8d0e0);
-  font-size: 0.8rem;
-  text-transform: none;
-  letter-spacing: normal;
-  font-weight: 500;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--txt-2, #6e7891);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
   cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.profile-edit-lang-chip:hover {
+  border-color: rgba(55, 148, 255, 0.35);
+  color: var(--txt-1, #c8d0e0);
+}
+
+.profile-edit-lang-chip.is-selected {
+  color: var(--txt-0, #f0f0ff);
+}
+
+.profile-edit-lang-chip input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--vscode-blue-2, #3794ff);
+  cursor: pointer;
+}
+
+.profile-edit-lang-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .profile-edit-summary {

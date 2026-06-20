@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ProfileAvatar from "./ProfileAvatar";
+import ProfileLanguageBadges from "./ProfileLanguageBadges";
 import {
   getDisplayBio,
   getDisplayName,
@@ -43,6 +44,8 @@ export default function ProfileHero({
               Add a bio in Edit profile.
             </p>
           ) : null}
+
+          <ProfileLanguageBadges languages={user?.preferredLanguages} />
 
           {isAuthenticated && (
             <div className="profile-hero-social">
