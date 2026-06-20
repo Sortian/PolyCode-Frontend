@@ -24,6 +24,7 @@ import usePandasProgress from "../learn/pandas-py/hooks/usePandasProgress";
 import CourseCertificate from "../learn/shared/CourseCertificate";
 import {
   getFollowStatus,
+  getProfileConnections,
   getProfileByUsername,
   setFollowStatus,
 } from "./services/profileApi";
@@ -464,6 +465,9 @@ export default function ProfilePage() {
     }
   };
 
+  const loadProfileConnections = (type) =>
+    getProfileConnections(profileUser?.username || routeUsername, type);
+
   if (certificateSlug) {
     return (
       <main className="profile-page profile-certificate-page">
@@ -514,6 +518,7 @@ export default function ProfilePage() {
         isFollowing={isFollowing}
         followSaving={followSaving}
         onToggleFollow={handleToggleFollow}
+        onLoadConnections={loadProfileConnections}
       />
 
       {followError && (

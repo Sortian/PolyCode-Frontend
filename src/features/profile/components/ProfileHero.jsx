@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import ProfileAvatar from "./ProfileAvatar";
 import {
   getDisplayBio,
@@ -16,8 +17,12 @@ export default function ProfileHero({
   isFollowing = false,
   followSaving = false,
   onToggleFollow,
+  onLoadConnections,
 }) {
-  const [socialNotice, setSocialNotice] = useState("");
+  const [activeList, setActiveList] = useState(null);
+  const [connectionUsers, setConnectionUsers] = useState([]);
+  const [connectionLoading, setConnectionLoading] = useState(false);
+  const [connectionError, setConnectionError] = useState("");
 
   const displayName = getDisplayName(user);
   const username = getDisplayUsername(user);
@@ -25,9 +30,25 @@ export default function ProfileHero({
   const following = user?.followingCount ?? 0;
   const followers = user?.followersCount ?? 0;
 
-  function showComingSoon(label) {
-    setSocialNotice(`${label} — coming soon.`);
-    window.setTimeout(() => setSocialNotice(""), 2800);
+  async function openConnectionList(type) {
+    if (activeList === type) {
+      setActiveList(null);
+      return;
+    }
+
+    setActiveList(type);
+    setConnectionUsers([]);
+    setConnectionError("");
+    setConnectionLoading(true);
+
+    try {
+      const data = await onLoadConnections?.(type);
+      setConnectionUsers(Array.isArray(data?.users) ? data.users : []);
+    } catch (error) {
+      setConnectionError(error.message || `Could not load ${type}`);
+    } finally {
+      setConnectionLoading(false);
+    }
   }
 
   return (
@@ -53,7 +74,8 @@ export default function ProfileHero({
               <button
                 type="button"
                 className="profile-hero-stat"
-                onClick={() => showComingSoon("Following list")}
+                onClick={() => openConnectionList("following")}
+                aria-expanded={activeList === "following"}
               >
                 <strong>{following}</strong>
                 <span>Following</span>
@@ -61,21 +83,14 @@ export default function ProfileHero({
               <button
                 type="button"
                 className="profile-hero-stat"
-                onClick={() => showComingSoon("Followers list")}
+                onClick={() => openConnectionList("followers")}
+                aria-expanded={activeList === "followers"}
               >
                 <strong>{followers}</strong>
                 <span>Followers</span>
               </button>
             </div>
-            {canEdit ? (
-              <button
-                type="button"
-                className="profile-hero-message-btn"
-                onClick={() => showComingSoon("Messages")}
-              >
-                Message
-              </button>
-            ) : isAuthenticated ? (
+            {!canEdit && isAuthenticated ? (
               <button
                 type="button"
                 className="profile-hero-message-btn"
@@ -91,10 +106,47 @@ export default function ProfileHero({
             ) : null}
           </div>
 
-          {socialNotice && (
-            <p className="profile-hero-notice" role="status">
-              {socialNotice}
-            </p>
+          {activeList && (
+            <div className="profile-connection-panel">
+              <div className="profile-connection-panel-head">
+                <strong>
+                  {activeList === "following" ? "Following" : "Followers"}
+                </strong>
+                <button type="button" onClick={() => setActiveList(null)}>
+                  Close
+                </button>
+              </div>
+
+              {connectionLoading ? (
+                <p className="profile-connection-state">Loading...</p>
+              ) : connectionError ? (
+                <p className="profile-connection-state profile-connection-state--error">
+                  {connectionError}
+                </p>
+              ) : connectionUsers.length === 0 ? (
+                <p className="profile-connection-state">
+                  No {activeList} yet.
+                </p>
+              ) : (
+                <div className="profile-connection-list">
+                  {connectionUsers.map((connectionUser) => (
+                    <Link
+                      key={connectionUser._id || connectionUser.id || connectionUser.username}
+                      to={`/@${connectionUser.username}`}
+                      className="profile-connection-user"
+                    >
+                      <ProfileAvatar user={connectionUser} size="sm" />
+                      <span>
+                        <strong>
+                          {getDisplayName(connectionUser)}
+                        </strong>
+                        <small>{getDisplayUsername(connectionUser)}</small>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
         </div>
 

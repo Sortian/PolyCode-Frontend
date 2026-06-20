@@ -47,6 +47,15 @@ export async function getFollowStatus(token, username) {
   return readResponse(res, "Could not load follow status");
 }
 
+export async function getProfileConnections(username, type) {
+  const cleanUsername = String(username || "").replace(/^@/, "").trim();
+  const cleanType = type === "following" ? "following" : "followers";
+  const res = await fetch(
+    `${getApiBase()}/auth/username/${encodeURIComponent(cleanUsername)}/${cleanType}`,
+  );
+  return readResponse(res, `Could not load ${cleanType}`);
+}
+
 export async function setFollowStatus(token, username, shouldFollow) {
   const cleanUsername = String(username || "").replace(/^@/, "").trim();
   const res = await fetch(
