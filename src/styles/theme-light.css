@@ -826,3 +826,48 @@
 .app.theme-light .assistant-feedback-hint {
   color: var(--accent);
 }
+
+.app.theme-light .assistant-markdown {
+  color: var(--txt-0);
+}
+
+.app.theme-light .assistant-inline-code {
+  background: #f3f4f6;
+  border-color: var(--border);
+  color: #334155;
+}
+
+.app.theme-light .assistant-code-block {
+  background: #f6f8fa;
+  border-color: #d0d7de;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.app.theme-light .assistant-code-header {
+  background: #eef1f5;
+  border-bottom-color: #d0d7de;
+}
+
+.app.theme-light .assistant-code-lang {
+  color: #64748b;
+}
+
+.app.theme-light .assistant-code-copy {
+  background: #ffffff;
+  border-color: #d0d7de;
+  color: #475569;
+}
+
+.app.theme-light .assistant-code-copy:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.app.theme-light .assistant-md-link {
+  color: #2563eb;
+}
+
+.app.theme-light .assistant-md-link:hover {
+  color: #1d4ed8;
+}

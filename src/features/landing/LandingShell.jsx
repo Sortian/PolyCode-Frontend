@@ -7,7 +7,6 @@ import LandingPage from "./pages/LandingPage";
 export default function LandingShell({
   savedTheme,
   onThemeChange,
-  footer,
   onLanguageSelect,
   continueLanguage,
 }) {
@@ -25,11 +24,11 @@ export default function LandingShell({
     body.classList.toggle("light-theme", landingTheme === "light");
 
     if (landingTheme === "light") {
-      html.style.backgroundColor = "#eef1f6";
-      body.style.backgroundColor = "#eef1f6";
+      html.style.backgroundColor = "#f4f6fa";
+      body.style.backgroundColor = "#f4f6fa";
     } else {
-      html.style.backgroundColor = "#03050a";
-      body.style.backgroundColor = "#03050a";
+      html.style.backgroundColor = "#07090f";
+      body.style.backgroundColor = "#07090f";
     }
 
     return () => {
@@ -56,7 +55,6 @@ export default function LandingShell({
         theme={landingTheme}
         onToggleTheme={toggleLandingTheme}
       />
-      {footer}
     </div>
   );
 }

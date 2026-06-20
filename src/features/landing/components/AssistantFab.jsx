@@ -26,6 +26,7 @@ import {
 import { ASSISTANT_CONFIG } from "../lib/assistantConfig";
 import { useTypewriter } from "../lib/useTypewriter";
 import AssistantAvatar from "./AssistantAvatar";
+import AssistantMarkdown from "../../assistant/components/AssistantMarkdown";
 
 const MAX_STORED_MESSAGES = 20;
 const DOCK_POSITION_KEY = "polycode_assistant_dock_position";
@@ -125,30 +126,6 @@ function saveSession(session) {
   }
 }
 
-function renderMarkdown(text) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return (
-        <strong key={i} style={{ fontWeight: 600, color: "var(--acid)" }}>
-          {part.slice(2, -2)}
-        </strong>
-      );
-    }
-    const lines = part.split("\n");
-    return (
-      <span key={i}>
-        {lines.map((line, j) => (
-          <span key={j}>
-            {line}
-            {j < lines.length - 1 ? <br /> : null}
-          </span>
-        ))}
-      </span>
-    );
-  });
-}
-
 function ReplyFeedback({ feedback, onRate, disabled, required }) {
   return (
     <div
@@ -229,8 +206,8 @@ function MentorReply({
             {ASSISTANT_CONFIG.name}
           </span>
         </div>
-        <p style={{ fontSize: "13px", lineHeight: 1.6, color: "#e2e8f0", margin: 0 }}>
-          {renderMarkdown(visible)}
+        <div className="assistant-markdown">
+          <AssistantMarkdown content={visible} />
           {!done && shouldStream ? (
             <span
               style={{
@@ -244,7 +221,7 @@ function MentorReply({
               }}
             />
           ) : null}
-        </p>
+        </div>
         {canRate ? (
           <ReplyFeedback
             feedback={msg.feedback}

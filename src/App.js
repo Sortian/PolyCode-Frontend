@@ -142,9 +142,15 @@ const PageFallback = () => (
 );
 
 function AppFooter() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="app-footer">
       <div className="app-footer-inner">
+        <div className="app-footer-meta">
+          <span className="app-footer-project">PolyCode</span>
+          <span className="app-footer-copy">© {year}</span>
+        </div>
         <a
           className="app-footer-brand"
           href="https://www.quantumlogicslimited.com"
@@ -154,13 +160,12 @@ function AppFooter() {
         >
           <img
             src="/images/logo.png"
-            alt="Quantum Logics logo"
+            alt=""
             className="app-footer-logo"
+            aria-hidden
           />
-          <span>Quantum Logics</span>
+          <span>Powered by Quantum Logics</span>
         </a>
-        <span className="app-footer-divider" />
-        <span className="app-footer-project">Polycode</span>
       </div>
     </footer>
   );
@@ -444,7 +449,6 @@ function StackPickerShell({ children, savedTheme, onToggleTheme }) {
             onToggleTheme,
           })
         : children}
-      <AppFooter />
     </div>
   );
 }
@@ -527,7 +531,6 @@ function AppRoutes() {
             <LandingShell
               savedTheme={theme}
               onThemeChange={setTheme}
-              footer={<AppFooter />}
               onLanguageSelect={handleLanguageSelect}
               continueLanguage={selectedLanguage}
             />
