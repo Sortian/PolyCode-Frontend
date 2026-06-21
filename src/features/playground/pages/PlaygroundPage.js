@@ -3,11 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import CodePlayground from '../components/CodePlayground';
 import './PlaygroundPage.css';
 
-export default function PlaygroundPage({
-  theme,
-  onToggleSidebar,
-  sidebarOpen,
-}) {
+export default function PlaygroundPage() {
   const [searchParams] = useSearchParams();
   const initLang = searchParams.get('lang') || 'javascript';
   const initCode = searchParams.get('code')
@@ -32,9 +28,6 @@ export default function PlaygroundPage({
         <CodePlayground
           initialLanguage={initLang}
           initialCode={initCode}
-          theme={theme}
-          onToggleSidebar={onToggleSidebar}
-          sidebarOpen={sidebarOpen}
         />
       </div>
     </div>

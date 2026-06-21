@@ -91,6 +91,15 @@
   background: #a78bfa;
 }
 
+.pg-hamburger.active {
+  border-color: rgba(0, 122, 204, 0.55);
+  background: rgba(0, 122, 204, 0.14);
+}
+
+.pg-hamburger.active span {
+  background: #3794ff;
+}
+
 /* ── Logo ── */
 
 .pg-logo {
@@ -247,7 +256,23 @@
   padding: 8px 12px;
   background: #252526;
   border-bottom: 1px solid #3c3c3c;
-  overflow: visible;
+  overflow: hidden;
+  max-height: 320px;
+  opacity: 1;
+  transition:
+    max-height 0.28s ease,
+    padding 0.28s ease,
+    opacity 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.pg-workspace-strip--collapsed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom-color: transparent;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .pg-workspace-group {
@@ -322,14 +347,55 @@
   min-height: 0;
 }
 
+.pg-panes--resizing {
+  cursor: row-resize;
+}
+
+.pg-pane-resizer {
+  flex: 0 0 7px;
+  position: relative;
+  cursor: row-resize;
+  touch-action: none;
+  user-select: none;
+  background: #252526;
+  border-top: 1px solid #3c3c3c;
+  border-bottom: 1px solid #3c3c3c;
+  z-index: 2;
+}
+
+.pg-pane-resizer::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 42px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: background 0.15s ease;
+}
+
+.pg-pane-resizer:hover,
+.pg-pane-resizer:active,
+.pg-panes--resizing .pg-pane-resizer {
+  background: rgba(0, 122, 204, 0.18);
+}
+
+.pg-pane-resizer:hover::after,
+.pg-pane-resizer:active::after,
+.pg-panes--resizing .pg-pane-resizer::after {
+  background: #3794ff;
+}
+
 .pg-editor-pane {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   min-width: 0;
+  min-height: 160px;
   overflow: hidden;
   border-right: none;
-  border-bottom: 1px solid #3c3c3c;
 }
 
 .pg-output-pane {
@@ -338,7 +404,7 @@
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  min-height: 220px;
+  min-height: 100px;
   flex: 0 0 38%;
   overflow: hidden;
 }
@@ -566,12 +632,11 @@
   }
 
   .pg-editor-pane {
-    min-height: 260px;
+    min-height: 140px;
   }
 
   .pg-output-pane {
-    min-height: 170px;
-    flex-basis: 35%;
+    min-height: 90px;
   }
 
   .pg-toolbar {

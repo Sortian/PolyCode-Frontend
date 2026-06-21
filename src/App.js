@@ -283,13 +283,7 @@ function MainApp({
               />
               <Route
                 path="/playground"
-                element={
-                  <PlaygroundPage
-                    theme={theme}
-                    onToggleSidebar={toggleSidebar}
-                    sidebarOpen={isSidebarOpen}
-                  />
-                }
+                element={<PlaygroundPage />}
               />
 
               <Route
