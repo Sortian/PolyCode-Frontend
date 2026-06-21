@@ -56,6 +56,29 @@ const LANG_GROUPS = [
 const ALL_LANGUAGES = LANG_GROUPS.flatMap((group) => group.langs);
 const DEFAULT_LANGUAGE = "javascript";
 const DEFAULT_STARTER = "// Start coding here\n";
+const CONSOLE_RATIO_KEY = "polycode_playground_console_ratio";
+const DEFAULT_CONSOLE_RATIO = 0.38;
+const MIN_CONSOLE_PX = 100;
+const MIN_EDITOR_PX = 160;
+
+function loadConsoleRatio() {
+  try {
+    const stored = Number(localStorage.getItem(CONSOLE_RATIO_KEY));
+    if (Number.isFinite(stored) && stored >= 0.15 && stored <= 0.8) {
+      return stored;
+    }
+  } catch {
+    /* ignore */
+  }
+  return DEFAULT_CONSOLE_RATIO;
+}
+
+function clampConsoleRatio(ratio, panesHeight) {
+  if (!panesHeight) return ratio;
+  const minRatio = MIN_CONSOLE_PX / panesHeight;
+  const maxRatio = 1 - MIN_EDITOR_PX / panesHeight;
+  return Math.min(Math.max(ratio, minRatio), Math.max(minRatio, maxRatio));
+}
 
 function getStarterCode(lang) {
   return STARTERS[lang] || DEFAULT_STARTER;
@@ -92,8 +115,6 @@ function buildInitialWorkspaces(initialLanguage, initialCode) {
 export default function CodePlayground({
   initialCode,
   initialLanguage = "javascript",
-  onToggleSidebar,
-  sidebarOpen,
 }) {
   const normalizedInitialLanguage = normalizeLanguage(initialLanguage);
   const [language, setLanguage] = useState(normalizedInitialLanguage);
@@ -103,11 +124,84 @@ export default function CodePlayground({
   const [runningLanguage, setRunningLanguage] = useState(null);
   const [fontSize, setFontSize] = useState(14);
   const [wordWrap, setWordWrap] = useState(false);
+  const [workspaceStripOpen, setWorkspaceStripOpen] = useState(true);
+  const [consoleRatio, setConsoleRatio] = useState(loadConsoleRatio);
+  const [isResizingPanes, setIsResizingPanes] = useState(false);
   const outputRef = useRef(null);
+  const panesRef = useRef(null);
+  const paneDragRef = useRef(null);
+  const consoleRatioRef = useRef(consoleRatio);
   const currentWorkspace = workspaces[language] || createWorkspace(language);
   const { code, output, previewHTML, activeTab } = currentWorkspace;
   const currentIsRunning = runningLanguage === language;
   const anyIsRunning = runningLanguage !== null; // eslint-disable-line no-unused-vars
+
+  useEffect(() => {
+    consoleRatioRef.current = consoleRatio;
+  }, [consoleRatio]);
+
+  useEffect(() => {
+    if (!isResizingPanes) return undefined;
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+    return () => {
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+  }, [isResizingPanes]);
+
+  const saveConsoleRatio = useCallback((ratio) => {
+    try {
+      localStorage.setItem(CONSOLE_RATIO_KEY, String(ratio));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const handlePaneResizePointerDown = (event) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+
+    const panes = panesRef.current;
+    if (!panes) return;
+
+    paneDragRef.current = {
+      pointerId: event.pointerId,
+      startY: event.clientY,
+      startRatio: consoleRatioRef.current,
+      panesHeight: panes.getBoundingClientRect().height,
+    };
+    setIsResizingPanes(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePaneResizePointerMove = (event) => {
+    const drag = paneDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    event.preventDefault();
+
+    const deltaRatio = (event.clientY - drag.startY) / drag.panesHeight;
+    const nextRatio = clampConsoleRatio(
+      drag.startRatio + deltaRatio,
+      drag.panesHeight,
+    );
+    setConsoleRatio(nextRatio);
+  };
+
+  const finishPaneResize = (event) => {
+    const drag = paneDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    paneDragRef.current = null;
+    setIsResizingPanes(false);
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    saveConsoleRatio(consoleRatioRef.current);
+  };
+
+  const resetConsoleRatio = () => {
+    setConsoleRatio(DEFAULT_CONSOLE_RATIO);
+    saveConsoleRatio(DEFAULT_CONSOLE_RATIO);
+  };
 
   const updateWorkspace = useCallback((lang, nextValue) => {
     setWorkspaces((prev) => {
@@ -225,19 +319,18 @@ export default function CodePlayground({
       {/* ── Toolbar ── */}
       <div className="pg-toolbar">
         <div className="pg-toolbar-left">
-          {/* Hamburger — re-open sidebar */}
-          {onToggleSidebar && (
-            <button
-              className="pg-hamburger"
-              onClick={onToggleSidebar}
-              title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
-              aria-label="Toggle sidebar"
-            >
-              <span />
-              <span />
-              <span />
-            </button>
-          )}
+          <button
+            type="button"
+            className={`pg-hamburger${workspaceStripOpen ? " active" : ""}`}
+            onClick={() => setWorkspaceStripOpen((open) => !open)}
+            title={workspaceStripOpen ? "Hide language list" : "Show language list"}
+            aria-label="Toggle language list"
+            aria-expanded={workspaceStripOpen}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
 
           <span className="pg-logo">⬡ IDE</span>
 
@@ -314,7 +407,12 @@ export default function CodePlayground({
       </div>
 
       {/* ── Workspace strip ── */}
-      <div className="pg-workspace-strip">
+      <div
+        className={`pg-workspace-strip${
+          workspaceStripOpen ? "" : " pg-workspace-strip--collapsed"
+        }`}
+        aria-hidden={!workspaceStripOpen}
+      >
         {LANG_GROUPS.map((group) => (
           <div key={group.label} className="pg-workspace-group">
             <span className="pg-workspace-label">{group.label}</span>
@@ -345,9 +443,16 @@ export default function CodePlayground({
       </div>
 
       {/* ── Split panes ── */}
-      <div className="pg-panes" onKeyDown={handleEditorKeyDown}>
+      <div
+        ref={panesRef}
+        className={`pg-panes${isResizingPanes ? " pg-panes--resizing" : ""}`}
+        onKeyDown={handleEditorKeyDown}
+      >
         {/* Editor */}
-        <div className="pg-editor-pane">
+        <div
+          className="pg-editor-pane"
+          style={{ flex: `1 1 ${(1 - consoleRatio) * 100}%` }}
+        >
           <div className="pg-pane-header">
             <span className="pg-pane-title">
               {langInfo.icon} {langInfo.label}
@@ -373,8 +478,27 @@ export default function CodePlayground({
           </div>
         </div>
 
+        <div
+          className="pg-pane-resizer"
+          role="separator"
+          aria-orientation="horizontal"
+          aria-label="Resize console panel"
+          aria-valuemin={15}
+          aria-valuemax={80}
+          aria-valuenow={Math.round(consoleRatio * 100)}
+          onPointerDown={handlePaneResizePointerDown}
+          onPointerMove={handlePaneResizePointerMove}
+          onPointerUp={finishPaneResize}
+          onPointerCancel={finishPaneResize}
+          onDoubleClick={resetConsoleRatio}
+          title="Drag to resize console. Double-click to reset."
+        />
+
         {/* Output / Preview */}
-        <div className="pg-output-pane">
+        <div
+          className="pg-output-pane"
+          style={{ flex: `0 0 ${consoleRatio * 100}%` }}
+        >
           <div className="pg-pane-header">
             <div className="pg-output-tabs">
               <button
