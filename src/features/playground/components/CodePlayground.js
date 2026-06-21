@@ -12,7 +12,6 @@ import {
 import {
   createFile,
   createWorkspace,
-  createLocalFileId,
   getActiveFile,
   mergeLocalWorkspace,
   monacoLanguageForFile,
