@@ -146,6 +146,13 @@ function saveSession(session) {
 }
 
 function ReplyFeedback({ feedback, onRate, disabled, required }) {
+  const handleRate = (rating) => (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (disabled || feedback === rating) return;
+    onRate(rating);
+  };
+
   return (
     <div
       className={`assistant-feedback${required && !feedback ? " assistant-feedback--required" : ""}`}
@@ -156,7 +163,7 @@ function ReplyFeedback({ feedback, onRate, disabled, required }) {
       <button
         type="button"
         className={`assistant-feedback-btn${feedback === "like" ? " assistant-feedback-btn--active-like" : ""}`}
-        onClick={() => onRate("like")}
+        onClick={handleRate("like")}
         disabled={disabled}
         aria-label="Helpful reply"
         aria-pressed={feedback === "like"}
@@ -166,7 +173,7 @@ function ReplyFeedback({ feedback, onRate, disabled, required }) {
       <button
         type="button"
         className={`assistant-feedback-btn${feedback === "dislike" ? " assistant-feedback-btn--active-dislike" : ""}`}
-        onClick={() => onRate("dislike")}
+        onClick={handleRate("dislike")}
         disabled={disabled}
         aria-label="Not helpful reply"
         aria-pressed={feedback === "dislike"}
@@ -182,7 +189,6 @@ function MentorReply({
   reduceMotion,
   showFeedback,
   onRate,
-  feedbackSaving,
   onStreamComplete,
   feedbackRequired,
 }) {
@@ -192,10 +198,11 @@ function MentorReply({
   const canRate = showFeedback && done && msg.content && msg.id !== "welcome";
 
   useEffect(() => {
-    if (shouldStream && done && onStreamComplete) {
+    if (!msg.stream || !onStreamComplete) return;
+    if (!shouldStream || done) {
       onStreamComplete(msg.id);
     }
-  }, [shouldStream, done, msg.id, onStreamComplete]);
+  }, [shouldStream, done, msg.id, msg.stream, onStreamComplete]);
 
   return (
     <article className="assistant-mentor-reply">
@@ -215,7 +222,7 @@ function MentorReply({
           <ReplyFeedback
             feedback={msg.feedback}
             onRate={onRate}
-            disabled={feedbackSaving}
+            disabled={false}
             required={feedbackRequired}
           />
         ) : null}
@@ -253,7 +260,8 @@ function getPendingFeedbackMessage(messages) {
     if (
       message.role === "assistant" &&
       message.id !== "welcome" &&
-      message.content?.trim()
+      message.content?.trim() &&
+      !message.stream
     ) {
       return message.feedback ? null : message;
     }
@@ -270,7 +278,6 @@ export default function AssistantFab() {
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
-  const [feedbackSavingId, setFeedbackSavingId] = useState(null);
   const [assistantLevel, setAssistantLevel] = useState(() => loadAssistantLevel());
   const messagesEndRef = useRef(null);
   const messagesScrollRef = useRef(null);
@@ -390,20 +397,23 @@ export default function AssistantFab() {
       const msgs = sessionRef.current.messages;
       const msgIndex = msgs.findIndex((m) => m.id === messageId);
       if (msgIndex < 0) return;
+      if (msgs[msgIndex]?.feedback === rating) return;
 
       const userMsg = [...msgs.slice(0, msgIndex)]
         .reverse()
         .find((m) => m.role === "user" && m.content?.trim());
-      if (!userMsg) return;
+      if (!userMsg) {
+        setError("Could not find your question for this reply. Try refreshing.");
+        return;
+      }
 
-      const previousFeedback = msgs[msgIndex]?.feedback;
       setSession((prev) => ({
         ...prev,
         messages: prev.messages.map((m) =>
           m.id === messageId ? { ...m, feedback: rating } : m,
         ),
       }));
-      setFeedbackSavingId(messageId);
+      setError(null);
 
       try {
         await postAssistantFeedback({
@@ -414,15 +424,13 @@ export default function AssistantFab() {
           assistant_message: assistantContent,
           context: assistantContext,
         });
-      } catch {
-        setSession((prev) => ({
-          ...prev,
-          messages: prev.messages.map((m) =>
-            m.id === messageId ? { ...m, feedback: previousFeedback || null } : m,
-          ),
-        }));
-      } finally {
-        setFeedbackSavingId(null);
+      } catch (err) {
+        // Keep local rating so the user is not stuck; training sync can retry later.
+        setError(
+          err instanceof Error
+            ? `${err.message} (saved locally — you can keep chatting)`
+            : "Could not sync feedback to server. You can keep chatting.",
+        );
       }
     },
     [assistantContext],
@@ -468,8 +476,9 @@ export default function AssistantFab() {
           level: assistantLevel,
           assistant_message_id: assistantId,
         });
+        const resolvedAssistantId = res.assistantMessageId || assistantId;
         const assistantMsg = {
-          id: assistantId,
+          id: resolvedAssistantId,
           role: "assistant",
           content: res.response,
           feedback: null,
@@ -710,11 +719,10 @@ export default function AssistantFab() {
                       msg={{ ...msg, content: messageContent(msg) }}
                       reduceMotion={reduceMotion}
                       showFeedback
-                      feedbackSaving={feedbackSavingId === msg.id}
                       feedbackRequired={msg.id === pendingFeedback?.id}
                       onStreamComplete={handleStreamComplete}
                       onRate={(rating) =>
-                        handleFeedback(msg.id, rating, messageContent(msg))
+                        handleFeedback(msg.id, rating, msg.content)
                       }
                     />
                   )}
