@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -272,6 +273,7 @@ function getPendingFeedbackMessage(messages) {
 
 export default function AssistantFab() {
   const { user } = useAuth();
+  const userId = user?._id || user?.id || null;
   const { context: assistantContext } = useAssistant();
   const { pathname } = useLocation();
   const compactDock = pathname !== "/select-language";
@@ -291,10 +293,30 @@ export default function AssistantFab() {
   const suppressDockClickRef = useRef(false);
   const [dockPosition, setDockPosition] = useState(() => loadDockPosition());
   const [draggingDock, setDraggingDock] = useState(false);
+  const lastUserIdRef = useRef(userId);
 
   useEffect(() => {
     sessionRef.current = session;
   }, [session]);
+
+  useEffect(() => {
+    const previousUserId = lastUserIdRef.current;
+    if (previousUserId === userId) return;
+
+    // First login on a guest session — keep chat; backend claims anonymous prompts.
+    if (!previousUserId && userId) {
+      lastUserIdRef.current = userId;
+      return;
+    }
+
+    // Logout or account switch — avoid 403 from another user's session id.
+    setSession({
+      sessionId: generateSessionId(),
+      messages: [WELCOME_MESSAGE],
+    });
+    setError(null);
+    lastUserIdRef.current = userId;
+  }, [userId]);
 
   useEffect(() => {
     if (!dockPosition) return undefined;
@@ -320,7 +342,17 @@ export default function AssistantFab() {
       try {
         const current = loadSession();
         const data = await fetchAssistantSession(current.sessionId);
-        if (cancelled || !data?.messages?.length) return;
+        if (cancelled) return;
+
+        if (data?.forbidden) {
+          setSession({
+            sessionId: generateSessionId(),
+            messages: [WELCOME_MESSAGE],
+          });
+          return;
+        }
+
+        if (!data?.messages?.length) return;
 
         const serverMessages = data.messages.map((m, index) => ({
           id:
@@ -352,6 +384,26 @@ export default function AssistantFab() {
     const scrollNode = messagesScrollRef.current;
     if (!scrollNode) return;
 
+    const scrollToBottom = () => {
+      scrollNode.scrollTop = scrollNode.scrollHeight;
+    };
+
+    scrollToBottom();
+    const rafId = window.requestAnimationFrame(scrollToBottom);
+    const timerId = window.setTimeout(scrollToBottom, 200);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(timerId);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const scrollNode = messagesScrollRef.current;
+    if (!scrollNode) return;
+
     const distanceFromBottom =
       scrollNode.scrollHeight - scrollNode.scrollTop - scrollNode.clientHeight;
     const shouldStickToBottom = sending || distanceFromBottom < 96;
@@ -361,7 +413,7 @@ export default function AssistantFab() {
     window.requestAnimationFrame(() => {
       scrollNode.scrollTop = scrollNode.scrollHeight;
     });
-  }, [session.messages, open, sending]);
+  }, [session.messages, sending, open]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -476,12 +528,15 @@ export default function AssistantFab() {
           context: assistantContext,
         });
       } catch (err) {
-        // Keep local rating so the user is not stuck; training sync can retry later.
-        setError(
-          err instanceof Error
-            ? `${err.message} (saved locally — you can keep chatting)`
-            : "Could not sync feedback to server. You can keep chatting.",
-        );
+        const message =
+          err instanceof Error ? err.message : "Could not sync feedback to server.";
+        const friendly =
+          message === "Forbidden"
+            ? "This chat belongs to another account. Start a new chat with the trash icon."
+            : message.includes("Sign in to rate")
+              ? "Sign in to save feedback for this conversation."
+              : message;
+        setError(`${friendly} (saved locally — you can keep chatting)`);
       }
     },
     [assistantContext],
@@ -670,7 +725,7 @@ export default function AssistantFab() {
     setOpen(true);
   };
 
-  return (
+  return createPortal(
     <>
       <AnimatePresence>
         {open ? (
@@ -899,6 +954,7 @@ export default function AssistantFab() {
           </div>
         </motion.div>
       ) : null}
-    </>
+    </>,
+    document.body,
   );
 }

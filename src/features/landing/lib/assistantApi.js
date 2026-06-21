@@ -69,6 +69,10 @@ export async function fetchAssistantSession(sessionId) {
       headers: getAuthHeaders(),
     });
 
+    if (res.status === 403) {
+      return { forbidden: true };
+    }
+
     if (!res.ok) {
       return null;
     }

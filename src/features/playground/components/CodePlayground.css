@@ -55,51 +55,6 @@
   min-width: 0;
 }
 
-/* ── Hamburger button ── */
-
-.pg-hamburger {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  cursor: pointer;
-  padding: 6px 7px;
-  flex-shrink: 0;
-  transition: all 0.15s;
-}
-
-.pg-hamburger span {
-  display: block;
-  width: 100%;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 1px;
-  transition: background 0.15s;
-}
-
-.pg-hamburger:hover {
-  border-color: rgba(167, 139, 250, 0.4);
-  background: rgba(167, 139, 250, 0.08);
-}
-
-.pg-hamburger:hover span {
-  background: #a78bfa;
-}
-
-.pg-hamburger.active {
-  border-color: rgba(0, 122, 204, 0.55);
-  background: rgba(0, 122, 204, 0.14);
-}
-
-.pg-hamburger.active span {
-  background: #3794ff;
-}
-
 /* ── Logo ── */
 
 .pg-logo {
@@ -247,94 +202,115 @@
   animation: spin 0.7s linear infinite;
 }
 
-/* ── Workspace strip ── */
+.pg-sync-badge {
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
 
-.pg-workspace-strip {
+.pg-sync-badge--local {
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.pg-sync-badge--busy {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.pg-sync-error {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.72rem;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.12);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.pg-file-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px 12px;
+  align-items: stretch;
+  gap: 0;
+  min-height: 34px;
+  overflow-x: auto;
   background: #252526;
   border-bottom: 1px solid #3c3c3c;
-  overflow: hidden;
-  max-height: 320px;
-  opacity: 1;
-  transition:
-    max-height 0.28s ease,
-    padding 0.28s ease,
-    opacity 0.2s ease,
-    border-color 0.2s ease;
+  scrollbar-width: thin;
 }
 
-.pg-workspace-strip--collapsed {
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  border-bottom-color: transparent;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.pg-workspace-group {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  min-width: 0;
-}
-
-.pg-workspace-label {
-  width: 92px;
-  flex-shrink: 0;
-  padding-top: 2px;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.44);
-}
-
-.pg-workspace-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  min-width: 0;
-  padding-bottom: 2px;
-}
-
-.pg-workspace-chip {
+.pg-file-tab {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 11px;
+  max-width: 180px;
+  border-right: 1px solid #3c3c3c;
   background: #2d2d30;
-  color: #cccccc;
-  border: 1px solid #3c3c3c;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.68rem;
-  font-family: inherit;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
 }
 
-.pg-workspace-chip:hover {
-  color: #fff;
-  border-color: #007acc;
-  background: rgba(0, 122, 204, 0.16);
-}
-
-.pg-workspace-chip.active {
-  color: #fff;
-  border-color: #007acc;
-  background: #094771;
+.pg-file-tab.active {
+  background: #1e1e1e;
   box-shadow: inset 0 -2px 0 #3794ff;
 }
 
-.pg-workspace-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+.pg-file-tab-btn {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #cccccc;
+  font-size: 0.72rem;
+  font-family: inherit;
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pg-file-tab.active .pg-file-tab-btn {
+  color: #ffffff;
+}
+
+.pg-file-dirty {
+  margin-left: 0.25rem;
+  color: #fbbf24;
+}
+
+.pg-file-tab-close {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  width: 22px;
+  flex-shrink: 0;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.pg-file-tab-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pg-file-tab-add {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  min-width: 34px;
+  padding: 0 0.65rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.pg-file-tab-add:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* ── Panes ── */
@@ -655,21 +631,6 @@
     display: flex;
     width: 100%;
     justify-content: flex-start;
-  }
-
-  .pg-workspace-group {
-    flex-direction: column;
-    gap: 6px;
-    align-items: stretch;
-  }
-
-  .pg-workspace-label {
-    width: auto;
-    padding-top: 0;
-  }
-
-  .pg-workspace-strip {
-    gap: 10px;
   }
 
   .pg-pane-hint {
