@@ -10,6 +10,7 @@
 .polym_mentor-scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  overscroll-behavior: contain;
 }
 
 .polym_mentor-scroll::-webkit-scrollbar {
@@ -42,6 +43,8 @@
   display: flex;
   flex-direction: column;
   width: min(100vw, 420px);
+  overflow: hidden;
+  overscroll-behavior: contain;
   border-left: 1px solid var(--assistant-header-border, var(--border));
   background: var(--assistant-panel-bg);
   box-shadow: var(--assistant-panel-shadow);
@@ -458,6 +461,8 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;

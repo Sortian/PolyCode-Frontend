@@ -355,6 +355,48 @@ export default function AssistantFab() {
   }, [session.messages, open, sending]);
 
   useEffect(() => {
+    if (!open) return undefined;
+
+    const body = document.body;
+    const html = document.documentElement;
+    const previousBodyOverflow = body.style.overflow;
+    const previousHtmlOverscroll = html.style.overscrollBehavior;
+
+    body.style.overflow = "hidden";
+    html.style.overscrollBehavior = "none";
+
+    return () => {
+      body.style.overflow = previousBodyOverflow;
+      html.style.overscrollBehavior = previousHtmlOverscroll;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const scrollEl = messagesScrollRef.current;
+    if (!open || !scrollEl) return undefined;
+
+    const trapWheel = (event) => {
+      const { scrollTop, scrollHeight, clientHeight } = scrollEl;
+      const maxScroll = scrollHeight - clientHeight;
+
+      if (maxScroll <= 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const atTop = scrollTop <= 0;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+      if ((event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)) {
+        event.preventDefault();
+      }
+    };
+
+    scrollEl.addEventListener("wheel", trapWheel, { passive: false });
+    return () => scrollEl.removeEventListener("wheel", trapWheel);
+  }, [open, session.messages.length]);
+
+  useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 150);
   }, [open]);
 
