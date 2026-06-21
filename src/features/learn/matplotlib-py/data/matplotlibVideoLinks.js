@@ -122,4 +122,9 @@ export const MATPLOTLIB_VIDEO_LINKS = {
     duration: "11:24",
     title: "Capstone Dashboard Project",
   },
+  "plt-13": {
+    youtubeId: "O52_AsVb9tI",
+    duration: "14:15",
+    title: "Matplotlib Cheat Sheet & Quick Reference",
+  },
 };

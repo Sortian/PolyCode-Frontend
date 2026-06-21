@@ -80,6 +80,41 @@
   color: #0f172a;
 }
 
+.app.theme-light .matplotlib-prerequisites {
+  background: #f8fafc;
+  border-color: #bbf7d0;
+}
+
+.app.theme-light .matplotlib-prereq-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.app.theme-light .matplotlib-prereq-card strong {
+  color: #0f172a;
+}
+
+.app.theme-light .matplotlib-prereq-card p,
+.app.theme-light .matplotlib-runtime-note {
+  color: #64748b;
+}
+
+.app.theme-light .lesson-objectives,
+.app.theme-light .lesson-scenario {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.app.theme-light .lesson-objectives strong,
+.app.theme-light .lesson-scenario strong {
+  color: #0f172a;
+}
+
+.app.theme-light .lesson-objectives li,
+.app.theme-light .lesson-scenario p {
+  color: #475569;
+}
+
 .app.theme-classic {
   --learn-hero-bg:
     linear-gradient(135deg, rgba(255, 176, 0, 0.12), transparent 44%),

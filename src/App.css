@@ -7953,6 +7953,150 @@ body {
   }
 }
 
+.matplotlib-prerequisites {
+  margin: 0 0 2rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 14px;
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  background:
+    linear-gradient(135deg, rgba(35, 145, 32, 0.1), transparent 55%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.matplotlib-prerequisites-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.matplotlib-prerequisites-head span {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4ade80;
+}
+
+.matplotlib-prerequisites-head small {
+  font-size: 0.75rem;
+  color: var(--txt-3, #6e7891);
+}
+
+.matplotlib-prerequisites-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.matplotlib-prereq-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.matplotlib-prereq-card:hover {
+  border-color: rgba(74, 222, 128, 0.35);
+  background: rgba(74, 222, 128, 0.06);
+}
+
+.matplotlib-prereq-card strong {
+  font-size: 0.875rem;
+  color: var(--txt-0, #f0f0ff);
+}
+
+.matplotlib-prereq-card p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--txt-2, #9aa3bc);
+}
+
+.matplotlib-prereq-cheat {
+  border-color: rgba(74, 222, 128, 0.25);
+  background: rgba(74, 222, 128, 0.05);
+}
+
+.matplotlib-runtime-note {
+  margin: 1rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--txt-2, #9aa3bc);
+}
+
+.matplotlib-runtime-note code {
+  font-size: 0.78rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(74, 222, 128, 0.12);
+  color: #86efac;
+}
+
+@media (max-width: 900px) {
+  .matplotlib-prerequisites-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .matplotlib-prerequisites-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lesson-objectives,
+.lesson-scenario {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--lesson-accent, #4f46e5) 35%, transparent);
+  background: color-mix(in srgb, var(--lesson-accent, #4f46e5) 8%, transparent);
+}
+
+.lesson-scenario {
+  border-color: rgba(0, 212, 255, 0.28);
+  background: rgba(0, 212, 255, 0.06);
+}
+
+.lesson-objectives-icon,
+.lesson-scenario-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.lesson-objectives strong,
+.lesson-scenario strong {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: var(--txt-0, #f0f0ff);
+}
+
+.lesson-objectives ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.lesson-objectives li,
+.lesson-scenario p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--txt-1, #c0c8e0);
+}
+
 .numpy-intro-theory {
   max-width: 780px;
   margin: 0 auto;

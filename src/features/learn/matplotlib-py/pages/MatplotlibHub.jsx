@@ -32,7 +32,7 @@ const LEARNING_PATH = [
     level: "Pro",
     chapters: ["publication-mastery"],
     color: "#9333ea",
-    summary: "Publication checklist and a capstone multi-chart dashboard.",
+    summary: "Publication checklist, capstone dashboard, and cheat sheet reference.",
   },
 ];
 
@@ -108,7 +108,7 @@ export default function MatplotlibHub() {
         </h1>
         <p className="oops-hero-sub">
           A structured path from your first line plot to publication-ready
-          dashboards — 8 chapters, 24 lessons, and hands-on challenges that
+          dashboards — 8 chapters, 25 lessons, and hands-on challenges that
           teach what to plot, why it matters, and how to make it clear.
         </p>
 
@@ -169,6 +169,39 @@ export default function MatplotlibHub() {
           </div>
         </div>
       </div>
+
+      <section className="matplotlib-prerequisites" aria-label="Before you start">
+        <div className="matplotlib-prerequisites-head">
+          <span>Before you start</span>
+          <small>Recommended background · not required for lesson 1</small>
+        </div>
+        <div className="matplotlib-prerequisites-grid">
+          <Link to="/language/Python" className="matplotlib-prereq-card">
+            <strong>Python basics</strong>
+            <p>Variables, lists, and functions — enough to read lesson code.</p>
+          </Link>
+          <Link to="/learn/numpy-py" className="matplotlib-prereq-card">
+            <strong>NumPy</strong>
+            <p>Arrays and vector math — used in real-world plotting lessons.</p>
+          </Link>
+          <Link to="/learn/pandas-py" className="matplotlib-prereq-card">
+            <strong>Pandas</strong>
+            <p>DataFrames and time series — helpful from chapter 5 onward.</p>
+          </Link>
+          <Link
+            to={`${BASE_PATH}/lesson/plt-13`}
+            className="matplotlib-prereq-card matplotlib-prereq-cheat"
+          >
+            <strong>Cheat sheet</strong>
+            <p>Chart picker + API reference — bookmark lesson 25 anytime.</p>
+          </Link>
+        </div>
+        <p className="matplotlib-runtime-note">
+          Plot examples run in your browser (Pyodide). The first run loads
+          Matplotlib and may take a few seconds — charts appear in the Output
+          panel after <code>plt.show()</code>, not in the text console.
+        </p>
+      </section>
 
       <div className="oops-guide-tools">
         <div className="oops-tool-panel oops-tool-panel-main">

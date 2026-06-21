@@ -438,6 +438,48 @@ function NumpyTheoryBlock({ block, step, accentColor }) {
     );
   }
 
+  if (block.type === "objectives") {
+    return (
+      <aside
+        className="lesson-objectives"
+        style={{ "--lesson-accent": accentColor }}
+      >
+        <span className="lesson-objectives-icon" aria-hidden>
+          🎯
+        </span>
+        <div>
+          <strong>After this lesson you can…</strong>
+          <ul>
+            {block.items.map((item) => (
+              <li key={item}>
+                <InlineText text={item} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    );
+  }
+
+  if (block.type === "scenario") {
+    return (
+      <aside
+        className="lesson-scenario"
+        style={{ "--lesson-accent": accentColor }}
+      >
+        <span className="lesson-scenario-icon" aria-hidden>
+          📋
+        </span>
+        <div>
+          <strong>Real scenario</strong>
+          <p>
+            <InlineText text={block.content} />
+          </p>
+        </div>
+      </aside>
+    );
+  }
+
   if (block.type === "callout") {
     const labels = {
       info: "Good to know",

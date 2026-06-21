@@ -3,8 +3,9 @@
 
 import { applyLessonVideoLinks } from "../../shared/applyLessonVideoLinks";
 import { MATPLOTLIB_VIDEO_LINKS } from "./matplotlibVideoLinks";
+import { applyChapterEnhancements } from "./matplotlibLessonEnhancements";
 
-export const MATPLOTLIB_CHAPTERS = [
+const RAW_MATPLOTLIB_CHAPTERS = [
   {
     id: "foundations",
     title: "Foundations",
@@ -2169,9 +2170,163 @@ plt.show()`,
           ],
         },
       },
+      {
+        id: "plt-13",
+        title: "Matplotlib Cheat Sheet",
+        xp: 15,
+        theory: [
+          {
+            type: "text",
+            content:
+              "Keep this lesson bookmarked. It condenses the **questions, chart types, and commands** you use most often when moving from raw data to a clear figure.",
+          },
+          {
+            type: "table",
+            title: "Which chart answers your question?",
+            columns: ["Your question", "Start with", "Typical call"],
+            rows: [
+              {
+                label: "Trend over time",
+                values: ["Line chart", "plt.plot() / ax.plot()"],
+              },
+              {
+                label: "Compare categories",
+                values: ["Bar chart", "plt.bar() / ax.bar()"],
+              },
+              {
+                label: "Relationship between two numbers",
+                values: ["Scatter plot", "plt.scatter()"],
+              },
+              {
+                label: "Distribution of one variable",
+                values: ["Histogram", "plt.hist(bins=...)"],
+              },
+              {
+                label: "Parts of a whole (few categories)",
+                values: ["Pie chart", "plt.pie() — use sparingly"],
+              },
+              {
+                label: "Compare group distributions",
+                values: ["Box plot", "plt.boxplot()"],
+              },
+            ],
+            showTotals: false,
+            footnote:
+              "When unsure, write your question as a sentence first — the chart type usually follows naturally.",
+          },
+          {
+            type: "table",
+            title: "API quick reference",
+            columns: ["Task", "Pyplot shortcut", "Object-oriented"],
+            rows: [
+              {
+                label: "Create figure",
+                values: ["plt.figure()", "fig, ax = plt.subplots()"],
+              },
+              {
+                label: "Labels & title",
+                values: ["plt.xlabel / ylabel / title", "ax.set_xlabel / set_title"],
+              },
+              {
+                label: "Legend",
+                values: ["plt.legend()", "ax.legend()"],
+              },
+              {
+                label: "Multi-panel layout",
+                values: ["plt.subplots(r, c)", "Index axs[i] or axs[r,c]"],
+              },
+              {
+                label: "Fix overlap",
+                values: ["plt.tight_layout()", "fig.tight_layout()"],
+              },
+              {
+                label: "Export",
+                values: ["plt.savefig('out.png', dpi=200)", "fig.savefig(...)"],
+              },
+            ],
+            showTotals: false,
+          },
+          {
+            type: "code",
+            lang: "python",
+            label: "Starter template — copy for new charts",
+            content: `import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.plot([1, 2, 3], [2, 4, 3], marker="o", label="Series")
+ax.set_title("Descriptive title with units")
+ax.set_xlabel("X axis label")
+ax.set_ylabel("Y axis label")
+ax.grid(True, alpha=0.3)
+ax.legend()
+plt.tight_layout()
+plt.show()`,
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            content:
+              "Before every `plt.show()`, ask: **Does this chart answer one clear question without me explaining it aloud?** If not, add labels, title, or pick a different chart type.",
+          },
+          {
+            type: "callout",
+            variant: "warning",
+            content:
+              "Common gotchas: empty legend (missing `label=`), blank PNG (savefig after show), overlapping subplot text (forgot `tight_layout`), misleading y-axis (truncated without note).",
+          },
+          {
+            type: "quiz",
+            question: "You want to compare average score across five teams. What do you reach for first?",
+            options: ["plt.hist()", "plt.bar()", "plt.pie()", "plt.scatter()"],
+            answer: 1,
+            explanation:
+              "Bar charts compare discrete categories. Histograms show distribution of one variable; scatter needs two numeric variables.",
+          },
+        ],
+        challenge: {
+          title: "Use the template",
+          description:
+            "Using `fig, ax = plt.subplots()`, plot `[1,2,3]` vs `[3,1,2]`, set a title, both axis labels, and call `plt.tight_layout()` before show.",
+          starterCode: `import matplotlib.pyplot as plt
+
+`,
+          solutionCode: `import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [3, 1, 2])
+ax.set_title("Sample chart")
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+plt.tight_layout()
+plt.show()`,
+          tests: [
+            {
+              id: 1,
+              label: "Uses subplots OO API",
+              keywords: [{ pattern: "plt\\.subplots\\s*\\(" }],
+            },
+            {
+              id: 2,
+              label: "Sets title and labels",
+              keywords: [
+                { pattern: "set_title\\s*\\(" },
+                { pattern: "set_xlabel\\s*\\(" },
+                { pattern: "set_ylabel\\s*\\(" },
+              ],
+            },
+            {
+              id: 3,
+              label: "Uses tight_layout",
+              keywords: [{ pattern: "tight_layout\\s*\\(" }],
+            },
+          ],
+        },
+      },
     ],
   },
 ];
+
+export const MATPLOTLIB_CHAPTERS = applyChapterEnhancements(RAW_MATPLOTLIB_CHAPTERS);
 
 export const MATPLOTLIB_LESSONS = applyLessonVideoLinks(
   MATPLOTLIB_CHAPTERS.flatMap((ch) =>

@@ -105,7 +105,7 @@ export const languageCourses = {
       tag: "Data Visualization",
       title: "Matplotlib · py",
       description:
-        "Beginner → Pro: line plots to publication dashboards — 8 chapters, chart selection, Pandas plots, and hands-on challenges.",
+        "Beginner → Pro: line plots to publication dashboards — 8 chapters, objectives per lesson, cheat sheet, and hands-on challenges.",
       href: "/learn/matplotlib-py",
       accent: "#239120",
       icon: Presentation,
