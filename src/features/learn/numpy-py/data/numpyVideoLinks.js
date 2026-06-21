@@ -36,12 +36,12 @@ export const NUMPY_VIDEO_LINKS = {
   // ── Ch 5: Linear Algebra ─────────────────────────────────────────────
   "numpy-9": "https://youtu.be/uvzY1ChOw68?si=isxXY0IqC_6tGLMn", // Dot Product
   "numpy-10": "https://youtu.be/4g6rNSphePo?si=c_2izCYl0Jpt2NLF", // Matrix Multiply @
-  "numpy-18": "", // Solve & Determinants
+  "numpy-18": "https://youtu.be/qT6-n-nmqcI?si=gv6B1DFg_O90Fk0Z", // Solve & Determinants
 
   // ── Ch 6: Aggregations ───────────────────────────────────────────────
-  "numpy-11": "", // sum, mean, min, max
-  "numpy-12": "", // axis=0 vs axis=1
-  "numpy-19": "", // NaN & Percentiles
+  "numpy-11": "https://youtu.be/MslR5CnRCR8?si=MoZNsNJAIFHNZud9", // sum, mean, min, max
+  "numpy-12": "https://youtu.be/msyCWwtDOEM?si=PD7LLfppS4Pkyjqg", // axis=0 vs axis=1
+  "numpy-19": "https://youtu.be/KxQQNC5FuqY?si=_ukURwPj8KZZcZVH", // NaN & Percentiles
 
   // ── Ch 7: Reshape & Combine ────────────────────────────────────────────
   "numpy-13": "", // reshape
