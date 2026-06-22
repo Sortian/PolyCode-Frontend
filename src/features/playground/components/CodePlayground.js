@@ -13,7 +13,17 @@ import {
   importPlaygroundWorkspace,
   fetchPlaygroundRecentFiles,
   fetchPlaygroundRuns,
+  deletePlaygroundRun,
+  clearPlaygroundRuns,
 } from "../services/playgroundApi";
+import {
+  buildRunFileKey,
+  appendLocalRunHistory,
+  clearLocalRunHistory,
+  loadLocalRunHistory,
+  makeLocalRunId,
+  removeLocalRunHistory,
+} from "../lib/playgroundRunHistory";
 import {
   createFile,
   createWorkspace,
@@ -235,6 +245,7 @@ export default function CodePlayground({
   const [recentLoading, setRecentLoading] = useState(false);
   const [runHistory, setRunHistory] = useState([]);
   const [runHistoryLoading, setRunHistoryLoading] = useState(false);
+  const [historyScope, setHistoryScope] = useState("all");
   const outputRef = useRef(null);
   const panesRef = useRef(null);
   const paneDragRef = useRef(null);
@@ -312,28 +323,44 @@ export default function CodePlayground({
   }, [refreshRecentFiles]);
 
   const refreshRunHistory = useCallback(async () => {
-    if (!token) {
-      setRunHistory([]);
-      return;
-    }
     const workspace = workspacesRef.current[language];
     const file = getActiveFile(workspace);
+    const fileKey = buildRunFileKey(file);
     const fileId = file?.serverId || null;
+    const scopeFileOnly = historyScope === "file";
 
     setRunHistoryLoading(true);
     try {
-      const data = await fetchPlaygroundRuns(token, {
-        language,
-        fileId: fileId || undefined,
-        limit: 25,
-      });
-      setRunHistory(Array.isArray(data.runs) ? data.runs : []);
+      if (token) {
+        const data = await fetchPlaygroundRuns(token, {
+          language,
+          fileId: scopeFileOnly && fileId ? fileId : undefined,
+          limit: 40,
+        });
+        setRunHistory(Array.isArray(data.runs) ? data.runs : []);
+        return;
+      }
+
+      setRunHistory(
+        loadLocalRunHistory({
+          language,
+          fileKey: scopeFileOnly ? fileKey : undefined,
+          limit: 40,
+        }),
+      );
     } catch (err) {
       logPlaygroundSyncError("Could not load run history", err);
+      setRunHistory(
+        loadLocalRunHistory({
+          language,
+          fileKey: scopeFileOnly ? fileKey : undefined,
+          limit: 40,
+        }),
+      );
     } finally {
       setRunHistoryLoading(false);
     }
-  }, [token, language]);
+  }, [token, language, historyScope]);
 
   useEffect(() => {
     if (!token) return;
@@ -348,9 +375,8 @@ export default function CodePlayground({
   }, [refreshRecentFiles]);
 
   useEffect(() => {
-    if (!token) return;
     refreshRunHistory();
-  }, [token, language, activeRecentFileId, refreshRunHistory]);
+  }, [token, language, activeRecentFileId, historyScope, refreshRunHistory]);
 
   useEffect(() => {
     workspacesRef.current = workspaces;
@@ -711,6 +737,72 @@ export default function CodePlayground({
     [language, updateWorkspace],
   );
 
+  const restoreRunCode = useCallback(
+    (run) => {
+      if (!run?.code) return;
+      updateActiveFileContent(run.code);
+      updateWorkspace(language, { activeTab: "output" });
+    },
+    [language, updateWorkspace, updateActiveFileContent],
+  );
+
+  const deleteRunHistoryItem = useCallback(
+    async (run) => {
+      if (!run?.id) return;
+      const isLocal = String(run.id).startsWith("local-");
+
+      if (token && !isLocal) {
+        try {
+          await deletePlaygroundRun(token, run.id);
+        } catch (err) {
+          logPlaygroundSyncError("Could not delete run", err);
+          return;
+        }
+      } else {
+        removeLocalRunHistory(run.id);
+      }
+
+      setRunHistory((prev) => prev.filter((entry) => entry.id !== run.id));
+    },
+    [token],
+  );
+
+  const clearAllRunHistory = useCallback(async () => {
+    const workspace = workspacesRef.current[language];
+    const file = getActiveFile(workspace);
+    const fileId = file?.serverId || null;
+    const fileKey = buildRunFileKey(file);
+    const scopeFileOnly = historyScope === "file";
+
+    if (
+      !window.confirm(
+        scopeFileOnly
+          ? "Clear run history for this file?"
+          : `Clear all ${resolveEngine(language).label} run history?`,
+      )
+    ) {
+      return;
+    }
+
+    if (token) {
+      try {
+        await clearPlaygroundRuns(token, {
+          language,
+          fileId: scopeFileOnly && fileId ? fileId : undefined,
+        });
+      } catch (err) {
+        logPlaygroundSyncError("Could not clear run history", err);
+        return;
+      }
+    }
+
+    clearLocalRunHistory({
+      language,
+      fileKey: scopeFileOnly ? fileKey : undefined,
+    });
+    setRunHistory([]);
+  }, [token, language, historyScope]);
+
   const addFile = useCallback(
     async (folderPath) => {
       const workspace =
@@ -985,6 +1077,8 @@ export default function CodePlayground({
         activeTab: activeTabAfter,
       });
 
+      const durationMs = Math.round(performance.now() - t0);
+
       if (token) {
         savePlaygroundRun(token, {
           language: currentLanguage,
@@ -993,7 +1087,7 @@ export default function CodePlayground({
           code: currentCode,
           output: resultOutput,
           previewHTML: resultPreview,
-          durationMs: Math.round(performance.now() - t0),
+          durationMs,
         })
           .then(() => {
             refreshRunHistory();
@@ -1002,6 +1096,21 @@ export default function CodePlayground({
           .catch(() => {
             /* non-blocking */
           });
+      } else {
+        const localRun = appendLocalRunHistory({
+          id: makeLocalRunId(),
+          language: currentLanguage,
+          fileKey: buildRunFileKey(file),
+          fileName: file?.name || "",
+          code: currentCode,
+          output: resultOutput,
+          previewHTML: resultPreview,
+          durationMs,
+          createdAt: new Date().toISOString(),
+        });
+        setRunHistory((prev) =>
+          [localRun, ...prev.filter((r) => r.id !== localRun.id)].slice(0, 40),
+        );
       }
     } catch (e) {
       resultOutput = [{ type: "stderr", text: e.message }];
@@ -1238,20 +1347,18 @@ export default function CodePlayground({
               >
                 ⬡ Console
               </button>
-              {token ? (
-                <button
-                  type="button"
-                  className={`pg-tab ${activeTab === "history" ? "active" : ""}`}
-                  onClick={() =>
-                    updateWorkspace(language, { activeTab: "history" })
-                  }
-                >
-                  💬 History
-                  {runHistory.length ? (
-                    <span className="pg-tab-count">{runHistory.length}</span>
-                  ) : null}
-                </button>
-              ) : null}
+              <button
+                type="button"
+                className={`pg-tab ${activeTab === "history" ? "active" : ""}`}
+                onClick={() =>
+                  updateWorkspace(language, { activeTab: "history" })
+                }
+              >
+                History
+                {runHistory.length ? (
+                  <span className="pg-tab-count">{runHistory.length}</span>
+                ) : null}
+              </button>
               {hasPreview && (
                 <button
                   type="button"
@@ -1267,15 +1374,19 @@ export default function CodePlayground({
             <button
               type="button"
               className="pg-clear-btn"
-              onClick={() =>
+              onClick={() => {
+                if (activeTab === "history") {
+                  clearAllRunHistory();
+                  return;
+                }
                 updateWorkspace(language, {
                   output: [],
                   previewHTML: null,
                   activeTab: "output",
-                })
-              }
+                });
+              }}
             >
-              CLEAR
+              {activeTab === "history" ? "CLEAR ALL" : "CLEAR"}
             </button>
           </div>
 
@@ -1288,12 +1399,13 @@ export default function CodePlayground({
                     <p>
                       Hit <strong>Run</strong> or press <kbd>Ctrl+Enter</kbd>
                     </p>
-                    {token ? (
-                      <p className="pg-unsupported-note">
-                        Run output is saved to your account. Open{" "}
-                        <strong>History</strong> to revisit past runs.
-                      </p>
-                    ) : null}
+                    <p className="pg-unsupported-note">
+                      Open <strong>History</strong> to revisit past runs, restore
+                      code, or delete entries you do not need.
+                      {token
+                        ? " Runs sync to your PolyCode account."
+                        : " Runs are saved in this browser until you clear them."}
+                    </p>
                     {isServerBased && (
                       <p className="pg-unsupported-note">
                         {langInfo.label} runs here in local simulation mode.
@@ -1316,35 +1428,78 @@ export default function CodePlayground({
                 )}
               </>
             )}
-            {activeTab === "history" && token && (
+            {activeTab === "history" && (
               <div className="pg-run-history">
+                <div className="pg-run-history-toolbar">
+                  <span className="pg-run-history-label">Saved runs</span>
+                  <div className="pg-run-history-filters">
+                    <button
+                      type="button"
+                      className={`pg-history-filter${historyScope === "all" ? " active" : ""}`}
+                      onClick={() => setHistoryScope("all")}
+                    >
+                      All {langInfo.label}
+                    </button>
+                    <button
+                      type="button"
+                      className={`pg-history-filter${historyScope === "file" ? " active" : ""}`}
+                      onClick={() => setHistoryScope("file")}
+                    >
+                      This file
+                    </button>
+                  </div>
+                </div>
                 {runHistoryLoading ? (
                   <p className="pg-empty-state">Loading saved runs…</p>
                 ) : runHistory.length === 0 ? (
                   <p className="pg-empty-state">
-                    No saved runs yet for this file. Run code to build your
-                    console history.
+                    No saved runs yet. Hit <strong>Run</strong> to build your
+                    console history — click a run to view output, restore code, or
+                    delete entries you do not need.
                   </p>
                 ) : (
                   runHistory.map((run) => (
-                    <button
-                      key={run.id}
-                      type="button"
-                      className="pg-run-history-item"
-                      onClick={() => applyRunHistory(run)}
-                    >
-                      <span className="pg-run-history-time">
-                        {formatRunTime(run.createdAt)}
-                      </span>
-                      <span className="pg-run-history-preview">
-                        {runPreviewText(run)}
-                      </span>
-                      {run.durationMs ? (
-                        <span className="pg-run-history-meta">
-                          {(run.durationMs / 1000).toFixed(2)}s
+                    <div key={run.id} className="pg-run-history-item">
+                      <button
+                        type="button"
+                        className="pg-run-history-main"
+                        onClick={() => applyRunHistory(run)}
+                        title="View this run's output"
+                      >
+                        <span className="pg-run-history-time">
+                          {formatRunTime(run.createdAt)}
+                          {run.fileName ? ` · ${run.fileName}` : ""}
                         </span>
-                      ) : null}
-                    </button>
+                        <span className="pg-run-history-preview">
+                          {runPreviewText(run)}
+                        </span>
+                        {run.durationMs ? (
+                          <span className="pg-run-history-meta">
+                            {(run.durationMs / 1000).toFixed(2)}s
+                          </span>
+                        ) : null}
+                      </button>
+                      <div className="pg-run-history-actions">
+                        {run.code ? (
+                          <button
+                            type="button"
+                            className="pg-run-history-action"
+                            onClick={() => restoreRunCode(run)}
+                            title="Restore code into editor"
+                          >
+                            Code
+                          </button>
+                        ) : null}
+                        <button
+                          type="button"
+                          className="pg-run-history-action pg-run-history-action--danger"
+                          onClick={() => deleteRunHistoryItem(run)}
+                          title="Delete this run"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
                   ))
                 )}
               </div>
