@@ -313,6 +313,304 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+/* ── Workspace + file explorer ── */
+
+.pg-workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pg-explorer {
+  flex: 0 0 220px;
+  width: 220px;
+  min-width: 180px;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: #252526;
+  border-right: 1px solid #3c3c3c;
+  min-height: 0;
+}
+
+.pg-explorer--collapsed {
+  flex: 0 0 28px;
+  width: 28px;
+  min-width: 28px;
+  align-items: center;
+  padding-top: 6px;
+}
+
+.pg-explorer-expand-btn {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+}
+
+.pg-explorer-expand-btn:hover {
+  color: #ffffff;
+}
+
+.pg-explorer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #3c3c3c;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  flex-shrink: 0;
+}
+
+.pg-explorer-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.pg-explorer-icon-btn {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 0.72rem;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.pg-explorer-icon-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pg-explorer-context {
+  margin: 0;
+  padding: 6px 10px;
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pg-explorer-context strong {
+  color: #9cdcfe;
+  font-weight: 600;
+}
+
+.pg-explorer-tree {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 6px 0 10px;
+  scrollbar-width: thin;
+}
+
+.pg-explorer-section-head {
+  flex-shrink: 0;
+  padding: 8px 10px 4px;
+  border-top: 1px solid #3c3c3c;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.pg-explorer-recent {
+  flex: 0 1 42%;
+  min-height: 80px;
+  max-height: 240px;
+  overflow: auto;
+  padding: 2px 0 8px;
+  scrollbar-width: thin;
+}
+
+.pg-recent-file {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 0.72rem;
+}
+
+.pg-recent-file:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pg-recent-file--active {
+  background: rgba(0, 122, 204, 0.22);
+  color: #ffffff;
+}
+
+.pg-recent-lang {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.pg-recent-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pg-recent-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.pg-recent-sub {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.42);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pg-tab-count {
+  margin-left: 4px;
+  padding: 0 5px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.62rem;
+}
+
+.pg-run-history {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+}
+
+.pg-run-history-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  text-align: left;
+  padding: 8px 10px;
+}
+
+.pg-run-history-item:hover {
+  border-color: rgba(0, 122, 204, 0.45);
+  background: rgba(0, 122, 204, 0.08);
+}
+
+.pg-run-history-time {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pg-run-history-preview {
+  font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pg-run-history-meta {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.pg-explorer-empty {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.pg-tree-folder,
+.pg-tree-file {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #cccccc;
+  font-size: 0.72rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 4px 8px 4px 0;
+  min-height: 26px;
+}
+
+.pg-tree-folder:hover,
+.pg-tree-file:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pg-tree-folder--selected,
+.pg-tree-file--active {
+  background: rgba(0, 122, 204, 0.22);
+  color: #ffffff;
+}
+
+.pg-tree-chevron {
+  width: 12px;
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.15s ease;
+}
+
+.pg-tree-chevron.open {
+  transform: rotate(90deg);
+}
+
+.pg-tree-icon {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.pg-tree-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pg-tree-dirty {
+  color: #fbbf24;
+  margin-left: 2px;
+}
+
+.pg-workspace .pg-panes {
+  flex: 1;
+  min-width: 0;
+}
+
 /* ── Panes ── */
 
 .pg-panes {
