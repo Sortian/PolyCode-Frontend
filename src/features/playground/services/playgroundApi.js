@@ -96,6 +96,32 @@ export async function savePlaygroundRun(token, payload) {
   return readResponse(res, "Could not save run output");
 }
 
+export async function deletePlaygroundRun(token, runId) {
+  const res = await fetch(
+    `${getApiBase()}/playground/runs/${encodeURIComponent(runId)}`,
+    {
+      method: "DELETE",
+      headers: authHeaders(token),
+    },
+  );
+  return readResponse(res, "Could not delete run");
+}
+
+export async function clearPlaygroundRuns(token, { language, fileId } = {}) {
+  const params = new URLSearchParams();
+  if (language) params.set("language", language);
+  if (fileId) params.set("fileId", fileId);
+  const query = params.toString();
+  const res = await fetch(
+    `${getApiBase()}/playground/runs${query ? `?${query}` : ""}`,
+    {
+      method: "DELETE",
+      headers: authHeaders(token),
+    },
+  );
+  return readResponse(res, "Could not clear run history");
+}
+
 export async function savePlaygroundWorkspace(token, payload) {
   const res = await fetch(`${getApiBase()}/playground/workspace`, {
     method: "PUT",

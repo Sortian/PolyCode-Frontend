@@ -11,6 +11,7 @@ import {
   compileWithBabel,
   looksLikeJsx,
   runJavaScriptInWorker,
+  transpileTypeScript,
 } from "./jsRunner";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -47,11 +48,10 @@ export async function runJSX(code) {
 
 export async function runTSX(code) {
   try {
-    const compiled = await compileWithBabel(
-      code,
-      ["typescript", "react"],
-      "snippet.tsx",
-    );
+    const compiled = await transpileTypeScript(code, {
+      jsx: true,
+      filename: "snippet.tsx",
+    });
     return runJavaScriptInWorker(compiled);
   } catch (e) {
     return err(e.message);
@@ -74,7 +74,7 @@ export async function runTypeScript(code) {
       };
     }
 
-    const compiled = await compileWithBabel(code, ["typescript"], "snippet.ts");
+    const compiled = await transpileTypeScript(code, { filename: "snippet.ts" });
     return runJavaScriptInWorker(compiled);
   } catch (e) {
     return err(e.message);

@@ -1,9 +1,17 @@
 /**
  * Browser-only JavaScript execution (Web Worker sandbox).
- * No backend compiler — optional @babel/standalone for TS/JSX.
+ * TypeScript via typescript.js CDN; JSX/TSX via @babel/standalone.
  */
 
 export const JS_EXECUTION_TIMEOUT_MS = 30000;
+
+const BABEL_URL =
+  "https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.9/babel.min.js";
+const TYPESCRIPT_URL =
+  "https://cdn.jsdelivr.net/npm/typescript@5.8.3/lib/typescript.min.js";
+
+let babelLoadPromise = null;
+let typescriptLoadPromise = null;
 
 function formatConsoleArgs(args) {
   return args
@@ -21,14 +29,147 @@ function formatConsoleArgs(args) {
 }
 
 const IMPORT_EXPORT_MESSAGE = [
-  "⚠️  Import/Export statements are not supported in browser mode.",
+  "Import/Export statements are not supported in browser mode.",
   "",
-  "💡 This playground runs in your browser without a bundler.",
-  "Use standalone scripts, built-in APIs, or CDN links in HTML.",
-  "",
-  "✅ Works great: functions, classes, async/await, console output",
-  "❌ Not supported: import ... from '...' or export statements",
+  "Write standalone scripts — functions, classes, and types work without imports.",
+  "For modules, use HTML with <script type=\"module\"> or stick to plain JS/TS.",
 ].join("\n");
+
+function getBabelGlobal() {
+  const babel = window.Babel;
+  return babel && typeof babel.transform === "function" ? babel : null;
+}
+
+function getTypeScriptGlobal() {
+  const ts = window.ts;
+  return ts && typeof ts.transpileModule === "function" ? ts : null;
+}
+
+function loadExternalScript({ src, datasetKey, getGlobal, onReset }) {
+  const existing = getGlobal();
+  if (existing) return Promise.resolve(existing);
+
+  const prior = document.querySelector(`script[data-${datasetKey}]`);
+  if (prior?.dataset.loaded === "true") {
+    const loaded = getGlobal();
+    if (loaded) return Promise.resolve(loaded);
+  }
+
+  return new Promise((resolve, reject) => {
+    const finish = () => {
+      const loaded = getGlobal();
+      if (loaded) {
+        resolve(loaded);
+        return;
+      }
+      onReset?.();
+      reject(new Error("Script loaded but runtime is unavailable."));
+    };
+
+    if (prior) {
+      prior.addEventListener("load", () => {
+        prior.dataset.loaded = "true";
+        finish();
+      });
+      prior.addEventListener("error", () => {
+        onReset?.();
+        reject(new Error(`Failed to load ${datasetKey}`));
+      });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.dataset[datasetKey] = "true";
+    script.onload = () => {
+      script.dataset.loaded = "true";
+      finish();
+    };
+    script.onerror = () => {
+      onReset?.();
+      reject(new Error(`Failed to load ${datasetKey}`));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+export function loadBabel() {
+  if (!babelLoadPromise) {
+    babelLoadPromise = loadExternalScript({
+      src: BABEL_URL,
+      datasetKey: "polycodeBabel",
+      getGlobal: getBabelGlobal,
+      onReset: () => {
+        babelLoadPromise = null;
+      },
+    });
+  }
+  return babelLoadPromise;
+}
+
+export function loadTypeScript() {
+  if (!typescriptLoadPromise) {
+    typescriptLoadPromise = loadExternalScript({
+      src: TYPESCRIPT_URL,
+      datasetKey: "polycodeTypescript",
+      getGlobal: getTypeScriptGlobal,
+      onReset: () => {
+        typescriptLoadPromise = null;
+      },
+    });
+  }
+  return typescriptLoadPromise;
+}
+
+export async function compileWithBabel(code, presets, filename = "snippet.js") {
+  const babel = await loadBabel();
+  const result = babel.transform(code, { presets, filename });
+  if (!result?.code) {
+    throw new Error("Babel produced no output.");
+  }
+  return result.code;
+}
+
+export async function transpileTypeScript(code, options = {}) {
+  const ts = await loadTypeScript();
+  const { jsx = false, filename = jsx ? "snippet.tsx" : "snippet.ts" } =
+    options;
+
+  const result = ts.transpileModule(code, {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ES2020,
+      jsx: jsx ? ts.JsxEmit.React : ts.JsxEmit.None,
+      removeComments: false,
+    },
+    fileName: filename,
+    reportDiagnostics: true,
+  });
+
+  const diagnostic = result.diagnostics?.[0];
+  if (diagnostic) {
+    const message = ts.flattenDiagnosticMessageText(
+      diagnostic.messageText,
+      "\n",
+    );
+    throw new Error(message);
+  }
+
+  if (!result.outputText?.trim()) {
+    throw new Error("TypeScript produced no output.");
+  }
+
+  return result.outputText;
+}
+
+export function looksLikeJsx(code = "") {
+  return (
+    /return\s*\(\s*</.test(code) ||
+    /<\s*[A-Za-z][\w.-]*[\s/>]/.test(code) ||
+    /<\/[A-Za-z]/.test(code)
+  );
+}
 
 /**
  * Run user JavaScript in an isolated worker with a generous timeout.
@@ -102,7 +243,7 @@ export function runJavaScriptInWorker(code, options = {}) {
           "",
           "Tips:",
           "• Check for infinite loops (while(true), heavy recursion)",
-          "• Large Pyodide/matplotlib loads can take longer — try Python again after first load",
+          "• Large Pyodide loads can take longer on first run",
           "• Break long work into smaller steps",
         ].join("\n"),
         error: `Timed out (${Math.round(timeoutMs / 1000)}s)`,
@@ -130,38 +271,4 @@ export function runJavaScriptInWorker(code, options = {}) {
 
     worker.postMessage(`"use strict";\n${code}`);
   });
-}
-
-export function loadBabel() {
-  if (window.Babel) return Promise.resolve(window.Babel);
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector('script[data-polycode-babel]');
-    if (existing) {
-      existing.addEventListener("load", () => resolve(window.Babel));
-      existing.addEventListener("error", () =>
-        reject(new Error("Failed to load Babel")),
-      );
-      if (window.Babel) resolve(window.Babel);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/@babel/standalone/babel.min.js";
-    script.dataset.polycodeBabel = "true";
-    script.onload = () => resolve(window.Babel);
-    script.onerror = () => reject(new Error("Failed to load Babel"));
-    document.head.appendChild(script);
-  });
-}
-
-export async function compileWithBabel(code, presets, filename = "snippet.js") {
-  const babel = await loadBabel();
-  return babel.transform(code, { presets, filename }).code;
-}
-
-export function looksLikeJsx(code = "") {
-  return (
-    /return\s*\(\s*</.test(code) ||
-    /<\s*[A-Za-z][\w.-]*[\s/>]/.test(code) ||
-    /<\/[A-Za-z]/.test(code)
-  );
 }
