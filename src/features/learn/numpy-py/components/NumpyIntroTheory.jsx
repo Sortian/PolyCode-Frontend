@@ -647,29 +647,32 @@ export default function NumpyIntroTheory({
   onGoChallenge,
 }) {
   const accentColor = lesson.chapterColor || "#4f46e5";
-  const firstText = lesson.theory.find((block) => block.type === "text");
   let stepCounter = 0;
 
   return (
     <div className="numpy-intro-theory">
-      <header
-        className="numpy-lesson-hero"
-        style={{ "--numpy-accent": accentColor }}
-      >
-        <span className="numpy-chapter-badge">{lesson.chapterTitle}</span>
-        <h2 className="numpy-lesson-title" id="numpy-lesson-heading">
-          {lesson.title}
-        </h2>
-        <p className="numpy-lesson-hook">
-          {plainText(firstText?.content) ||
-            "We'll explain this idea in plain English — no jargon overload."}
-        </p>
-      </header>
+      {lesson.outcomes?.length > 0 && (
+        <section
+          className="numpy-lesson-outcomes"
+          style={{ "--numpy-accent": accentColor }}
+          aria-labelledby="numpy-lesson-heading"
+        >
+          <h2 id="numpy-lesson-heading" className="numpy-outcomes-heading">
+            Learning outcomes
+          </h2>
+          <ul className="numpy-outcomes-list">
+            {lesson.outcomes.map((item) => (
+              <li key={item}>
+                <InlineText text={item} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="numpy-learn-path">
         <div className="numpy-path-label">
-          <span>Your learning path</span>
-          <small>Read the idea, then run the code right below it</small>
+          <span>Lesson content</span>
         </div>
 
         {lesson.theory.map((block, index) => {
