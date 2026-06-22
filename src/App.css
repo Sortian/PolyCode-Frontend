@@ -8069,6 +8069,61 @@ body {
     rgba(255, 255, 255, 0.02);
 }
 
+.numpy-lesson-outcomes {
+  margin: 0 0 28px;
+  padding: 20px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  background: color-mix(in srgb, var(--vscode-panel, #12141c) 88%, transparent);
+}
+
+.numpy-outcomes-heading {
+  margin: 0 0 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--txt-2, #a0a0b8);
+}
+
+.numpy-outcomes-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.numpy-outcomes-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--txt-1, #e0e0e8);
+}
+
+.numpy-outcomes-list li::before {
+  content: "✓";
+  flex-shrink: 0;
+  margin-top: 0.1em;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--numpy-accent, #818cf8);
+  background: none;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.numpy-learn-path {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
 .numpy-chapter-badge {
   display: inline-block;
   font-size: 0.72rem;
@@ -8094,27 +8149,19 @@ body {
   margin: 0;
 }
 
-.numpy-learn-path {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
 .numpy-path-label {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 4px 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+  padding: 0 2px 10px;
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));
 }
 
 .numpy-path-label span {
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--acid, #ffe566);
+  color: var(--txt-3, #60607a);
 }
 
 .numpy-path-label small {
@@ -9180,6 +9227,7 @@ body {
   z-index: 1;
 }
 
+.lesson-annotator-content .numpy-lesson-outcomes,
 .lesson-annotator-content .numpy-confidence-panel,
 .lesson-annotator-content .numpy-mark-read-panel,
 .lesson-annotator-content .numpy-theory-actions,
