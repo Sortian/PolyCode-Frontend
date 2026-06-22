@@ -251,7 +251,10 @@ export default function CodePlayground({
   const activeFile = getActiveFile(currentWorkspace);
   const code = activeFile?.content || "";
   const { files, output, previewHTML, activeTab } = currentWorkspace;
-  const folders = currentWorkspace.folders || [];
+  const folders = useMemo(
+    () => currentWorkspace.folders || [],
+    [currentWorkspace.folders],
+  );
   const expandedFolders = currentWorkspace.expandedFolders || { "": true };
   const selectedFolder = currentWorkspace.selectedFolder || "";
   const fileTree = useMemo(

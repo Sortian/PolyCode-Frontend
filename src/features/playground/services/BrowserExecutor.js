@@ -9,7 +9,6 @@
 
 import {
   compileWithBabel,
-  JS_EXECUTION_TIMEOUT_MS,
   looksLikeJsx,
   runJavaScriptInWorker,
 } from "./jsRunner";
