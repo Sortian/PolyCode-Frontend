@@ -20,6 +20,7 @@ import GlobalAssistant from "./features/assistant/components/GlobalAssistant";
 import { AssistantProvider } from "./features/assistant/context/AssistantContext";
 import "./App.css";
 import "./styles/theme-light.css";
+import "./styles/theme-ocean.css";
 import "./styles/theme-palettes.css";
 import "./styles/theme-assistant.css";
 import "./styles/theme-learn-surfaces.css";

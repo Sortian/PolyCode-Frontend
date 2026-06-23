@@ -505,6 +505,10 @@
     gap: 12px;
   }
 
+  .profile-activity-charts {
+    grid-template-columns: 1fr;
+  }
+
   .profile-activity-section {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;

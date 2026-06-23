@@ -58,6 +58,38 @@
   --vscode-blue-2: #818cf8;
 }
 
+.app.theme-ocean {
+  --ink: #041016;
+  --ink-2: #061820;
+  --ink-3: #082028;
+  --ink-4: #0a2830;
+  --border: rgba(45, 212, 191, 0.2);
+  --border-2: rgba(34, 211, 238, 0.32);
+  --txt-0: #ecfeff;
+  --txt-1: #cffafe;
+  --txt-2: #67e8f9;
+  --txt-3: #2dd4bf;
+  --acid: #2dd4bf;
+  --acid-rgb: 45, 212, 191;
+  --accent: #14b8a6;
+  --acid-glow: rgba(45, 212, 191, 0.26);
+  --acid-dim: rgba(45, 212, 191, 0.14);
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34, 211, 238, 0.14);
+  --violet: #38bdf8;
+  --bg-card: #071820;
+  --glass: rgba(45, 212, 191, 0.05);
+  --glass-heavy: rgba(34, 211, 238, 0.09);
+  --glass-2: rgba(45, 212, 191, 0.08);
+  --vscode-panel: #0a2430;
+  --vscode-panel-2: #0c2e3c;
+  --vscode-border: rgba(45, 212, 191, 0.24);
+  --vscode-blue: #0891b2;
+  --vscode-blue-2: #22d3ee;
+  --numpy-accent: #22d3ee;
+  --course-accent: #2dd4bf;
+}
+
 .app.theme-ocean .main-content.learn-content {
   --ink: #041016;
   --ink-2: #061820;

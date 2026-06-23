@@ -641,6 +641,40 @@
   color: #ffffff;
 }
 
+.app.theme-light .profile-chart-grid-line {
+  stroke: rgba(15, 23, 42, 0.08);
+}
+
+.app.theme-light .profile-chart-axis-label {
+  fill: #64748b;
+}
+
+.app.theme-light .profile-chart-bar {
+  fill: rgba(14, 165, 233, 0.18);
+  stroke: rgba(14, 165, 233, 0.28);
+}
+
+.app.theme-light .profile-chart-bar.is-active,
+.app.theme-light .profile-chart-bar:hover,
+.app.theme-light .profile-chart-bar:focus-visible {
+  fill: #0ea5e9;
+  stroke: #0284c7;
+}
+
+.app.theme-light .profile-chart-point {
+  fill: #ffffff;
+  stroke: #0ea5e9;
+}
+
+.app.theme-light .profile-chart-point.is-active {
+  fill: #0ea5e9;
+  stroke: #ffffff;
+}
+
+.app.theme-light .profile-activity-charts {
+  border-top-color: rgba(15, 23, 42, 0.1);
+}
+
 .app.theme-light .oops-test-pass {
   background: rgba(var(--acid-rgb), 0.09);
 }

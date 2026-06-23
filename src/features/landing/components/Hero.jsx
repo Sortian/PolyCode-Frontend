@@ -62,15 +62,11 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
         >
-          <div className="landing-hero-image-glow" aria-hidden />
-          <div className="landing-hero-image-aura" aria-hidden />
-          <div className="landing-hero-image-frame">
-            <img
-              className="landing-hero-image"
-              src="/images/herooooo.png"
-              alt="PolyCode platform — Learn, Code, Secure with PolyMentor, courses, and PolyGuard"
-            />
-          </div>
+          <img
+            className="landing-hero-image"
+            src="/images/herooooo.png"
+            alt="PolyCode platform — Learn, Code, Secure with PolyMentor, courses, and PolyGuard"
+          />
         </motion.div>
       </div>
     </section>
