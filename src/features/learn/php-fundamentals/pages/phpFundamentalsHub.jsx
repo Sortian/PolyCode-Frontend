@@ -6,6 +6,8 @@ import {
   PHP_FUNDAMENTALS_TOTAL_XP,
 } from "../data/phpFundamentalsCurriculum";
 import usePhpFundamentalsProgress from "../hooks/usePhpFundamentalsProgress";
+import LearnChapterPathOverview from "../../shared/LearnChapterPathOverview";
+import LearnChapterGrid from "../../shared/LearnChapterGrid";
 
 const BASE_PATH = "/learn/php-fundamentals";
 
@@ -255,95 +257,20 @@ export default function PhpFundamentalsHub() {
         </div>
       </div>
 
-      <div className="oops-path-overview">
-        {PHP_FUNDAMENTALS_CHAPTERS.map((chapter, index) => {
-          const done = chapter.lessons.filter((l) => progress[l.id]).length;
-          const active = done > 0 && done < chapter.lessons.length;
-          return (
-            <button
-              key={chapter.id}
-              type="button"
-              className={`oops-path-step ${active ? "active" : ""} ${
-                done === chapter.lessons.length ? "done" : ""
-              }`}
-              style={{ "--ch-color": chapter.color }}
-              onClick={() =>
-                navigate(`${BASE_PATH}/lesson/${chapter.lessons[0].id}`)
-              }
-            >
-              <span>{index + 1}</span>
-              <strong>{chapter.title}</strong>
-              <small>
-                {done}/{chapter.lessons.length}
-              </small>
-            </button>
-          );
-        })}
-      </div>
+      <LearnChapterPathOverview
+        chapters={PHP_FUNDAMENTALS_CHAPTERS}
+        progress={progress}
+        onChapterSelect={(chapter) =>
+          navigate(`${BASE_PATH}/lesson/${chapter.lessons[0].id}`)
+        }
+      />
 
-      <div className="oops-chapters">
-        {PHP_FUNDAMENTALS_CHAPTERS.map((chapter, index) => {
-          const done = chapter.lessons.filter((l) => progress[l.id]).length;
-          const chapterPct =
-            Math.round((done / chapter.lessons.length) * 100) || 0;
-          const firstUnfinished = chapter.lessons.find((l) => !progress[l.id]);
-          const allDone = done === chapter.lessons.length;
-
-          return (
-            <div
-              key={chapter.id}
-              className={`oops-chapter-card ${allDone ? "oops-chapter-done" : ""}`}
-              style={{ "--ch-color": chapter.color }}
-            >
-              <div className="oops-chapter-header">
-                <span className="oops-chapter-icon">{chapter.icon}</span>
-                <div>
-                  <div className="oops-chapter-num">Chapter {index + 1}</div>
-                  <div className="oops-chapter-title">{chapter.title}</div>
-                </div>
-                {allDone && <span className="oops-done-badge">✓ Done</span>}
-              </div>
-              <div className="oops-chapter-progress-track">
-                <div
-                  className="oops-chapter-progress-fill"
-                  style={{ width: `${chapterPct}%` }}
-                />
-              </div>
-              <div className="oops-chapter-meta">
-                {done}/{chapter.lessons.length} lessons · {chapterPct}%
-              </div>
-              <ul className="oops-lesson-list">
-                {chapter.lessons.map((lesson) => (
-                  <li
-                    key={lesson.id}
-                    className={`oops-lesson-item ${progress[lesson.id] ? "done" : ""}`}
-                    onClick={() => navigate(`${BASE_PATH}/lesson/${lesson.id}`)}
-                  >
-                    <span className="oops-lesson-status">
-                      {progress[lesson.id] ? "✓" : "○"}
-                    </span>
-                    <span className="oops-lesson-name">{lesson.title}</span>
-                    <span className="oops-lesson-xp">+{lesson.xp} XP</span>
-                  </li>
-                ))}
-              </ul>
-              <button
-                type="button"
-                className="oops-chapter-cta"
-                onClick={() =>
-                  navigate(
-                    `${BASE_PATH}/lesson/${
-                      firstUnfinished ? firstUnfinished.id : chapter.lessons[0].id
-                    }`,
-                  )
-                }
-              >
-                {allDone ? "Review Chapter →" : done > 0 ? "Continue →" : "Start →"}
-              </button>
-            </div>
-          );
-        })}
-      </div>
+      <LearnChapterGrid
+        chapters={PHP_FUNDAMENTALS_CHAPTERS}
+        progress={progress}
+        basePath={BASE_PATH}
+        navigate={navigate}
+      />
     </div>
   );
 }
