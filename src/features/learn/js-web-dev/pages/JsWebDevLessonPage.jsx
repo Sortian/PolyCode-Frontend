@@ -4,21 +4,21 @@ import NumpyIntroTheory from "../../numpy-py/components/NumpyIntroTheory";
 import OopsSidebar from "../../oops-cpp/components/OopsSidebar";
 import LearnProfileMenu from "../../shared/LearnProfileMenu";
 import LessonContentShell from "../../shared/LessonContentShell";
-import JavaScriptCodeChallenge from "../components/JavaScriptCodeChallenge";
+import JavaScriptCodeChallenge from "../../js-fundamentals/components/JavaScriptCodeChallenge";
 import {
-  JS_FUNDAMENTALS_CHAPTERS,
-  JS_FUNDAMENTALS_LESSONS,
-  JS_FUNDAMENTALS_TOTAL_XP,
-} from "../data/jsFundamentalsCurriculum";
-import useJsFundamentalsProgress from "../hooks/useJsFundamentalsProgress";
+  JS_WEB_DEV_CHAPTERS,
+  JS_WEB_DEV_LESSONS,
+  JS_WEB_DEV_TOTAL_XP,
+} from "../data/jsWebDevCurriculum";
+import useJsWebDevProgress from "../hooks/useJsWebDevProgress";
 import useLessonReadGate from "../../shared/useLessonReadGate";
 import LessonChallengeTab from "../../shared/LessonChallengeTab";
 import { useLessonAssistantContext } from "../../../assistant/hooks/useLessonAssistantContext";
 
-const BASE_PATH = "/learn/js-fundamentals";
-const READ_GATE_PREFIX = "js_fundamentals";
+const BASE_PATH = "/learn/js-web-dev";
+const READ_GATE_PREFIX = "js_web_dev";
 
-export default function JsFundamentalsLessonPage() {
+export default function JsWebDevLessonPage() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const [tab, setTab] = useState("theory");
@@ -42,18 +42,16 @@ export default function JsFundamentalsLessonPage() {
     rememberLesson,
     saveCode,
     toggleBookmark,
-  } = useJsFundamentalsProgress();
+  } = useJsWebDevProgress();
   const codeSaveTimer = useRef(null);
 
-  const lesson = JS_FUNDAMENTALS_LESSONS.find((item) => item.id === lessonId);
-  const lessonIdx = JS_FUNDAMENTALS_LESSONS.findIndex(
-    (item) => item.id === lessonId,
-  );
-  const prev = JS_FUNDAMENTALS_LESSONS[lessonIdx - 1];
-  const next = JS_FUNDAMENTALS_LESSONS[lessonIdx + 1];
+  const lesson = JS_WEB_DEV_LESSONS.find((item) => item.id === lessonId);
+  const lessonIdx = JS_WEB_DEV_LESSONS.findIndex((item) => item.id === lessonId);
+  const prev = JS_WEB_DEV_LESSONS[lessonIdx - 1];
+  const next = JS_WEB_DEV_LESSONS[lessonIdx + 1];
 
   useLessonAssistantContext({
-    course: "JavaScript",
+    course: "JavaScript Web Development",
     language: "JavaScript",
     lesson,
     chapter: lesson?.chapterTitle,
@@ -79,9 +77,9 @@ export default function JsFundamentalsLessonPage() {
   if (!lesson) {
     return (
       <div className="oops-not-found">
-        <p>JavaScript lesson not found.</p>
+        <p>Web development lesson not found.</p>
         <button type="button" onClick={() => navigate(BASE_PATH)}>
-          ← Back to JavaScript Course
+          ← Back to JavaScript Web Development
         </button>
       </div>
     );
@@ -90,7 +88,7 @@ export default function JsFundamentalsLessonPage() {
   const isCompleted = isAuthenticated && !!progress[lessonId];
   const isBookmarked = bookmarks.includes(lessonId);
   const completedCount = Object.keys(progress).length;
-  const earnedXP = JS_FUNDAMENTALS_LESSONS.filter((item) => progress[item.id]).reduce(
+  const earnedXP = JS_WEB_DEV_LESSONS.filter((item) => progress[item.id]).reduce(
     (sum, item) => sum + item.xp,
     0,
   );
@@ -111,9 +109,9 @@ export default function JsFundamentalsLessonPage() {
       <OopsSidebar
         currentLessonId={lessonId}
         progress={progress}
-        chapters={JS_FUNDAMENTALS_CHAPTERS}
+        chapters={JS_WEB_DEV_CHAPTERS}
         basePath={BASE_PATH}
-        title="JavaScript"
+        title="JS Web Dev"
       />
 
       <div className="oops-lesson-main">
@@ -123,7 +121,7 @@ export default function JsFundamentalsLessonPage() {
             className="oops-back-btn"
             onClick={() => navigate(BASE_PATH)}
           >
-            ← JavaScript Course
+            ← Web Development
           </button>
           <div className="oops-lesson-breadcrumb">
             <span style={{ color: lesson.chapterColor }}>
@@ -151,16 +149,16 @@ export default function JsFundamentalsLessonPage() {
           </button>
           <LearnProfileMenu
             user={user}
-            trackTitle="JavaScript"
+            trackTitle="JS Web Dev"
             syncLabel={
               isAuthenticated
-                ? "JavaScript progress saved to your account"
+                ? "Web dev progress saved to your account"
                 : "Sign in to save progress"
             }
             completedCount={completedCount}
-            totalLessons={JS_FUNDAMENTALS_LESSONS.length}
+            totalLessons={JS_WEB_DEV_LESSONS.length}
             earnedXP={earnedXP}
-            totalXP={JS_FUNDAMENTALS_TOTAL_XP}
+            totalXP={JS_WEB_DEV_TOTAL_XP}
             bookmarksCount={bookmarks.length}
             streak={0}
           />
@@ -183,9 +181,9 @@ export default function JsFundamentalsLessonPage() {
         </div>
 
         <LessonContentShell
-          storageKey={`js-fundamentals:${lessonId}`}
+          storageKey={`js-web-dev:${lessonId}`}
           videoUrl={lesson.videoUrl}
-          videoTitle={`${lesson.title} — JavaScript`}
+          videoTitle={`${lesson.title} — JavaScript Web Dev`}
         >
           {tab === "theory" ? (
             <NumpyIntroTheory

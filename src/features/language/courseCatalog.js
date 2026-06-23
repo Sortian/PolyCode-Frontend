@@ -2,6 +2,7 @@ import {
   Boxes,
   FileText,
   Grid3x3,
+  Globe,
   Layers3,
   Play,
   Brain,
@@ -142,12 +143,21 @@ export const languageCourses = {
   javascript: [
     {
       title: "JavaScript Fundamentals",
-      tag: "Interactive Course",
+      tag: "Core Course",
       icon: Grid3x3,
       description:
-        "Variables, logic, functions, arrays, and objects with friendly theory and hands-on JS challenges.",
+        "Core language skills: variables, logic, functions, arrays, objects, async, and classes with hands-on challenges.",
       href: "/learn/js-fundamentals",
       accent: "#f59e0b",
+    },
+    {
+      title: "JavaScript Web Development",
+      tag: "Web Course",
+      icon: Globe,
+      description:
+        "Build for the browser: DOM, events, forms, fetch APIs, storage, and interactive project patterns.",
+      href: "/learn/js-web-dev",
+      accent: "#22c55e",
     },
   ],
   php: [
@@ -254,7 +264,10 @@ export const learnNavByLanguage = {
     { label: "Matplotlib", to: "/learn/matplotlib-py" },
     { label: "AI/ML", to: "/learn/ai_ml-py" },
   ],
-  javascript: [{ label: "JS Basics", to: "/learn/js-fundamentals" }],
+  javascript: [
+    { label: "Fundamentals", to: "/learn/js-fundamentals" },
+    { label: "Web Dev", to: "/learn/js-web-dev" },
+  ],
   php: [{ label: "PHP Basics", to: "/learn/php-fundamentals" }],
   ruby: [{label: "Ruby Basics", to: "/learn/ruby-fundamentals"}]
 };
@@ -276,7 +289,10 @@ export function inferLanguageFromLearnPath(pathname = "") {
   ) {
     return "python";
   }
-  if (pathname.startsWith("/learn/js-fundamentals")) {
+  if (
+    pathname.startsWith("/learn/js-fundamentals") ||
+    pathname.startsWith("/learn/js-web-dev")
+  ) {
     return "javascript";
   }
   if (pathname.startsWith("/learn/php-fundamentals")) {

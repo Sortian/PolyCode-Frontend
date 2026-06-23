@@ -144,6 +144,12 @@ const JsFundamentalsLessonPage = lazyWithChunkRetry(
   () =>
     import("./features/learn/js-fundamentals/pages/JsFundamentalsLessonPage"),
 );
+const JsWebDevHub = lazyWithChunkRetry(
+  () => import("./features/learn/js-web-dev/pages/JsWebDevHub"),
+);
+const JsWebDevLessonPage = lazyWithChunkRetry(
+  () => import("./features/learn/js-web-dev/pages/JsWebDevLessonPage"),
+);
 const CsharpHub = lazyWithChunkRetry(
   () => import("./features/learn/csharp-fundamentals/pages/CsharpHub"),
 );
@@ -513,6 +519,8 @@ function AppRoutes() {
     ) {
       handleLanguageSelect("Python", { stay: true });
     } else if (path.startsWith("/learn/js-fundamentals")) {
+      handleLanguageSelect("JavaScript", { stay: true });
+    } else if (path.startsWith("/learn/js-web-dev")) {
       handleLanguageSelect("JavaScript", { stay: true });
     } else if (path.startsWith("/learn/c-sharp-fundamentals")) {
       handleLanguageSelect("C#", { stay: true });
@@ -953,6 +961,52 @@ function AppRoutes() {
                 selectedLanguage={selectedLanguage}
               >
                 <JsFundamentalsLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+
+        <Route
+          path="/learn/js-web-dev"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsWebDevHub />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/js-web-dev/lesson/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsWebDevLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/js-web-dev/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsWebDevLessonPage />
               </LearnShell>
             </ThemedShell>
           }

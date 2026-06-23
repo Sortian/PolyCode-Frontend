@@ -1,15 +1,15 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  JS_FUNDAMENTALS_CHAPTERS,
-  JS_FUNDAMENTALS_LESSONS,
-  JS_FUNDAMENTALS_TOTAL_XP,
-} from "../data/jsFundamentalsCurriculum";
-import useJsFundamentalsProgress from "../hooks/useJsFundamentalsProgress";
+  JS_WEB_DEV_CHAPTERS,
+  JS_WEB_DEV_LESSONS,
+  JS_WEB_DEV_TOTAL_XP,
+} from "../data/jsWebDevCurriculum";
+import useJsWebDevProgress from "../hooks/useJsWebDevProgress";
 import LearnChapterPathOverview from "../../shared/LearnChapterPathOverview";
 import LearnChapterGrid from "../../shared/LearnChapterGrid";
 
-const BASE_PATH = "/learn/js-fundamentals";
+const BASE_PATH = "/learn/js-web-dev";
 
 function lessonPlainText(lesson) {
   return lesson.theory
@@ -18,7 +18,7 @@ function lessonPlainText(lesson) {
     .join(" ");
 }
 
-export default function JsFundamentalsHub() {
+export default function JsWebDevHub() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -27,31 +27,31 @@ export default function JsFundamentalsHub() {
     completedMap: progress,
     bookmarks,
     lastLessonId,
-  } = useJsFundamentalsProgress();
+  } = useJsWebDevProgress();
 
   const completedCount = Object.keys(progress).length;
-  const earnedXP = JS_FUNDAMENTALS_LESSONS.filter((lesson) => progress[lesson.id]).reduce(
+  const earnedXP = JS_WEB_DEV_LESSONS.filter((lesson) => progress[lesson.id]).reduce(
     (sum, lesson) => sum + lesson.xp,
     0,
   );
   const pct =
-    Math.round((completedCount / JS_FUNDAMENTALS_LESSONS.length) * 100) || 0;
+    Math.round((completedCount / JS_WEB_DEV_LESSONS.length) * 100) || 0;
   const nextLesson =
-    JS_FUNDAMENTALS_LESSONS.find((lesson) => !progress[lesson.id]) ||
-    JS_FUNDAMENTALS_LESSONS[0];
+    JS_WEB_DEV_LESSONS.find((lesson) => !progress[lesson.id]) ||
+    JS_WEB_DEV_LESSONS[0];
   const resumeLesson =
-    JS_FUNDAMENTALS_LESSONS.find((lesson) => lesson.id === lastLessonId) ||
+    JS_WEB_DEV_LESSONS.find((lesson) => lesson.id === lastLessonId) ||
     nextLesson;
-  const completedChapters = JS_FUNDAMENTALS_CHAPTERS.filter((chapter) =>
+  const completedChapters = JS_WEB_DEV_CHAPTERS.filter((chapter) =>
     chapter.lessons.every((lesson) => progress[lesson.id]),
   ).length;
   const bookmarkedLessons = bookmarks
-    .map((id) => JS_FUNDAMENTALS_LESSONS.find((lesson) => lesson.id === id))
+    .map((id) => JS_WEB_DEV_LESSONS.find((lesson) => lesson.id === id))
     .filter(Boolean);
 
   const filteredLessons = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return JS_FUNDAMENTALS_LESSONS.filter((lesson) => {
+    return JS_WEB_DEV_LESSONS.filter((lesson) => {
       const matchesQuery =
         !query ||
         lesson.title.toLowerCase().includes(query) ||
@@ -67,8 +67,8 @@ export default function JsFundamentalsHub() {
   }, [bookmarks, filter, progress, search]);
 
   return (
-    <div className="oops-hub js-fundamentals-hub">
-      <div className="oops-hero js-fundamentals-hero">
+    <div className="oops-hub js-web-dev-hub">
+      <div className="oops-hero js-web-dev-hero">
         <Link
           to="/language/JavaScript"
           className="oops-back-btn"
@@ -76,15 +76,15 @@ export default function JsFundamentalsHub() {
         >
           ← JavaScript courses
         </Link>
-        <div className="oops-hero-badge">JAVASCRIPT · BEGINNER → ADVANCED</div>
+        <div className="oops-hero-badge">JAVASCRIPT · WEB TRACK</div>
         <h1 className="oops-hero-title">
           JavaScript
           <br />
-          <span className="oops-hero-accent">Complete Course</span>
+          <span className="oops-hero-accent">Web Development</span>
         </h1>
         <p className="oops-hero-sub">
-          32 student-friendly lessons from your first line of code through async,
-          classes, DOM, and graduation projects — with examples, tables, and diagrams.
+          Build interactive pages: DOM, events, forms, fetch APIs, browser storage,
+          and a capstone project — with diagrams, tables, and hands-on challenges.
         </p>
 
         <div className="oops-hero-grid">
@@ -92,8 +92,8 @@ export default function JsFundamentalsHub() {
             <div className="oops-xp-meta">
               <span>
                 {isAuthenticated
-                  ? `${completedCount}/${JS_FUNDAMENTALS_LESSONS.length} lessons · ${earnedXP}/${JS_FUNDAMENTALS_TOTAL_XP} XP`
-                  : `Sign in to track progress · ${JS_FUNDAMENTALS_LESSONS.length} lessons`}
+                  ? `${completedCount}/${JS_WEB_DEV_LESSONS.length} lessons · ${earnedXP}/${JS_WEB_DEV_TOTAL_XP} XP`
+                  : `Sign in to track progress · ${JS_WEB_DEV_LESSONS.length} lessons`}
               </span>
               <span>{isAuthenticated ? `${pct}%` : "—"}</span>
             </div>
@@ -139,7 +139,7 @@ export default function JsFundamentalsHub() {
               type="button"
               onClick={() => navigate(`${BASE_PATH}/lesson/${resumeLesson.id}`)}
             >
-              {completedCount > 0 ? "Resume JavaScript" : "Start JavaScript"}
+              {completedCount > 0 ? "Resume Web Dev" : "Start Web Dev"}
             </button>
           </div>
         </div>
@@ -147,19 +147,16 @@ export default function JsFundamentalsHub() {
 
       <div className="oops-guide-tools">
         <div className="oops-tool-panel oops-tool-panel-main">
-          <span className="oops-interactive-label">Find a JavaScript topic</span>
+          <span className="oops-interactive-label">Find a topic</span>
           <div className="oops-search-row">
             <input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search functions, arrays, loops..."
-              aria-label="Search JavaScript lessons"
+              placeholder="Search DOM, events, fetch..."
+              aria-label="Search web dev lessons"
             />
-            <div
-              className="oops-filter-tabs"
-              aria-label="Filter JavaScript lessons"
-            >
+            <div className="oops-filter-tabs" aria-label="Filter lessons">
               {[
                 ["all", "All"],
                 ["todo", "To do"],
@@ -183,7 +180,6 @@ export default function JsFundamentalsHub() {
                 key={lesson.id}
                 type="button"
                 className="oops-search-result"
-                style={{ "--ch-color": lesson.chapterColor }}
                 onClick={() => navigate(`${BASE_PATH}/lesson/${lesson.id}`)}
               >
                 <span>{progress[lesson.id] ? "✓" : "○"}</span>
@@ -236,19 +232,19 @@ export default function JsFundamentalsHub() {
         <div className="oops-stat-tile">
           <span>Lessons</span>
           <strong>
-            {completedCount}/{JS_FUNDAMENTALS_LESSONS.length}
+            {completedCount}/{JS_WEB_DEV_LESSONS.length}
           </strong>
         </div>
         <div className="oops-stat-tile">
           <span>Chapters</span>
           <strong>
-            {completedChapters}/{JS_FUNDAMENTALS_CHAPTERS.length}
+            {completedChapters}/{JS_WEB_DEV_CHAPTERS.length}
           </strong>
         </div>
         <div className="oops-stat-tile">
           <span>XP</span>
           <strong>
-            {earnedXP}/{JS_FUNDAMENTALS_TOTAL_XP}
+            {earnedXP}/{JS_WEB_DEV_TOTAL_XP}
           </strong>
         </div>
         <div className="oops-stat-tile">
@@ -258,7 +254,7 @@ export default function JsFundamentalsHub() {
       </div>
 
       <LearnChapterPathOverview
-        chapters={JS_FUNDAMENTALS_CHAPTERS}
+        chapters={JS_WEB_DEV_CHAPTERS}
         progress={progress}
         onChapterSelect={(chapter) =>
           navigate(`${BASE_PATH}/lesson/${chapter.lessons[0].id}`)
@@ -266,7 +262,7 @@ export default function JsFundamentalsHub() {
       />
 
       <LearnChapterGrid
-        chapters={JS_FUNDAMENTALS_CHAPTERS}
+        chapters={JS_WEB_DEV_CHAPTERS}
         progress={progress}
         basePath={BASE_PATH}
         navigate={navigate}

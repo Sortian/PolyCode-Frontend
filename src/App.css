@@ -4429,12 +4429,12 @@ body {
   font-size: 1.25rem;
   line-height: 1;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--ch-color, var(--acid, #ffe566)) 16%, transparent);
-  border: 1px solid color-mix(in srgb, var(--ch-color, var(--acid, #ffe566)) 30%, transparent);
+  background: var(--learn-chapter-icon-bg);
+  border: 1px solid var(--learn-chapter-icon-border);
 }
 
 .learn-chapter-icon {
-  color: var(--ch-color, var(--acid, #ffe566));
+  color: var(--learn-chapter-icon-color);
   flex-shrink: 0;
 }
 
@@ -4467,8 +4467,8 @@ body {
   width: 52px;
   height: 7px;
   border-radius: 99px;
-  background: color-mix(in srgb, var(--ch-color, var(--acid, #ffe566)) 12%, var(--border, #1e2433));
-  border: 1px solid color-mix(in srgb, var(--ch-color, var(--acid, #ffe566)) 22%, transparent);
+  background: var(--learn-chapter-progress-track);
+  border: 1px solid var(--learn-chapter-progress-track-border);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -4477,22 +4477,9 @@ body {
   display: block;
   height: 100%;
   min-width: 0;
-  background: var(--ch-color, var(--acid, #ffe566));
+  background: var(--learn-chapter-progress-fill);
   border-radius: 99px;
   transition: width 0.35s ease;
-}
-
-.oops-path-step span:not(.oops-path-step-icon):not(.oops-path-step-body):not(.oops-path-step-progress):not(.oops-path-step-num) {
-  display: inline-grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: var(--border, #1e2433);
-  color: var(--txt-2, #6e7891);
-  font-size: 0.7rem;
-  font-weight: 800;
-  margin-bottom: 8px;
 }
 
 .oops-path-step strong,
@@ -4513,17 +4500,43 @@ body {
 
 .oops-path-step.active,
 .oops-path-step.done {
-  border-color: var(--ch-color, var(--acid, #ffe566));
+  border-color: var(--learn-chapter-active-border, var(--learn-pill-border));
   background: color-mix(
     in srgb,
-    var(--ch-color, var(--acid, #ffe566)) 9%,
-    var(--ink-2)
+    var(--learn-chapter-progress-fill) 6%,
+    var(--learn-tile-bg, var(--ink-2))
   );
 }
 
-.oops-path-step.done span {
-  background: var(--ch-color, var(--acid, #ffe566));
-  color: var(--ink, #03050a);
+.oops-path-step.done {
+  box-shadow: inset 3px 0 0 var(--learn-chapter-progress-fill, var(--acid, #ffe566));
+}
+
+.oops-path-step.active {
+  box-shadow: inset 3px 0 0
+    color-mix(in srgb, var(--learn-chapter-progress-fill) 70%, transparent);
+}
+
+.oops-path-step.done .oops-path-step-icon,
+.oops-path-step.active .oops-path-step-icon {
+  background: var(--learn-chapter-icon-bg);
+  border: 1px solid var(--learn-chapter-icon-border);
+}
+
+.oops-path-step.done .oops-path-step-body,
+.oops-path-step.active .oops-path-step-body {
+  background: transparent;
+  color: inherit;
+}
+
+.oops-path-step.done .oops-path-step-progress,
+.oops-path-step.active .oops-path-step-progress {
+  background: var(--learn-chapter-progress-track);
+  border-color: var(--learn-chapter-progress-track-border);
+}
+
+.oops-path-step.done .oops-path-step-num {
+  color: var(--learn-chapter-progress-fill, var(--acid, #ffe566));
 }
 
 /* Chapter cards */
@@ -4545,7 +4558,7 @@ body {
 }
 
 .oops-chapter-card:hover {
-  border-color: var(--ch-color, var(--acid, #ffe566));
+  border-color: var(--learn-pill-border, var(--learn-card-border));
   transform: translateY(-2px);
 }
 
@@ -4569,12 +4582,12 @@ body {
   height: 46px;
   border-radius: 11px;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--ch-color, var(--acid, #ffe566)) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--ch-color, var(--acid, #ffe566)) 28%, transparent);
+  background: var(--learn-chapter-icon-bg);
+  border: 1px solid var(--learn-chapter-icon-border);
 }
 
 .oops-chapter-icon-wrap .learn-chapter-icon {
-  color: var(--ch-color, var(--acid, #ffe566));
+  color: var(--learn-chapter-icon-color);
 }
 
 .oops-chapter-heading {
@@ -4626,7 +4639,7 @@ body {
 }
 
 .oops-lesson-item.done .lesson-status-icon {
-  color: var(--ch-color, var(--acid, #ffe566));
+  color: var(--learn-chapter-progress-fill, var(--acid, #ffe566));
 }
 
 .oops-chapter-progress-track {
@@ -4639,7 +4652,7 @@ body {
 
 .oops-chapter-progress-fill {
   height: 100%;
-  background: var(--ch-color, var(--acid, #ffe566));
+  background: var(--learn-chapter-progress-fill, var(--acid, #ffe566));
   border-radius: 99px;
   transition: width 0.4s ease;
 }
@@ -7871,7 +7884,7 @@ body {
 }
 
 .oops-sb-icon .learn-chapter-icon {
-  color: var(--ch-color, var(--acid, #ffe566));
+  color: var(--learn-chapter-icon-color);
 }
 
 .oops-sb-check {
@@ -7929,7 +7942,7 @@ body {
 }
 
 .oops-sidebar-lesson-btn.current {
-  color: var(--ch-color, var(--acid, #ffe566));
+  color: var(--learn-chapter-progress-fill, var(--acid, #ffe566));
   font-weight: 600;
 }
 
