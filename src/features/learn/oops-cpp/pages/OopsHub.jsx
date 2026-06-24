@@ -2,6 +2,10 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CHAPTERS, TOTAL_XP, ALL_LESSONS } from "../data/oopsCurriculum";
 import useOopsProgress from "../hooks/useOopsProgress";
+import LearnChapterPathOverview from "../../shared/LearnChapterPathOverview";
+import LearnChapterGrid from "../../shared/LearnChapterGrid";
+
+const BASE_PATH = "/learn/oops-cpp";
 
 function lessonPlainText(lesson) {
   return lesson.theory
@@ -146,9 +150,7 @@ export default function OopsHub() {
               <button
                 key={lesson.id}
                 type="button"
-                className="oops-search-result"
-                style={{ "--ch-color": lesson.chapterColor }}
-                onClick={() => navigate(`/learn/oops-cpp/lesson/${lesson.id}`)}
+                className="oops-search-result"                onClick={() => navigate(`/learn/oops-cpp/lesson/${lesson.id}`)}
               >
                 <span>{progress[lesson.id] ? "✓" : "○"}</span>
                 <strong>{lesson.title}</strong>
@@ -224,103 +226,20 @@ export default function OopsHub() {
         </div>
       </div>
 
-      <div className="oops-path-overview">
-        {CHAPTERS.map((ch, index) => {
-          const done = ch.lessons.filter((l) => progress[l.id]).length;
-          const active = done > 0 && done < ch.lessons.length;
-          return (
-            <button
-              key={ch.id}
-              className={`oops-path-step ${active ? "active" : ""} ${
-                done === ch.lessons.length ? "done" : ""
-              }`}
-              style={{ "--ch-color": ch.color }}
-              onClick={() =>
-                navigate(`/learn/oops-cpp/lesson/${ch.lessons[0].id}`)
-              }
-              type="button"
-            >
-              <span>{index + 1}</span>
-              <strong>{ch.title}</strong>
-              <small>
-                {done}/{ch.lessons.length}
-              </small>
-            </button>
-          );
-        })}
-      </div>
+      <LearnChapterPathOverview
+        chapters={CHAPTERS}
+        progress={progress}
+        onChapterSelect={(chapter) =>
+          navigate(`${BASE_PATH}/lesson/${chapter.lessons[0].id}`)
+        }
+      />
 
-      {/* Chapter Grid */}
-      <div className="oops-chapters">
-        {CHAPTERS.map((ch, i) => {
-          const chLessons = ch.lessons;
-          const done = chLessons.filter((l) => progress[l.id]).length;
-          const chPct = Math.round((done / chLessons.length) * 100) || 0;
-          const firstUnfinished = chLessons.find((l) => !progress[l.id]);
-          const allDone = done === chLessons.length;
-
-          return (
-            <div
-              key={ch.id}
-              className={`oops-chapter-card ${allDone ? "oops-chapter-done" : ""}`}
-              style={{ "--ch-color": ch.color }}
-            >
-              <div className="oops-chapter-header">
-                <span className="oops-chapter-icon">{ch.icon}</span>
-                <div>
-                  <div className="oops-chapter-num">Chapter {i + 1}</div>
-                  <div className="oops-chapter-title">{ch.title}</div>
-                </div>
-                {allDone && <span className="oops-done-badge">✓ Done</span>}
-              </div>
-
-              <div className="oops-chapter-progress-track">
-                <div
-                  className="oops-chapter-progress-fill"
-                  style={{ width: `${chPct}%` }}
-                />
-              </div>
-              <div className="oops-chapter-meta">
-                {done}/{chLessons.length} lessons · {chPct}%
-              </div>
-
-              <ul className="oops-lesson-list">
-                {chLessons.map((l) => {
-                  const isDone = !!progress[l.id];
-                  return (
-                    <li
-                      key={l.id}
-                      className={`oops-lesson-item ${isDone ? "done" : ""}`}
-                      onClick={() => navigate(`/learn/oops-cpp/lesson/${l.id}`)}
-                    >
-                      <span className="oops-lesson-status">
-                        {isDone ? "✓" : "○"}
-                      </span>
-                      <span className="oops-lesson-name">{l.title}</span>
-                      <span className="oops-lesson-xp">+{l.xp} XP</span>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              <button
-                className="oops-chapter-cta"
-                onClick={() =>
-                  navigate(
-                    `/learn/oops-cpp/lesson/${firstUnfinished ? firstUnfinished.id : ch.lessons[0].id}`,
-                  )
-                }
-              >
-                {allDone
-                  ? "Review Chapter →"
-                  : done > 0
-                    ? "Continue →"
-                    : "Start →"}
-              </button>
-            </div>
-          );
-        })}
-      </div>
+      <LearnChapterGrid
+        chapters={CHAPTERS}
+        progress={progress}
+        basePath={BASE_PATH}
+        navigate={navigate}
+      />
     </div>
   );
 }

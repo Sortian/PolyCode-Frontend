@@ -18,8 +18,8 @@ export default function StatsPage({ selectedLanguage }) {
 
   if (loading)
     return (
-      <div className="loading">
-        <div className="spinner" />
+      <div className="loading-section">
+        <div className="spinner" aria-hidden="true" />
       </div>
     );
   if (!stats)

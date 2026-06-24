@@ -1,15 +1,18 @@
 /**
  * BrowserExecutor — runs code 100% in the browser, no external API.
  *
- * Languages with real execution:
- *   JavaScript, TypeScript, Python (Pyodide), HTML/CSS, SQL (sql.js),
- *   JSON, Markdown, Lua (fengari), Brainfuck, Ruby (Opal), PHP (lite),
- *   Scheme/Lisp (BiwaScheme), Prolog (tau-prolog)
+ * JavaScript / TypeScript / JSX: Web Worker + @babel/standalone (in-browser "compiler")
+ * Python: Pyodide WASM · SQL: sql.js · HTML/CSS/JSON/Markdown: native browser APIs
  *
- * Server-style languages:
- *   C, C++, Java, Go, Rust, Kotlin, Swift, Bash, Batch, R, Perl, Scala, Dart, etc.
- *   These run in a local browser simulation mode (no API/backend).
+ * Compiled languages (C, C++, Java, …): lightweight print-line simulation (no gcc/javac).
  */
+
+import {
+  compileWithBabel,
+  looksLikeJsx,
+  runJavaScriptInWorker,
+  transpileTypeScript,
+} from "./jsRunner";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -28,106 +31,54 @@ function ok(stdout) { return { stdout, stderr: '', error: null }; }
 function err(stderr) { return { stdout: '', stderr, error: stderr }; }
 function preview(html) { return { stdout: '', stderr: '', error: null, previewHTML: html }; }
 
-// ─── JavaScript ───────────────────────────────────────────────────────────────
+// ─── JavaScript / JSX (Web Worker sandbox) ───────────────────────────────────
 
-export function runJavaScript(code) {
-  return new Promise((resolve) => {
-    // Check for import statements
-    if (/^\s*import\s+/m.test(code) || /^\s*export\s+/m.test(code)) {
-      resolve({
-        stdout: '',
-        stderr: [
-          '⚠️  Import/Export statements are not supported in browser mode.',
-          '',
-          '💡 What\'s happening?',
-          'This playground runs entirely in your browser without a build system.',
-          'ES6 modules (import/export) require bundlers like Webpack or Vite.',
-          '',
-          '✅ What you can do instead:',
-          '• Use built-in browser APIs (fetch, localStorage, etc.)',
-          '• Write standalone functions and classes',
-          '• Use CDN links in HTML for external libraries',
-          '• Try Python, SQL, or other browser-supported languages',
-          '',
-          '📝 Example:',
-          '❌ import React from "react";',
-          '✅ const element = <h1>Hello World</h1>; (JSX works!)',
-        ].join('\n'),
-        error: null,
-      });
-      return;
-    }
+export function runJavaScript(code, options) {
+  return runJavaScriptInWorker(code, options);
+}
 
-    const logs = [], errors = [];
-    const html = `<!DOCTYPE html><html><body><script>
-      window.onerror = (m,s,l,c,e) => { parent.postMessage({type:'error',data:String(e||m)},'*'); };
-      const _s = (type,args) => parent.postMessage({type,data:args.map(a=>{
-        try{return typeof a==='object'?JSON.stringify(a,null,2):String(a);}catch(e){return String(a);}
-      }).join(' ')},'*');
-      console.log   = (...a) => _s('log',a);
-      console.error = (...a) => _s('error',a);
-      console.warn  = (...a) => _s('warn',a);
-      console.info  = (...a) => _s('info',a);
-      console.table = (...a) => _s('log',a);
-      try { ${code} } catch(e){ parent.postMessage({type:'error',data:e.message},'*'); }
-      parent.postMessage({type:'__done__'},'*');
-    </script></body></html>`;
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.sandbox = 'allow-scripts';
-    document.body.appendChild(iframe);
+export async function runJSX(code) {
+  try {
+    const compiled = await compileWithBabel(code, ["react"], "snippet.jsx");
+    return runJavaScriptInWorker(compiled);
+  } catch (e) {
+    return err(e.message);
+  }
+}
 
-    const t = setTimeout(() => { cleanup(); resolve(err('Timed out (5s)')); }, 5000);
-    const handler = (e) => {
-      if (e.source !== iframe.contentWindow) return;
-      const { type, data } = e.data;
-      if (type === '__done__') { cleanup(); resolve({ stdout: logs.join('\n'), stderr: errors.join('\n'), error: null }); }
-      else if (type === 'log' || type === 'info') logs.push(data);
-      else if (type === 'warn') logs.push(`⚠ ${data}`);
-      else if (type === 'error') errors.push(data);
-    };
-    const cleanup = () => { clearTimeout(t); window.removeEventListener('message', handler); document.body.removeChild(iframe); URL.revokeObjectURL(url); };
-    window.addEventListener('message', handler);
-    iframe.src = url;
-  });
+export async function runTSX(code) {
+  try {
+    const compiled = await transpileTypeScript(code, {
+      jsx: true,
+      filename: "snippet.tsx",
+    });
+    return runJavaScriptInWorker(compiled);
+  } catch (e) {
+    return err(e.message);
+  }
 }
 
 // ─── TypeScript ───────────────────────────────────────────────────────────────
 
 export async function runTypeScript(code) {
   try {
-    // Check for import statements
     if (/^\s*import\s+/m.test(code) || /^\s*export\s+|from\s+['"]/m.test(code)) {
       return {
-        stdout: '',
+        stdout: "",
         stderr: [
-          '⚠️  Import/Export statements are not supported in browser mode.',
-          '',
-          '💡 What\'s happening?',
-          'This playground runs entirely in your browser without a build system.',
-          'TypeScript with imports requires bundlers like Webpack or Vite.',
-          '',
-          '✅ What you can do instead:',
-          '• Write standalone TypeScript code (no imports)',
-          '• Use type annotations and interfaces',
-          '• Create classes and functions that work independently',
-          '• All TypeScript features except imports work great!',
-          '',
-          '📝 Example:',
-          '❌ import axios from "axios";',
-          '✅ interface User { name: string; }',
-          '✅ const greet = (u: User): string => `Hello, {u.name}!`;',
-        ].join('\n'),
+          "⚠️  Import/Export statements are not supported in browser mode.",
+          "",
+          "Write standalone TypeScript — types, interfaces, and functions work without imports.",
+        ].join("\n"),
         error: null,
       };
     }
 
-    if (!window.Babel) await loadScript('https://unpkg.com/@babel/standalone/babel.min.js');
-    const compiled = window.Babel.transform(code, { presets: ['typescript'], filename: 'c.ts' }).code;
-    return runJavaScript(compiled);
-  } catch (e) { return err(e.message); }
+    const compiled = await transpileTypeScript(code, { filename: "snippet.ts" });
+    return runJavaScriptInWorker(compiled);
+  } catch (e) {
+    return err(e.message);
+  }
 }
 
 // ─── HTML/CSS ─────────────────────────────────────────────────────────────────
@@ -186,12 +137,39 @@ export async function runSQL(code) {
 let pyodideInstance = null;
 let pyodideLoading = false;
 const pyodideLoadedPackages = new Set();
+let matplotlibPyodideReady = false;
+
+const MATPLOTLIB_PYODIDE_SETUP = `
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import io, base64
+
+if "_POLYCODE_FIGURES" not in globals():
+    _POLYCODE_FIGURES = []
+
+def _polycode_clear_figures():
+    global _POLYCODE_FIGURES
+    _POLYCODE_FIGURES = []
+
+def _polycode_capture_show(*args, **kwargs):
+    import matplotlib.pyplot as plt
+    fig = plt.gcf()
+    if fig.get_axes():
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", bbox_inches="tight", dpi=110)
+        _POLYCODE_FIGURES.append(base64.b64encode(buf.getvalue()).decode("ascii"))
+    plt.close(fig)
+
+plt.show = _polycode_capture_show
+`;
 
 const PYTHON_STDLIB_PREFIXES = [
   'math', 'random', 'datetime', 'time', 'sys', 'os', 'json', 're',
   'collections', 'itertools', 'functools', 'typing', 'statistics',
   'string', 'textwrap', 'unicodedata', 'struct', 'codecs', 'copy',
   'pprint', 'reprlib', 'enum', 'graphlib', 'contextlib', 'abc',
+  'io', 'pickle', 'pathlib', 'warnings', 'builtins',
 ];
 
 /** Pyodide wheels available via loadPackage (used by learn + playground). */
@@ -203,6 +181,7 @@ const PYTHON_PYODIDE_PACKAGES = {
   micropip: 'micropip',
   sklearn: 'scikit-learn',
   skimage: 'scikit-image',
+  joblib: 'joblib',
 };
 
 function getImportedModules(code = '') {
@@ -224,15 +203,37 @@ function isAllowedPythonModule(moduleName = '') {
   return Object.prototype.hasOwnProperty.call(PYTHON_PYODIDE_PACKAGES, moduleName);
 }
 
+function getPyodideWheelPackages(code = '') {
+  const wheels = new Set();
+  for (const name of getImportedModules(code)) {
+    const wheel = PYTHON_PYODIDE_PACKAGES[name];
+    if (wheel) wheels.add(wheel);
+  }
+  // scikit-learn already bundles joblib — loading both causes Pyodide errors.
+  if (wheels.has("scikit-learn")) {
+    wheels.delete("joblib");
+  }
+  return [...wheels];
+}
+
 async function ensurePyodidePackages(py, code = '') {
-  const needed = getImportedModules(code)
-    .map((name) => PYTHON_PYODIDE_PACKAGES[name])
-    .filter(Boolean);
+  const needed = getPyodideWheelPackages(code);
 
   for (const pkg of needed) {
     if (pyodideLoadedPackages.has(pkg)) continue;
-    await py.loadPackage(pkg);
-    pyodideLoadedPackages.add(pkg);
+    try {
+      await py.loadPackage(pkg);
+      pyodideLoadedPackages.add(pkg);
+      if (pkg === "scikit-learn") {
+        pyodideLoadedPackages.add("joblib");
+      }
+    } catch (error) {
+      const message = error?.message || String(error);
+      throw new Error(
+        `Could not load ${pkg} in the browser (${message}). ` +
+          "Start the PolyCode backend (port 5000) so this lesson can run with server Python.",
+      );
+    }
   }
 }
 
@@ -244,6 +245,49 @@ class _Cap(io.StringIO):
 sys.stdout = _Cap()
 sys.stderr = _Cap()
 `);
+}
+
+function setupPyodideStdin(py, stdin = "") {
+  if (!stdin) return;
+  py.runPython(`
+import sys, io
+sys.stdin = io.StringIO(${JSON.stringify(stdin)})
+`);
+}
+
+export function codeNeedsStdin(code = "", language = "") {
+  const lang = String(language).toLowerCase();
+  const source = String(code);
+  if (lang === "python" || lang === "py") return /\binput\s*\(/.test(source);
+  if (lang === "cpp" || lang === "c++" || lang === "c") {
+    return /\bcin\s*>>/.test(source) || /\bscanf\s*\(/.test(source);
+  }
+  if (lang === "java") return /\bScanner\b/.test(source) || /\bSystem\.in\b/.test(source);
+  return false;
+}
+
+function codeUsesMatplotlib(source = '') {
+  return /(?:^|\n)\s*(?:import|from)\s+matplotlib\b/m.test(source) ||
+    /\bmatplotlib\.pyplot\b/.test(source) ||
+    /\bplt\.(?:show|plot|scatter|bar|hist|pie|subplots|figure|savefig|annotate)\s*\(/.test(source);
+}
+
+async function ensureMatplotlibPyodideSetup(py) {
+  if (matplotlibPyodideReady) return;
+  await py.loadPackage('matplotlib');
+  pyodideLoadedPackages.add('matplotlib');
+  py.runPython(MATPLOTLIB_PYODIDE_SETUP);
+  matplotlibPyodideReady = true;
+}
+
+function extractPyodidePlotImages(py) {
+  try {
+    const raw = py.runPython('__import__("json").dumps(_POLYCODE_FIGURES)');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+  } catch {
+    return [];
+  }
 }
 
 async function ensurePyodide() {
@@ -296,7 +340,7 @@ export async function runPython(code, stdin = '') {
           '',
           '💡 This playground runs Python with Pyodide (WebAssembly).',
           '',
-          '✅ Available: stdlib, numpy, pandas, matplotlib, scipy, micropip',
+          '✅ Available: stdlib, numpy, pandas, matplotlib, scipy, scikit-learn, joblib, micropip',
           '❌ Not available: requests, socket, threading, subprocess, etc.',
         ].join('\n'),
         error: `Module '${importedModule}' is not available in the browser.`,
@@ -305,19 +349,40 @@ export async function runPython(code, stdin = '') {
 
     const py = await ensurePyodide();
     await ensurePyodidePackages(py, code);
+    const usesMatplotlib = codeUsesMatplotlib(code);
+    if (usesMatplotlib) {
+      await ensureMatplotlibPyodideSetup(py);
+    }
     resetPyodideIO(py);
+    setupPyodideStdin(py, stdin);
+    if (usesMatplotlib && matplotlibPyodideReady) {
+      py.runPython('_polycode_clear_figures()');
+    }
     
     let error = null;
     try {
       py.runPython(code);
     } catch (e) {
       error = e.message;
+      if (
+        !stdin &&
+        /\binput\s*\(/.test(code) &&
+        /I\/O error|EOF|stdin/i.test(error)
+      ) {
+        error = [
+          error,
+          "",
+          "💡 This program calls input(). Add values in the Program input (stdin) panel below — one line per input() call.",
+        ].join("\n");
+      }
     }
     
     const stdout = py.runPython('sys.stdout.getvalue()');
     const stderr = py.runPython('sys.stderr.getvalue()');
+    const plotImages =
+      usesMatplotlib && matplotlibPyodideReady ? extractPyodidePlotImages(py) : [];
     
-    return { stdout, stderr, error };
+    return { stdout, stderr, error, plotImages };
   } catch (e) {
     return err(`Python Error: ${e.message}`);
   }
@@ -503,9 +568,34 @@ function makeSimulationHeader(language) {
 
 function runServerLanguageLocally(language, code) {
   try {
+    const header = makeSimulationHeader(language);
+    const lowerLang = language.toLowerCase();
+
+    if (
+      (lowerLang === "cpp" || lowerLang === "c++" || lowerLang === "c") &&
+      (/\bcin\s*>>/.test(code) || /\bscanf\s*\(/.test(code))
+    ) {
+      return Promise.resolve(
+        ok(
+          [
+            header,
+            "",
+            "⚠️  This program uses interactive input (cin / scanf).",
+            "Browser mode cannot compile or run it — only static print lines are simulated.",
+            "",
+            "To run it properly:",
+            "• Fill in the Program input (stdin) panel below (one value per line)",
+            "• Ensure the PolyCode backend is running — it will compile with g++",
+            "",
+            "For quick tests without input, assign values directly:",
+            "  int num = 10;  // instead of cin >> num;",
+          ].join("\n"),
+        ),
+      );
+    }
+
     const lines = code.split('\n');
     const out = [];
-    const lowerLang = language.toLowerCase();
     const pushTexts = (texts) => texts.forEach(t => out.push(t));
 
     for (const rawLine of lines) {
@@ -562,7 +652,6 @@ function runServerLanguageLocally(language, code) {
       }
     }
 
-    const header = makeSimulationHeader(language);
     if (out.length) {
       return Promise.resolve(ok([header, '', ...out].join('\n')));
     }
@@ -615,10 +704,10 @@ export const LANGUAGE_REGISTRY = {
   // Browser-native
   javascript: { label: 'JavaScript', icon: '🟨', engine: 'js', mono: 'javascript', browserNative: true },
   js: { label: 'JavaScript', icon: '🟨', engine: 'js', mono: 'javascript', browserNative: true },
-  jsx: { label: 'JSX', icon: '⚛️', engine: 'js', mono: 'javascript', browserNative: true },
+  jsx: { label: 'JSX', icon: '⚛️', engine: 'jsx', mono: 'javascript', browserNative: true },
   typescript: { label: 'TypeScript', icon: '🔷', engine: 'ts', mono: 'typescript', browserNative: true },
   ts: { label: 'TypeScript', icon: '🔷', engine: 'ts', mono: 'typescript', browserNative: true },
-  tsx: { label: 'TSX', icon: '🔷', engine: 'ts', mono: 'typescript', browserNative: true },
+  tsx: { label: 'TSX', icon: '🔷', engine: 'tsx', mono: 'typescript', browserNative: true },
   python: { label: 'Python', icon: '🐍', engine: 'py', mono: 'python', browserNative: true },
   py: { label: 'Python', icon: '🐍', engine: 'py', mono: 'python', browserNative: true },
   html: { label: 'HTML', icon: '🌐', engine: 'html', mono: 'html', browserNative: true },
@@ -672,7 +761,11 @@ export function resolveEngine(language = '') {
 export async function executeCode(code, language, stdin = '') {
   const { engine, label } = resolveEngine(language);
   switch (engine) {
-    case 'js': return runJavaScript(code);
+    case 'js':
+      if (looksLikeJsx(code)) return runJSX(code);
+      return runJavaScript(code);
+    case 'jsx': return runJSX(code);
+    case 'tsx': return runTSX(code);
     case 'ts': return runTypeScript(code);
     case 'html': return runHTML(code);
     case 'css': return runCSS(code);
@@ -688,3 +781,5 @@ export async function executeCode(code, language, stdin = '') {
     default: return runUnsupported(label);
   }
 }
+
+export { JS_EXECUTION_TIMEOUT_MS } from "./jsRunner";

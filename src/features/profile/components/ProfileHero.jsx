@@ -11,7 +11,10 @@ export default function ProfileHero({
   user,
   isAuthenticated,
   canEdit = false,
-  totalStreak,
+  totalStreak = 0,
+  totalCompleted = 0,
+  totalLessons = 0,
+  totalPct = 0,
   editOpen,
   onToggleEdit,
   isFollowing = false,
@@ -135,7 +138,9 @@ export default function ProfileHero({
                       to={`/@${connectionUser.username}`}
                       className="profile-connection-user"
                     >
-                      <ProfileAvatar user={connectionUser} size="sm" />
+                      <div className="profile-connection-avatar">
+                        <ProfileAvatar user={connectionUser} size="sm" />
+                      </div>
                       <span>
                         <strong>
                           {getDisplayName(connectionUser)}
@@ -150,12 +155,27 @@ export default function ProfileHero({
           )}
         </div>
 
-        <div className="profile-hero-side">
-          <div className="profile-total-progress">
-            <span>Current Streak</span>
-            <strong>{totalStreak} days</strong>
-          </div>
-          {canEdit && (
+        {canEdit ? (
+          <div className="profile-hero-side">
+            <div className="profile-hero-metrics">
+              <div className="profile-hero-metric">
+                <span>Current streak</span>
+                <strong>
+                  {totalStreak}{" "}
+                  {totalStreak === 1 ? "day" : "days"}
+                </strong>
+              </div>
+              <div className="profile-hero-metric">
+                <span>Lessons done</span>
+                <strong>
+                  {totalCompleted}/{totalLessons}
+                </strong>
+              </div>
+              <div className="profile-hero-metric">
+                <span>Overall progress</span>
+                <strong>{totalPct}%</strong>
+              </div>
+            </div>
             <button
               type="button"
               className="profile-hero-edit-btn"
@@ -164,8 +184,8 @@ export default function ProfileHero({
             >
               {editOpen ? "Close edit" : "Edit profile"}
             </button>
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );

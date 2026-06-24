@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { LEARN_ACCENT } from "../../shared/learnAccent";
 import { useNavigate, useParams } from "react-router-dom";
 import CodeChallenge from "../../oops-cpp/components/CodeChallenge";
 import ConceptCard from "../../oops-cpp/components/ConceptCard";
@@ -87,16 +88,13 @@ export default function PointersLessonPage() {
     user,
     completedMap: progress,
     savedCodeMap,
-    getLessonNote,
     bookmarks,
     completeLesson,
     rememberLesson,
     saveCode,
-    saveNote,
     toggleBookmark,
     addTime,
   } = usePointersProgress();
-  const [noteDraft, setNoteDraft] = useState("");
   const codeSaveTimer = useRef(null);
 
   const lesson = POINTER_LESSONS.find((item) => item.id === lessonId);
@@ -136,10 +134,6 @@ export default function PointersLessonPage() {
   }, [lessonId, rememberLesson]);
 
   useEffect(() => {
-    setNoteDraft(getLessonNote(lessonId));
-  }, [lessonId, getLessonNote]);
-
-  useEffect(() => {
     if (!lessonId) return undefined;
     const id = setInterval(() => addTime(1), 60000);
     return () => clearInterval(id);
@@ -173,10 +167,6 @@ export default function PointersLessonPage() {
     await completeLesson(lesson);
   }
 
-  function handleSaveNote() {
-    saveNote(lessonId, noteDraft);
-  }
-
   function handleCodeChange(code) {
     window.clearTimeout(codeSaveTimer.current);
     codeSaveTimer.current = window.setTimeout(() => {
@@ -200,7 +190,7 @@ export default function PointersLessonPage() {
             ← Pointers C++
           </button>
           <div className="oops-lesson-breadcrumb">
-            <span style={{ color: `var(--ch-color, ${lesson.chapterColor})` }}>
+            <span className="learn-lesson-chapter-tag">
               {lesson.chapterTitle}
             </span>
             <span className="oops-bc-sep">›</span>
@@ -345,7 +335,7 @@ export default function PointersLessonPage() {
                 <ConceptCard
                   key={index}
                   block={block}
-                  accentColor={lesson.chapterColor}
+                  accentColor={LEARN_ACCENT}
                   runnableCodeLangs={["cpp", "c++"]}
                 />
               ))}
@@ -356,29 +346,14 @@ export default function PointersLessonPage() {
                 confidence={confidence}
                 onConfidenceChange={handleConfidenceChange}
                 onGoChallenge={goToChallenge}
-                accentColor={lesson.chapterColor}
+                accentColor={LEARN_ACCENT}
                 challengeLabel="Ready? Take the Challenge →"
               />
-
-              <div className="oops-notes-panel">
-                <div>
-                  <span className="oops-interactive-label">Lesson Notes</span>
-                  <h3>Capture your pointer rule</h3>
-                </div>
-                <textarea
-                  value={noteDraft}
-                  onChange={(event) => setNoteDraft(event.target.value)}
-                  placeholder="Write a pointer rule, gotcha, address trace, or safety note..."
-                />
-                <button type="button" onClick={handleSaveNote}>
-                  Save Note
-                </button>
-              </div>
             </div>
           ) : (
             <CodeChallenge
               challenge={lesson.challenge}
-              accentColor={lesson.chapterColor}
+              accentColor={LEARN_ACCENT}
               isCompleted={isCompleted}
               onComplete={handleChallengeComplete}
               initialCode={savedCodeMap[lessonId]}

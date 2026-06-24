@@ -3,25 +3,35 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AssistantCodeBlock from "./AssistantCodeBlock";
 
-function prepareStreamingMarkdown(text) {
-  if (!text) return "";
-  const fenceCount = (text.match(/```/g) || []).length;
-  if (fenceCount % 2 === 1) {
-    return `${text}\n\`\`\``;
+function partitionStreamingMarkdown(text, isStreaming) {
+  if (!text || !isStreaming) return { markdown: text || "", pending: null };
+
+  const parts = text.split("```");
+  if (parts.length % 2 === 1) {
+    return { markdown: text, pending: null };
   }
-  return text;
+
+  const markdown = parts.slice(0, -1).join("```");
+  const pending = parts[parts.length - 1] || "";
+  const newlineIndex = pending.indexOf("\n");
+  const lang = newlineIndex === -1 ? pending.trim() : pending.slice(0, newlineIndex).trim();
+  const code =
+    newlineIndex === -1 ? "" : pending.slice(newlineIndex + 1);
+
+  return { markdown, pending: { lang, code } };
 }
 
-export default function AssistantMarkdown({ content }) {
-  const markdown = useMemo(
-    () => prepareStreamingMarkdown(content),
-    [content],
+export default function AssistantMarkdown({ content, streaming = false }) {
+  const { markdown, pending } = useMemo(
+    () => partitionStreamingMarkdown(content, streaming),
+    [content, streaming],
   );
 
   return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
+    <>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
         code({ className, children, ...props }) {
           const match = /language-([a-zA-Z0-9#+-]+)/.exec(className || "");
           const lang = match ? match[1] : "";
@@ -71,8 +81,26 @@ export default function AssistantMarkdown({ content }) {
           );
         },
       }}
-    >
-      {markdown}
-    </ReactMarkdown>
+      >
+        {markdown}
+      </ReactMarkdown>
+      {pending ? (
+        <div className="assistant-code-block assistant-code-block--streaming">
+          <div className="assistant-code-header">
+            <div className="assistant-code-dots" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+            <span className="assistant-code-lang">
+              {pending.lang ? pending.lang.toUpperCase() : "Code"}
+            </span>
+          </div>
+          <div className="assistant-code-body">
+            <pre className="assistant-code-pre">{pending.code}</pre>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CHAPTERS } from "../data/oopsCurriculum";
 import { useLearnNav } from "../../shared/LearnNavContext";
+import LearnChapterIcon from "../../shared/LearnChapterIcon";
+import LessonStatusIcon from "../../shared/LessonStatusIcon";
 
 export default function OopsSidebar({
   currentLessonId,
@@ -42,33 +44,34 @@ export default function OopsSidebar({
         menuOpen ? "oops-sidebar-mobile-open" : ""
       }`}
     >
-      <div className="oops-sidebar-header">
-        {!collapsed && brandLogo ? (
-          <div className="oops-sidebar-brand">{brandLogo}</div>
-        ) : (
-          !collapsed && <span className="oops-sidebar-title">{title}</span>
-        )}
-        <button
-          type="button"
-          className="oops-sidebar-close-mobile"
-          onClick={closeMenu}
-          aria-label="Close lesson menu"
-        >
-          ×
-        </button>
-        <button
-          type="button"
-          className="oops-sidebar-toggle"
-          onClick={() => setCollapsed(!collapsed)}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? "›" : "‹"}
-        </button>
-      </div>
+      <div className="oops-sidebar-sticky">
+        <div className="oops-sidebar-header">
+          {!collapsed && brandLogo ? (
+            <div className="oops-sidebar-brand">{brandLogo}</div>
+          ) : (
+            !collapsed && <span className="oops-sidebar-title">{title}</span>
+          )}
+          <button
+            type="button"
+            className="oops-sidebar-close-mobile"
+            onClick={closeMenu}
+            aria-label="Close lesson menu"
+          >
+            ×
+          </button>
+          <button
+            type="button"
+            className="oops-sidebar-toggle"
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? "›" : "‹"}
+          </button>
+        </div>
 
-      {!collapsed && (
-        <nav className="oops-sidebar-nav">
+        {!collapsed && (
+          <nav className="oops-sidebar-nav">
           {chapters.map((ch) => {
             const isOpen = expanded.has(ch.id);
             const doneLessons = ch.lessons.filter((l) => progress[l.id]).length;
@@ -78,10 +81,11 @@ export default function OopsSidebar({
               <div key={ch.id} className="oops-sidebar-chapter">
                 <button
                   className={`oops-sidebar-chapter-btn ${allDone ? "done" : ""}`}
-                  style={{ "--ch-color": ch.color }}
                   onClick={() => toggleChapter(ch.id)}
                 >
-                  <span className="oops-sb-icon">{ch.icon}</span>
+                  <span className="oops-sb-icon">
+                    <LearnChapterIcon icon={ch.icon} size={16} />
+                  </span>
                   <span className="oops-sb-title">{ch.title}</span>
                   <span className="oops-sb-count">
                     {doneLessons}/{ch.lessons.length}
@@ -98,11 +102,10 @@ export default function OopsSidebar({
                         <li key={l.id}>
                           <button
                             className={`oops-sidebar-lesson-btn ${isDone ? "done" : ""} ${isCurrent ? "current" : ""}`}
-                            style={{ "--ch-color": ch.color }}
                             onClick={() => goToLesson(l.id)}
                           >
                             <span className="oops-sb-check">
-                              {isDone ? "✓" : "○"}
+                              <LessonStatusIcon done={isDone} />
                             </span>
                             <span>{l.title}</span>
                             {!isDone && (
@@ -117,8 +120,9 @@ export default function OopsSidebar({
               </div>
             );
           })}
-        </nav>
-      )}
+          </nav>
+        )}
+      </div>
     </aside>
   );
 }

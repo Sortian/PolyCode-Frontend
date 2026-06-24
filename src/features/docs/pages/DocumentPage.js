@@ -84,7 +84,7 @@ export default function DocumentPage({ selectedLanguage, theme }) {
 
   if (loading)
     return (
-      <div className="loading">
+      <div className="loading-overlay">
         <div className="spinner-container">
           <div className="spinner" />
           <div className="spinner-inner" />

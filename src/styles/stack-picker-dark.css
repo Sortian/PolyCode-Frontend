@@ -112,11 +112,12 @@
   background: var(--glass-2) !important;
 }
 
-.stack-picker-dark .loading {
+.stack-picker-dark .loading-overlay {
   background: rgba(3, 5, 10, 0.85) !important;
 }
 
-.stack-picker-dark .loading p {
+.stack-picker-dark .loading-overlay p,
+.stack-picker-dark .loading-section p {
   color: #ffffff !important;
 }
 

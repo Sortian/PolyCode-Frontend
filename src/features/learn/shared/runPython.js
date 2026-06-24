@@ -1,5 +1,25 @@
 import { executeCode } from "../../playground/services/BrowserExecutor";
 import { getApiBase } from "../../../config/apiBase";
+import {
+  mergePythonRunResult,
+  codeUsesMatplotlib,
+} from "./pythonPlotOutput";
+
+async function readJsonResponse(response) {
+  const text = await response.text();
+  const trimmed = text.trim();
+  if (!trimmed) return {};
+  if (trimmed.startsWith("<")) {
+    throw new Error(
+      "Server returned HTML instead of JSON. Start the PolyCode backend on port 5000.",
+    );
+  }
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    throw new Error("Python API returned invalid JSON.");
+  }
+}
 
 async function runPythonOnServer(source) {
   const endpoints = ["/challenges/run-python", "/documents/run-python"];
@@ -17,14 +37,14 @@ async function runPythonOnServer(source) {
         signal: controller.signal,
       });
 
-      const payload = await response.json().catch(() => ({}));
+      const payload = await readJsonResponse(response);
       if (!response.ok) {
         lastError = new Error(
           payload.message || payload.error || `Python API failed (${path})`,
         );
         continue;
       }
-      return payload;
+      return mergePythonRunResult(payload);
     } catch (error) {
       lastError = error;
     } finally {
@@ -36,23 +56,61 @@ async function runPythonOnServer(source) {
 }
 
 async function runPythonInBrowser(source) {
-  return executeCode(source, "python");
+  return mergePythonRunResult(await executeCode(source, "python"));
 }
 
-export async function runPythonCode(source) {
+async function runPythonWithServerFirst(source) {
   try {
-    return { result: await runPythonOnServer(source), runtime: "server" };
+    const result = await runPythonOnServer(source);
+    const runtimeError = getPythonRuntimeError(result);
+    if (runtimeError) {
+      throw new Error(runtimeError);
+    }
+    return { result, runtime: "server" };
   } catch (serverError) {
     try {
-      return { result: await runPythonInBrowser(source), runtime: "browser" };
+      const browserResult = await runPythonInBrowser(source);
+      const browserError = getPythonRuntimeError(browserResult);
+      if (browserError) {
+        throw new Error(browserError);
+      }
+      return { result: browserResult, runtime: "browser" };
     } catch (browserError) {
       throw new Error(
-        serverError.message ||
-          browserError.message ||
-          "Could not run Python. Start the backend or check your network for Pyodide.",
+        browserError.message ||
+          serverError.message ||
+          "Could not run Python. Start the backend on port 5000 or check your network for Pyodide.",
       );
     }
   }
+}
+
+async function runPythonWithBrowserFirst(source) {
+  try {
+    return { result: await runPythonInBrowser(source), runtime: "browser" };
+  } catch (browserError) {
+    try {
+      const result = await runPythonOnServer(source);
+      const runtimeError = getPythonRuntimeError(result);
+      if (runtimeError) {
+        throw new Error(runtimeError);
+      }
+      return { result, runtime: "server" };
+    } catch (serverError) {
+      throw new Error(
+        browserError.message ||
+          serverError.message ||
+          "Could not run Python. Matplotlib needs the in-browser runtime (Pyodide) or matplotlib installed on the server.",
+      );
+    }
+  }
+}
+
+export async function runPythonCode(source) {
+  if (codeUsesMatplotlib(source)) {
+    return runPythonWithBrowserFirst(source);
+  }
+  return runPythonWithServerFirst(source);
 }
 
 export function formatPythonOutput(result = {}) {

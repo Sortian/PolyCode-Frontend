@@ -142,11 +142,8 @@ export default function LanguagePickerSection({
     return (
       <section id="get-started" className="landing-get-started">
         <div className="landing-container">
-          <div className="loading">
-            <div className="spinner-container">
-              <div className="spinner" />
-              <div className="spinner-inner" />
-            </div>
+          <div className="loading-section">
+            <div className="spinner" aria-hidden="true" />
             <p>Discovering available languages…</p>
           </div>
         </div>

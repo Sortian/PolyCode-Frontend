@@ -1,0 +1,236 @@
+/**
+ * Ocean theme — teal / aqua shell + learn surfaces.
+ * Scoped under .app.theme-ocean (set on root app div).
+ */
+
+/* ── App shell ── */
+.app.theme-ocean {
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(45, 212, 191, 0.1) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(34, 211, 238, 0.08) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(8, 145, 178, 0.06) 0%,
+      transparent 50%
+    ),
+    #041016;
+}
+
+.app.theme-ocean::before {
+  background-image:
+    linear-gradient(rgba(45, 212, 191, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 212, 191, 0.045) 1px, transparent 1px);
+}
+
+.app.theme-ocean .navbar {
+  background: rgba(4, 16, 22, 0.94);
+  backdrop-filter: blur(20px) saturate(160%);
+  border-bottom-color: rgba(45, 212, 191, 0.18);
+  box-shadow: 0 1px 0 rgba(45, 212, 191, 0.08);
+}
+
+.app.theme-ocean .sidebar,
+.app.theme-ocean .layout::before {
+  background: rgba(6, 24, 32, 0.96);
+  border-color: rgba(45, 212, 191, 0.16);
+}
+
+.app.theme-ocean .navbar-links a.active,
+.app.theme-ocean .navbar-link-btn.active {
+  background: rgba(45, 212, 191, 0.14);
+  color: #5eead4;
+}
+
+.app.theme-ocean .navbar-links a:hover,
+.app.theme-ocean .navbar-link-btn:hover {
+  background: rgba(45, 212, 191, 0.08);
+  color: var(--txt-0);
+}
+
+.app.theme-ocean .theme-toggle-btn,
+.app.theme-ocean .navbar-change-stack-btn {
+  border-color: rgba(45, 212, 191, 0.22);
+  color: var(--txt-1);
+}
+
+.app.theme-ocean .theme-toggle-btn:hover,
+.app.theme-ocean .navbar-change-stack-btn:hover {
+  border-color: rgba(45, 212, 191, 0.42);
+  color: #5eead4;
+  background: rgba(45, 212, 191, 0.08);
+}
+
+.app.theme-ocean .app-footer {
+  border-top-color: rgba(45, 212, 191, 0.14);
+  background: rgba(4, 16, 22, 0.98);
+}
+
+/* ── Lesson chrome ── */
+.app.theme-ocean .main-content.learn-content .oops-sidebar,
+.app.theme-ocean .main-content.learn-content .oops-sidebar-header,
+.app.theme-ocean .main-content.learn-content .oops-lesson-topbar,
+.app.theme-ocean .main-content.learn-content .oops-tabs {
+  background: var(--ink-2);
+  border-color: var(--border);
+}
+
+.app.theme-ocean .main-content.learn-content .oops-tab.active {
+  border-bottom-color: var(--accent);
+  color: var(--txt-0);
+}
+
+.app.theme-ocean .main-content.learn-content .oops-tab-xp,
+.app.theme-ocean .main-content.learn-content .oops-completed-badge {
+  color: var(--accent);
+  background: rgba(45, 212, 191, 0.12);
+}
+
+.app.theme-ocean .main-content.learn-content .oops-inline-code {
+  background: rgba(45, 212, 191, 0.12);
+  color: #99f6e4;
+}
+
+.app.theme-ocean .main-content.learn-content .oops-focus-btn:hover,
+.app.theme-ocean .main-content.learn-content .oops-focus-btn.active {
+  border-color: rgba(34, 211, 238, 0.45);
+  color: var(--txt-0);
+  background: rgba(34, 211, 238, 0.1);
+}
+
+.app.theme-ocean .main-content.learn-content .learn-profile-btn {
+  border-color: rgba(45, 212, 191, 0.28);
+  background:
+    linear-gradient(135deg, rgba(45, 212, 191, 0.16), rgba(34, 211, 238, 0.08)),
+    var(--ink);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.06);
+}
+
+.app.theme-ocean .main-content.learn-content .learn-profile-btn span {
+  background: var(--vscode-blue);
+}
+
+.app.theme-ocean .main-content.learn-content .learn-profile-popover {
+  border-color: rgba(45, 212, 191, 0.24);
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(45, 212, 191, 0.12),
+      transparent 36%
+    ),
+    var(--vscode-panel);
+}
+
+.app.theme-ocean .main-content.learn-content .oops-easy-summary > div {
+  background:
+    linear-gradient(180deg, rgba(45, 212, 191, 0.06), transparent),
+    var(--ink-2);
+}
+
+.app.theme-ocean .main-content.learn-content .oops-summary-kicker {
+  color: var(--cyan);
+}
+
+/* Remap per-course chapter accent colors to Ocean palette */
+.app.theme-ocean .main-content.learn-content {
+  --ch-color: var(--accent);
+}
+
+.app.theme-ocean .main-content.learn-content .oops-sidebar-lesson-btn.current,
+.app.theme-ocean .main-content.learn-content .oops-sidebar-chapter-btn.done .oops-sb-check,
+.app.theme-ocean .main-content.learn-content .oops-sidebar-lesson-btn.done .oops-sb-check {
+  color: var(--accent) !important;
+}
+
+.app.theme-ocean .main-content.learn-content .oops-lesson-breadcrumb span[style] {
+  color: var(--accent) !important;
+}
+
+/* ── Shared theory / NumPy lesson blocks ── */
+.app.theme-ocean .main-content.learn-content .numpy-intro-theory,
+.app.theme-ocean .main-content.learn-content .numpy-lesson-outcomes {
+  --numpy-accent: var(--accent);
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-lesson-hero {
+  border-color: rgba(45, 212, 191, 0.32);
+  background:
+    linear-gradient(135deg, rgba(45, 212, 191, 0.14), transparent 55%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-chapter-badge,
+.app.theme-ocean .main-content.learn-content .numpy-outcomes-list li::before {
+  color: var(--accent);
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-inline-code {
+  background: rgba(45, 212, 191, 0.14);
+  color: #99f6e4;
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-step-num[style] {
+  background: var(--accent) !important;
+  color: #041016 !important;
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-matrix-label[style],
+.app.theme-ocean .main-content.learn-content .numpy-matrix-operator[style] {
+  color: var(--accent) !important;
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-matrix-cell[style] {
+  border-color: rgba(45, 212, 191, 0.34) !important;
+  background: rgba(45, 212, 191, 0.08) !important;
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-diagram-item[style] {
+  --node-color: var(--accent) !important;
+  border-top-color: var(--accent) !important;
+}
+
+.app.theme-ocean .main-content.learn-content .lesson-objectives,
+.app.theme-ocean .main-content.learn-content .lesson-scenario {
+  --lesson-accent: var(--accent);
+  border-color: rgba(45, 212, 191, 0.24);
+  background: rgba(45, 212, 191, 0.06);
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-tip-box {
+  border-color: rgba(45, 212, 191, 0.24);
+  background: rgba(45, 212, 191, 0.06);
+}
+
+.app.theme-ocean .main-content.learn-content .numpy-tip-info {
+  border-color: rgba(34, 211, 238, 0.3);
+  background: rgba(34, 211, 238, 0.07);
+}
+
+.app.theme-ocean .main-content.learn-content .lesson-read-gate {
+  border-color: rgba(45, 212, 191, 0.24);
+  background: rgba(45, 212, 191, 0.05);
+}
+
+.app.theme-ocean .profile-chart-line {
+  stroke: var(--accent, #14b8a6);
+}
+
+.app.theme-ocean .profile-chart-bar.is-active,
+.app.theme-ocean .profile-chart-bar:hover,
+.app.theme-ocean .profile-chart-bar:focus-visible {
+  fill: rgba(45, 212, 191, 0.82);
+  stroke: rgba(125, 211, 252, 0.85);
+}
+
+.app.theme-ocean .profile-chart-point.is-active,
+.app.theme-ocean .profile-chart-point:hover,
+.app.theme-ocean .profile-chart-point:focus-visible {
+  fill: var(--accent, #14b8a6);
+}

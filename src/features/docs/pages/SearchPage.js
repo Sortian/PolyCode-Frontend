@@ -85,8 +85,8 @@ export default function SearchPage({ selectedLanguage }) {
       </form>
 
       {loading && (
-        <div className="loading">
-          <div className="spinner" />
+        <div className="loading-section">
+          <div className="spinner" aria-hidden="true" />
         </div>
       )}
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import RunnableCodeBlock from "../../shared/RunnableCodeBlock";
 import LessonReadGate from "../../shared/LessonReadGate";
+import { LEARN_ACCENT } from "../../shared/learnAccent";
 
 function plainText(text = "") {
   return text.replace(/\*\*/g, "").replace(/`/g, "");
@@ -438,6 +439,48 @@ function NumpyTheoryBlock({ block, step, accentColor }) {
     );
   }
 
+  if (block.type === "objectives") {
+    return (
+      <aside
+        className="lesson-objectives"
+        style={{ "--lesson-accent": accentColor }}
+      >
+        <span className="lesson-objectives-icon" aria-hidden>
+          🎯
+        </span>
+        <div>
+          <strong>After this lesson you can…</strong>
+          <ul>
+            {block.items.map((item) => (
+              <li key={item}>
+                <InlineText text={item} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    );
+  }
+
+  if (block.type === "scenario") {
+    return (
+      <aside
+        className="lesson-scenario"
+        style={{ "--lesson-accent": accentColor }}
+      >
+        <span className="lesson-scenario-icon" aria-hidden>
+          📋
+        </span>
+        <div>
+          <strong>Real scenario</strong>
+          <p>
+            <InlineText text={block.content} />
+          </p>
+        </div>
+      </aside>
+    );
+  }
+
   if (block.type === "callout") {
     const labels = {
       info: "Good to know",
@@ -598,21 +641,54 @@ function NumpyTheoryBlock({ block, step, accentColor }) {
 
 export default function NumpyIntroTheory({
   lesson,
-  noteDraft,
-  onNoteChange,
-  onSaveNote,
   confidence,
   onConfidenceChange,
   markedAsRead = false,
   onMarkAsRead = () => {},
   onGoChallenge,
 }) {
-  const accentColor = lesson.chapterColor || "#4f46e5";
-  const firstText = lesson.theory.find((block) => block.type === "text");
+  const accentColor = LEARN_ACCENT;
+  const theoryWithoutObjectives = lesson.theory.filter(
+    (block) => block.type !== "objectives",
+  );
+  const objectivesBlock = lesson.theory.find((block) => block.type === "objectives");
+  const outcomeItems =
+    lesson.outcomes?.length > 0
+      ? lesson.outcomes
+      : objectivesBlock?.items || [];
+  const firstText = theoryWithoutObjectives.find(
+    (block) => block.type === "text" && !block.code,
+  );
+  const firstTextIndex = theoryWithoutObjectives.findIndex(
+    (block) => block.type === "text" && !block.code,
+  );
+  const theoryBlocks =
+    firstTextIndex >= 0
+      ? theoryWithoutObjectives.filter((_, index) => index !== firstTextIndex)
+      : theoryWithoutObjectives;
   let stepCounter = 0;
 
   return (
     <div className="numpy-intro-theory">
+      {outcomeItems.length > 0 && (
+        <section
+          className="numpy-lesson-outcomes numpy-lesson-outcomes-first"
+          style={{ "--numpy-accent": accentColor }}
+          aria-labelledby="numpy-outcomes-heading"
+        >
+          <h2 id="numpy-outcomes-heading" className="numpy-outcomes-heading">
+            Learning outcomes
+          </h2>
+          <ul className="numpy-outcomes-list">
+            {outcomeItems.map((item) => (
+              <li key={item}>
+                <InlineText text={item} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <header
         className="numpy-lesson-hero"
         style={{ "--numpy-accent": accentColor }}
@@ -630,10 +706,9 @@ export default function NumpyIntroTheory({
       <div className="numpy-learn-path">
         <div className="numpy-path-label">
           <span>Your learning path</span>
-          <small>Read the idea, then run the code right below it</small>
         </div>
 
-        {lesson.theory.map((block, index) => {
+        {theoryBlocks.map((block, index) => {
           const needsStep =
             block.type === "text" ||
             block.type === "array" ||
@@ -662,21 +737,6 @@ export default function NumpyIntroTheory({
         onGoChallenge={onGoChallenge}
         accentColor={accentColor}
       />
-
-      <div className="numpy-notes-panel">
-        <h3>📝 Your notes</h3>
-        <p className="numpy-notes-hint">
-          Write anything you want to remember — in your own words.
-        </p>
-        <textarea
-          value={noteDraft}
-          onChange={(event) => onNoteChange(event.target.value)}
-          placeholder="Example: ndarray = a neat row of numbers I can math on all at once..."
-        />
-        <button type="button" className="numpy-notes-save" onClick={onSaveNote}>
-          Save note
-        </button>
-      </div>
     </div>
   );
 }

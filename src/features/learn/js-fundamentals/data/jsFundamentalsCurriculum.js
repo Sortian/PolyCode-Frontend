@@ -1,40 +1,30 @@
-// PolyCode — JavaScript Fundamentals interactive course
-// 5 chapters · 16 lessons · browser JavaScript challenges
+// PolyCode — JavaScript course (beginner → advanced)
+// 11 chapters · 32 lessons · browser JavaScript challenges
 // YouTube links: edit jsFundamentalsVideoLinks.js
 
 import { applyLessonVideoLinks } from "../../shared/applyLessonVideoLinks";
 import { JS_FUNDAMENTALS_VIDEO_LINKS } from "./jsFundamentalsVideoLinks";
+import {
+  JS_ACCENT,
+  quiz,
+  callout,
+  text,
+  diagram,
+  table,
+  objectives,
+} from "./jsCurriculumHelpers";
+import { JS_EXTENDED_CHAPTERS } from "./jsChaptersExtended";
 
-const ACCENT = "#f59e0b";
+const ACCENT = JS_ACCENT;
 
-function quiz(question, options, answer, explanation) {
-  return { type: "quiz", question, options, answer, explanation };
-}
+const JS_GRADUATION_CHAPTER = JS_EXTENDED_CHAPTERS.find((ch) => ch.id === "graduation");
+const JS_MIDDLE_CHAPTERS = JS_EXTENDED_CHAPTERS.filter((ch) => ch.id !== "graduation");
 
-function callout(variant, content) {
-  return { type: "callout", variant, content };
-}
-
-function text(content, codeBlock = null) {
-  if (codeBlock) {
-    return {
-      type: "text",
-      content,
-      code: { lang: "javascript", ...codeBlock },
-    };
-  }
-  return { type: "text", content };
-}
-
-function diagram(title, nodes) {
-  return { type: "diagram", title, nodes };
-}
-
-export const JS_FUNDAMENTALS_CHAPTERS = [
+const JS_CORE_CHAPTERS = [
   {
     id: "intro",
     title: "What is JavaScript?",
-    icon: "🟨",
+    icon: "braces",
     color: ACCENT,
     lessons: [
       {
@@ -42,6 +32,11 @@ export const JS_FUNDAMENTALS_CHAPTERS = [
         title: "What is JavaScript?",
         xp: 10,
         theory: [
+          objectives([
+            "Explain what JavaScript does on a website",
+            "Know where JS runs (browser, server, apps)",
+            "Use console.log to see your first output",
+          ]),
           text(
             "**JavaScript** (often shortened to **JS**) is the programming language that brings websites to life. HTML builds the structure of a page, CSS styles how it looks — and JavaScript decides **what happens** when users click, type, scroll, or submit a form.",
             {
@@ -54,7 +49,7 @@ export const JS_FUNDAMENTALS_CHAPTERS = [
             {
               label: "Variables store information",
               content: `const appName = "PolyCode";
-const lessonCount = 16;
+const lessonCount = 32;
 console.log(appName, "has", lessonCount, "lessons");`,
             },
           ),
@@ -248,6 +243,15 @@ console.log(typeof undefined);   // undefined`,
               items: ["[1, 2, 3] arrays", "{ name: \"Ali\" }", "functions"],
             },
           ]),
+          table("typeof results you'll see often", ["Value", "typeof result"], [
+            ['"hello"', '"string"'],
+            ["42", '"number"'],
+            ["true / false", '"boolean"'],
+            ["undefined", '"undefined"'],
+            ["null", '"object" (quirk)'],
+            ["[1, 2]", '"object"'],
+            ["function() {}", '"function"'],
+          ]),
           text(
             "Use **`typeof`** to inspect a value at runtime. It's handy when debugging: \"Why did my math break?\" — often because something is a string instead of a number.",
             {
@@ -305,7 +309,7 @@ console.log(typeof false);`,
   {
     id: "variables",
     title: "Variables & Logic",
-    icon: "🔤",
+    icon: "type",
     color: "#eab308",
     lessons: [
       {
@@ -606,7 +610,7 @@ console.log(sum);`,
   {
     id: "functions",
     title: "Functions",
-    icon: "⚡",
+    icon: "function-square",
     color: "#f97316",
     lessons: [
       {
@@ -853,7 +857,7 @@ console.log(celsiusToFahrenheit(25));`,
   {
     id: "data",
     title: "Arrays & Objects",
-    icon: "📦",
+    icon: "package",
     color: "#fb923c",
     lessons: [
       {
@@ -1138,10 +1142,12 @@ console.log(title);`,
       },
     ],
   },
-  {
+];
+
+const JS_CAPSTONE_CHAPTER = {
     id: "capstone",
     title: "Put It Together",
-    icon: "🏁",
+    icon: "flag",
     color: "#ea580c",
     lessons: [
       {
@@ -1229,30 +1235,37 @@ console.log(tasks.length);`,
         xp: 20,
         theory: [
           text(
-            "Congratulations — you've walked through the **core JavaScript toolkit**: values, variables, decisions, loops, functions, arrays, and objects. That's the foundation every web developer builds on.",
+            "Congratulations — you've walked through **beginner to advanced JavaScript**: values, functions, async, classes, web APIs, and real project patterns. That's the foundation every web developer builds on.",
           ),
-          diagram("Your JavaScript journey so far", [
+          diagram("Your JavaScript journey", [
             {
               id: "a",
-              label: "Basics",
+              label: "Core",
               color: ACCENT,
-              items: ["const / let", "if & loops", "typeof & operators"],
+              items: ["const / let", "if & loops", "functions & arrows"],
             },
             {
               id: "b",
-              label: "Functions",
+              label: "Data",
               color: "#f97316",
-              items: ["return", "arrow functions", "default params"],
+              items: ["map / filter", "JSON & Map", "objects"],
             },
             {
               id: "c",
-              label: "Data",
-              color: "#fb923c",
-              items: ["map / filter / find", "objects", "destructuring"],
+              label: "Advanced",
+              color: "#06b6d4",
+              items: ["async / await", "classes", "DOM & events"],
             },
           ]),
+          table("Skills you can use now", ["Area", "You can…"], [
+            ["Logic", "Write functions, loops, and conditionals"],
+            ["Data", "Transform arrays and parse JSON"],
+            ["Async", "Read Promise and async/await code"],
+            ["OOP", "Create classes with extends"],
+            ["Web", "Explain DOM, events, and fetch flow"],
+          ]),
           text(
-            "**What to learn next in PolyCode:** DOM & Events (make pages interactive), Async JavaScript (fetch data from servers), then Node.js or React — each builds directly on what you practiced here.",
+            "**What to learn next in PolyCode:** React or Node.js tracks, the Docs Hub certificate path, and daily challenges to keep your skills sharp.",
             {
               label: "Combine skills in one snippet",
               content: `const lessons = [
@@ -1297,7 +1310,13 @@ console.log(graduate("You"));`,
         },
       },
     ],
-  },
+  };
+
+export const JS_FUNDAMENTALS_CHAPTERS = [
+  ...JS_CORE_CHAPTERS,
+  ...JS_MIDDLE_CHAPTERS,
+  JS_CAPSTONE_CHAPTER,
+  JS_GRADUATION_CHAPTER,
 ];
 
 export const JS_FUNDAMENTALS_LESSONS = applyLessonVideoLinks(

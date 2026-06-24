@@ -1,0 +1,194 @@
+/* Profile page — theme-aware surfaces (scoped to /@[user] routes) */
+
+.main-content.learn-content:has(.profile-page) {
+  --profile-accent: var(--accent, #ffe566);
+  --profile-accent-dim: var(--acid-dim, rgba(255, 229, 102, 0.12));
+  --profile-accent-border: color-mix(in srgb, var(--profile-accent) 35%, var(--border));
+  --profile-hero-bg: var(--vscode-panel, #252526);
+  --profile-hero-border: color-mix(in srgb, var(--profile-accent) 28%, var(--border));
+  --profile-hero-glow: color-mix(in srgb, var(--profile-accent) 14%, transparent);
+  --profile-avatar-ring: linear-gradient(
+    135deg,
+    var(--profile-accent),
+    color-mix(in srgb, var(--profile-accent) 55%, var(--cyan, #00f2ff))
+  );
+  --profile-surface-bg: var(--ink-2, #0d1117);
+  --profile-surface-border: var(--border, #1e2433);
+  --profile-chart-accent: var(--profile-accent);
+  --profile-chart-line: var(--profile-accent);
+  --profile-chart-point: var(--profile-accent);
+  --profile-heatmap-0: #161b22;
+  --profile-heatmap-1: color-mix(in srgb, var(--profile-accent) 34%, #161b22);
+  --profile-heatmap-2: color-mix(in srgb, var(--profile-accent) 58%, #161b22);
+  --profile-heatmap-3: color-mix(in srgb, var(--profile-accent) 78%, #161b22);
+  --profile-heatmap-4: var(--profile-accent);
+}
+
+/* Default dark */
+.app:not(.theme-light):not(.theme-classic):not(.theme-midnight):not(.theme-ocean):not(.theme-slate)
+  .main-content.learn-content:has(.profile-page) {
+  --profile-hero-bg: var(--bg-card, #080a14);
+  --profile-surface-bg: var(--ink-3, #080a14);
+  --profile-hero-border: rgba(255, 229, 102, 0.2);
+  --profile-hero-glow: rgba(255, 229, 102, 0.12);
+}
+
+.app.theme-classic .main-content.learn-content:has(.profile-page) {
+  --profile-accent: #ffb000;
+  --profile-accent-dim: rgba(255, 176, 0, 0.14);
+  --profile-hero-bg: #1a1408;
+  --profile-surface-bg: #141008;
+  --profile-hero-border: rgba(255, 176, 0, 0.24);
+  --profile-hero-glow: rgba(255, 176, 0, 0.12);
+}
+
+.app.theme-midnight .main-content.learn-content:has(.profile-page) {
+  --profile-accent: #818cf8;
+  --profile-accent-dim: rgba(129, 140, 248, 0.16);
+  --profile-hero-bg: #12182c;
+  --profile-surface-bg: #0f1628;
+  --profile-hero-border: rgba(129, 140, 248, 0.28);
+  --profile-hero-glow: rgba(129, 140, 248, 0.14);
+}
+
+.app.theme-ocean .main-content.learn-content:has(.profile-page) {
+  --profile-accent: #2dd4bf;
+  --profile-accent-dim: rgba(45, 212, 191, 0.14);
+  --profile-hero-bg: #0a2430;
+  --profile-surface-bg: #071820;
+  --profile-hero-border: rgba(45, 212, 191, 0.24);
+  --profile-hero-glow: rgba(45, 212, 191, 0.14);
+}
+
+.app.theme-slate .main-content.learn-content:has(.profile-page) {
+  --profile-accent: #94a3b8;
+  --profile-accent-dim: rgba(148, 163, 184, 0.12);
+  --profile-hero-bg: #1a1e28;
+  --profile-surface-bg: #171a22;
+  --profile-hero-border: rgba(148, 163, 184, 0.22);
+  --profile-hero-glow: rgba(148, 163, 184, 0.1);
+}
+
+.app.theme-light .main-content.learn-content:has(.profile-page) {
+  --profile-accent: #4f46e5;
+  --profile-accent-dim: rgba(79, 70, 229, 0.08);
+  --profile-hero-bg: #ffffff;
+  --profile-surface-bg: #ffffff;
+  --profile-hero-border: rgba(15, 23, 42, 0.1);
+  --profile-hero-glow: rgba(79, 70, 229, 0.1);
+  --profile-heatmap-0: #e2e8f0;
+}
+
+/* Surfaces */
+.main-content.learn-content:has(.profile-page) .profile-hero {
+  border-color: var(--profile-hero-border);
+  background:
+    radial-gradient(
+      circle at top right,
+      var(--profile-hero-glow),
+      transparent 38%
+    ),
+    var(--profile-hero-bg);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-hero-avatar {
+  background: var(--profile-avatar-ring);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-language-badge {
+  border-color: var(--profile-accent-border);
+  background: var(--profile-accent-dim);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-hero-stat:hover strong,
+.main-content.learn-content:has(.profile-page) .profile-hero-stat[aria-expanded="true"] {
+  color: var(--profile-accent);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-hero-message-btn:hover {
+  border-color: var(--profile-accent-border);
+  background: var(--profile-accent-dim);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-hero-edit-btn,
+.main-content.learn-content:has(.profile-page) .profile-edit-btn-primary {
+  border-color: var(--profile-accent-border);
+  background: var(--profile-accent-dim);
+  color: var(--profile-accent);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-total-progress strong,
+.main-content.learn-content:has(.profile-page) .profile-hero-metric strong,
+.main-content.learn-content:has(.profile-page) .profile-activity-head strong {
+  color: var(--profile-accent);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-overview-grid div,
+.main-content.learn-content:has(.profile-page) .profile-activity-card,
+.main-content.learn-content:has(.profile-page) .profile-track-card,
+.main-content.learn-content:has(.profile-page) .profile-edit-card,
+.main-content.learn-content:has(.profile-page) .profile-total-progress,
+.main-content.learn-content:has(.profile-page) .profile-hero-metrics {
+  background: var(--profile-surface-bg);
+  border-color: var(--profile-surface-border);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-hero-metric {
+  border-bottom-color: var(--profile-surface-border);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-activity-cell,
+.main-content.learn-content:has(.profile-page) .profile-activity-legend i {
+  background: var(--profile-heatmap-0);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-activity-cell[data-level="1"],
+.main-content.learn-content:has(.profile-page) .profile-activity-legend i[data-level="1"] {
+  background: var(--profile-heatmap-1);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-activity-cell[data-level="2"],
+.main-content.learn-content:has(.profile-page) .profile-activity-legend i[data-level="2"] {
+  background: var(--profile-heatmap-2);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-activity-cell[data-level="3"],
+.main-content.learn-content:has(.profile-page) .profile-activity-legend i[data-level="3"] {
+  background: var(--profile-heatmap-3);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-activity-cell[data-level="4"],
+.main-content.learn-content:has(.profile-page) .profile-activity-legend i[data-level="4"] {
+  background: var(--profile-heatmap-4);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-chart-line {
+  stroke: var(--profile-chart-line);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-chart-point {
+  stroke: var(--profile-chart-point);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-chart-point.is-active {
+  fill: var(--profile-chart-point);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-chart-bar {
+  fill: color-mix(in srgb, var(--profile-chart-accent) 72%, transparent);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-chart-bar.is-active,
+.main-content.learn-content:has(.profile-page) .profile-chart-bar:hover,
+.main-content.learn-content:has(.profile-page) .profile-chart-bar:focus-visible {
+  fill: var(--profile-chart-accent);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-edit-lang-chip:hover {
+  border-color: var(--profile-accent-border);
+}
+
+.main-content.learn-content:has(.profile-page) .profile-edit-lang-chip input {
+  accent-color: var(--profile-accent);
+}

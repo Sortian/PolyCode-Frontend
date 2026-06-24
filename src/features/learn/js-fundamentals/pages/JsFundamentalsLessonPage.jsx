@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { LEARN_ACCENT } from "../../shared/learnAccent";
 import { useNavigate, useParams } from "react-router-dom";
 import NumpyIntroTheory from "../../numpy-py/components/NumpyIntroTheory";
 import OopsSidebar from "../../oops-cpp/components/OopsSidebar";
@@ -37,15 +38,12 @@ export default function JsFundamentalsLessonPage() {
     isAuthenticated,
     completedMap: progress,
     savedCodeMap,
-    getLessonNote,
     bookmarks,
     completeLesson,
     rememberLesson,
     saveCode,
-    saveNote,
     toggleBookmark,
   } = useJsFundamentalsProgress();
-  const [noteDraft, setNoteDraft] = useState("");
   const codeSaveTimer = useRef(null);
 
   const lesson = JS_FUNDAMENTALS_LESSONS.find((item) => item.id === lessonId);
@@ -56,7 +54,7 @@ export default function JsFundamentalsLessonPage() {
   const next = JS_FUNDAMENTALS_LESSONS[lessonIdx + 1];
 
   useLessonAssistantContext({
-    course: "JavaScript Fundamentals",
+    course: "JavaScript",
     language: "JavaScript",
     lesson,
     chapter: lesson?.chapterTitle,
@@ -72,10 +70,6 @@ export default function JsFundamentalsLessonPage() {
     if (lessonId) rememberLesson(lessonId);
   }, [lessonId, rememberLesson]);
 
-  useEffect(() => {
-    setNoteDraft(getLessonNote(lessonId));
-  }, [lessonId, getLessonNote]);
-
   useEffect(
     () => () => {
       window.clearTimeout(codeSaveTimer.current);
@@ -88,7 +82,7 @@ export default function JsFundamentalsLessonPage() {
       <div className="oops-not-found">
         <p>JavaScript lesson not found.</p>
         <button type="button" onClick={() => navigate(BASE_PATH)}>
-          ← Back to JavaScript Fundamentals
+          ← Back to JavaScript Course
         </button>
       </div>
     );
@@ -106,10 +100,6 @@ export default function JsFundamentalsLessonPage() {
     await completeLesson(lesson);
   }
 
-  function handleSaveNote() {
-    saveNote(lessonId, noteDraft);
-  }
-
   function handleCodeChange(code) {
     window.clearTimeout(codeSaveTimer.current);
     codeSaveTimer.current = window.setTimeout(() => {
@@ -124,7 +114,7 @@ export default function JsFundamentalsLessonPage() {
         progress={progress}
         chapters={JS_FUNDAMENTALS_CHAPTERS}
         basePath={BASE_PATH}
-        title="JavaScript Fundamentals"
+        title="JavaScript"
       />
 
       <div className="oops-lesson-main">
@@ -134,10 +124,10 @@ export default function JsFundamentalsLessonPage() {
             className="oops-back-btn"
             onClick={() => navigate(BASE_PATH)}
           >
-            ← JavaScript Fundamentals
+            ← JavaScript Course
           </button>
           <div className="oops-lesson-breadcrumb">
-            <span style={{ color: lesson.chapterColor }}>
+            <span className="learn-lesson-chapter-tag">
               {lesson.chapterTitle}
             </span>
             <span className="oops-bc-sep">›</span>
@@ -162,7 +152,7 @@ export default function JsFundamentalsLessonPage() {
           </button>
           <LearnProfileMenu
             user={user}
-            trackTitle="JavaScript Fundamentals"
+            trackTitle="JavaScript"
             syncLabel={
               isAuthenticated
                 ? "JavaScript progress saved to your account"
@@ -201,9 +191,6 @@ export default function JsFundamentalsLessonPage() {
           {tab === "theory" ? (
             <NumpyIntroTheory
               lesson={lesson}
-              noteDraft={noteDraft}
-              onNoteChange={setNoteDraft}
-              onSaveNote={handleSaveNote}
               confidence={confidence}
               onConfidenceChange={handleConfidenceChange}
               markedAsRead={markedAsRead}
@@ -213,7 +200,7 @@ export default function JsFundamentalsLessonPage() {
           ) : (
             <JavaScriptCodeChallenge
               challenge={lesson.challenge}
-              accentColor={lesson.chapterColor}
+              accentColor={LEARN_ACCENT}
               isCompleted={isCompleted}
               onComplete={handleChallengeComplete}
               initialCode={savedCodeMap[lessonId]}

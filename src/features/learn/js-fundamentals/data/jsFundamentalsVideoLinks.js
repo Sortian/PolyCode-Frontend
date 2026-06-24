@@ -1,5 +1,5 @@
 /**
- * Paste YouTube URLs here — keyed by lesson id (js-0, js-1, …).
+ * Paste YouTube URLs here — keyed by lesson id (js-0 … js-31).
  * Leave empty string until you add a link.
  */
 export const JS_FUNDAMENTALS_VIDEO_LINKS = {
@@ -19,4 +19,20 @@ export const JS_FUNDAMENTALS_VIDEO_LINKS = {
   "js-13": "",
   "js-14": "",
   "js-15": "",
+  "js-16": "",
+  "js-17": "",
+  "js-18": "",
+  "js-19": "",
+  "js-20": "",
+  "js-21": "",
+  "js-22": "",
+  "js-23": "",
+  "js-24": "",
+  "js-25": "",
+  "js-26": "",
+  "js-27": "",
+  "js-28": "",
+  "js-29": "",
+  "js-30": "",
+  "js-31": "",
 };

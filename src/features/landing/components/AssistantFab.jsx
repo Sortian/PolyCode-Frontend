@@ -215,7 +215,7 @@ function MentorReply({
           <span className="assistant-mentor-name">{ASSISTANT_CONFIG.name}</span>
         </div>
         <div className="assistant-markdown">
-          <AssistantMarkdown content={visible} />
+          <AssistantMarkdown content={visible} streaming={shouldStream && !done} />
           {!done && shouldStream ? (
             <span className="assistant-stream-cursor" />
           ) : null}

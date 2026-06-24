@@ -14,11 +14,13 @@ import Sidebar from "./features/navigation/components/Sidebar";
 import { PlaygroundProvider } from "./features/playground/context/PlaygroundContext";
 import { AuthProvider, useAuth } from "./features/auth/context/AuthContext";
 import SelectionPins from "./shared/components/SelectionPins";
+import LastRouteTracker from "./shared/navigation/LastRouteTracker";
 import { LearnNavProvider } from "./features/learn/shared/LearnNavContext";
 import GlobalAssistant from "./features/assistant/components/GlobalAssistant";
 import { AssistantProvider } from "./features/assistant/context/AssistantContext";
 import "./App.css";
 import "./styles/theme-light.css";
+import "./styles/theme-ocean.css";
 import "./styles/theme-palettes.css";
 import "./styles/theme-assistant.css";
 import "./styles/theme-learn-surfaces.css";
@@ -31,6 +33,8 @@ import {
 } from "./shared/theme/themes";
 import "./styles/stack-picker-dark.css";
 import "./styles/responsive.css";
+import "./styles/theme-dark.css";
+import "./styles/theme-profile.css";
 
 import LandingShell from "./features/landing/LandingShell";
 
@@ -69,6 +73,9 @@ const LandingPage = lazyWithChunkRetry(
 );
 const LanguageLandingPage = lazyWithChunkRetry(
   () => import("./features/language/pages/LanguageLandingPage"),
+);
+const AllCoursesPage = lazyWithChunkRetry(
+  () => import("./features/courses/pages/AllCoursesPage"),
 );
 const HomePage = lazyWithChunkRetry(
   () => import("./features/docs/pages/Home/HomePage"),
@@ -129,12 +136,24 @@ const PandasHub = lazyWithChunkRetry(
 const PandasLessonPage = lazyWithChunkRetry(
   () => import("./features/learn/pandas-py/pages/PandasLessonPage"),
 );
+const AiHub = lazyWithChunkRetry(
+  () => import("./features/learn/ai_ml-py/pages/aiHub"),
+);
+const AiLessonPage = lazyWithChunkRetry(
+  () => import("./features/learn/ai_ml-py/pages/aiLessonPage"),
+);
 const JsFundamentalsHub = lazyWithChunkRetry(
   () => import("./features/learn/js-fundamentals/pages/JsFundamentalsHub"),
 );
 const JsFundamentalsLessonPage = lazyWithChunkRetry(
   () =>
     import("./features/learn/js-fundamentals/pages/JsFundamentalsLessonPage"),
+);
+const JsWebDevHub = lazyWithChunkRetry(
+  () => import("./features/learn/js-web-dev/pages/JsWebDevHub"),
+);
+const JsWebDevLessonPage = lazyWithChunkRetry(
+  () => import("./features/learn/js-web-dev/pages/JsWebDevLessonPage"),
 );
 const CsharpHub = lazyWithChunkRetry(
   () => import("./features/learn/csharp-fundamentals/pages/CsharpHub"),
@@ -165,7 +184,7 @@ const RubyFundamentalsLessonPage = lazyWithChunkRetry(
 );
 
 const PageFallback = () => (
-  <div className="loading">
+  <div className="loading-overlay">
     <div className="spinner-container">
       <div className="spinner" />
     </div>
@@ -363,7 +382,11 @@ function LearnShell({
           aria-hidden="true"
         />
       )}
-      <main className="main-content learn-content">{children}</main>
+      <main className="main-content learn-content">
+        {React.isValidElement(children)
+          ? React.cloneElement(children, { theme, onThemeChange })
+          : children}
+      </main>
     </LearnNavProvider>
   );
 }
@@ -500,10 +523,13 @@ function AppRoutes() {
     if (
       path.startsWith("/learn/numpy-py") ||
       path.startsWith("/learn/pandas-py") ||
-      path.startsWith("/learn/matplotlib-py")
+      path.startsWith("/learn/matplotlib-py") ||
+      path.startsWith("/learn/ai_ml-py")
     ) {
       handleLanguageSelect("Python", { stay: true });
     } else if (path.startsWith("/learn/js-fundamentals")) {
+      handleLanguageSelect("JavaScript", { stay: true });
+    } else if (path.startsWith("/learn/js-web-dev")) {
       handleLanguageSelect("JavaScript", { stay: true });
     } else if (path.startsWith("/learn/c-sharp-fundamentals")) {
       handleLanguageSelect("C#", { stay: true });
@@ -579,6 +605,14 @@ function AppRoutes() {
                 continueLanguage={selectedLanguage}
               />
             </StackPickerShell>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <ThemedShell theme={theme}>
+              <AllCoursesPage />
+            </ThemedShell>
           }
         />
         <Route
@@ -779,6 +813,52 @@ function AppRoutes() {
             </ThemedShell>
           }
         />
+        {/* AI/ML Python Course Routes */}
+        <Route
+          path="/learn/ai_ml-py"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <AiHub />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/ai_ml-py/lesson/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <AiLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/ai_ml-py/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <AiLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
         {/* ✅ CORRECT: Route is the direct child, ThemedShell is inside the element prop */}
         <Route
           path="/learn/matplotlib-py"
@@ -898,6 +978,52 @@ function AppRoutes() {
                 selectedLanguage={selectedLanguage}
               >
                 <JsFundamentalsLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+
+        <Route
+          path="/learn/js-web-dev"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsWebDevHub />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/js-web-dev/lesson/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsWebDevLessonPage />
+              </LearnShell>
+            </ThemedShell>
+          }
+        />
+        <Route
+          path="/learn/js-web-dev/:lessonId"
+          element={
+            <ThemedShell theme={theme}>
+              <LearnShell
+                theme={theme}
+                onThemeChange={handleThemeChange}
+                onGoToStackPicker={goToStackPicker}
+                selectedLanguage={selectedLanguage}
+              >
+                <JsWebDevLessonPage />
               </LearnShell>
             </ThemedShell>
           }
@@ -1049,6 +1175,7 @@ function App() {
           <AssistantProvider>
             <SelectionPins />
             <ScrollToTop />
+            <LastRouteTracker />
             <AppRoutes />
             <GlobalAssistant />
           </AssistantProvider>

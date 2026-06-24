@@ -3,6 +3,38 @@
  * Scoped under .app.theme-light (set on root app div).
  */
 
+/* ── Navbar brand (main app + landing) ── */
+.app.theme-light .navbar-brand .logo-text,
+.app.theme-light .polycode-landing .landing-logo-text,
+.polycode-landing.polycode-landing--light .landing-logo-text {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+
+.app.theme-light .polycode-landing .landing-logo-sub,
+.polycode-landing.polycode-landing--light .landing-logo-sub {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+.app.theme-light .navbar-brand .navbar-logo {
+  padding: 5px;
+  background: linear-gradient(145deg, #eef2ff 0%, #f8fafc 52%, #ecfeff 100%);
+  border: 1px solid rgba(79, 70, 229, 0.22);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  filter: contrast(1.12) saturate(1.18);
+}
+
+.app.theme-light .navbar-brand:hover .navbar-logo {
+  border-color: rgba(79, 70, 229, 0.38);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.12);
+}
+
 /* ── Auth (login / signup) ── */
 .app.theme-light .auth-page {
   background:
@@ -85,6 +117,8 @@
 .app.theme-light .page-title-hero,
 .app.theme-light .doc-header h1,
 .app.theme-light .breadcrumb .active-path {
+  font-family: var(--font-body);
+  font-weight: 600;
   background: none !important;
   -webkit-background-clip: unset !important;
   background-clip: unset !important;
@@ -208,23 +242,30 @@
 }
 
 /* ── Loading overlay ── */
-.app.theme-light .loading {
+.app.theme-light .loading-overlay {
   background: rgba(248, 250, 252, 0.88);
 }
 
-.app.theme-light .loading p {
+.app.theme-light .loading-overlay p,
+.app.theme-light .loading-section p {
   color: var(--txt-1);
 }
 
-.app.theme-light .spinner {
+.app.theme-light .spinner-container > .spinner {
   border-color: rgba(15, 23, 42, 0.08);
   border-top-color: var(--accent);
   border-right-color: #0e7490;
 }
 
-.app.theme-light .spinner-inner {
+.app.theme-light .spinner-container > .spinner-inner {
   border-color: rgba(15, 23, 42, 0.06);
   border-bottom-color: #6d28d9;
+}
+
+.app.theme-light .loading-section .spinner {
+  border-color: rgba(15, 23, 42, 0.08);
+  border-top-color: var(--accent);
+  border-right-color: #0e7490;
 }
 
 .app.theme-light .backdrop {
@@ -547,7 +588,6 @@
 .app.theme-light .profile-track-card,
 .app.theme-light .oops-problem-panel,
 .app.theme-light .oops-brief-card,
-.app.theme-light .oops-notes-panel,
 .app.theme-light .oops-confidence-panel,
 .app.theme-light .oops-quiz-card,
 .app.theme-light .oops-callout,
@@ -583,7 +623,6 @@
 .app.theme-light .oops-lesson-heading,
 .app.theme-light .oops-problem-title,
 .app.theme-light .oops-brief-card h3,
-.app.theme-light .oops-notes-panel h3,
 .app.theme-light .oops-confidence-panel h3,
 .app.theme-light .oops-quiz-card h4 {
   color: #0f172a;
@@ -596,10 +635,55 @@
 .app.theme-light .profile-track-head span,
 .app.theme-light .profile-track-stats span,
 .app.theme-light .profile-next-row span,
+.app.theme-light .profile-connection-state,
+.app.theme-light .profile-connection-panel-head button,
+.app.theme-light .profile-connection-user small,
 .app.theme-light .oops-problem-desc,
 .app.theme-light .oops-brief-card p,
 .app.theme-light .oops-brief-card li {
+  color: var(--profile-panel-muted, #64748b);
+}
+
+.app.theme-light .profile-hero-stat strong,
+.app.theme-light .profile-connection-panel-head strong,
+.app.theme-light .profile-connection-user strong {
+  color: var(--profile-panel-fg, #0f172a);
+}
+
+.app.theme-light .profile-hero-stat span {
   color: #64748b;
+}
+
+.app.theme-light .profile-hero-stat:hover strong,
+.app.theme-light .profile-hero-stat[aria-expanded="true"] strong {
+  color: var(--accent);
+}
+
+.app.theme-light .profile-hero-stat[aria-expanded="true"] span {
+  color: var(--accent);
+}
+
+.app.theme-light .profile-connection-panel {
+  --profile-panel-bg: #ffffff;
+  --profile-panel-fg: #0f172a;
+  --profile-panel-muted: #64748b;
+  --profile-panel-border: rgba(15, 23, 42, 0.12);
+  --profile-panel-hover: #f1f5f9;
+  background: var(--profile-panel-bg);
+  border-color: var(--profile-panel-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.app.theme-light .profile-connection-panel-head button:hover {
+  color: var(--profile-panel-fg);
+}
+
+.app.theme-light .profile-connection-user:hover {
+  background: var(--profile-panel-hover);
+}
+
+.app.theme-light .profile-hero-social {
+  border-top-color: rgba(15, 23, 42, 0.1);
 }
 
 .app.theme-light .profile-total-progress,
@@ -641,6 +725,40 @@
   background: #0f172a;
   border-color: rgba(14, 165, 233, 0.32);
   color: #ffffff;
+}
+
+.app.theme-light .profile-chart-grid-line {
+  stroke: rgba(15, 23, 42, 0.08);
+}
+
+.app.theme-light .profile-chart-axis-label {
+  fill: #64748b;
+}
+
+.app.theme-light .profile-chart-bar {
+  fill: rgba(14, 165, 233, 0.18);
+  stroke: rgba(14, 165, 233, 0.28);
+}
+
+.app.theme-light .profile-chart-bar.is-active,
+.app.theme-light .profile-chart-bar:hover,
+.app.theme-light .profile-chart-bar:focus-visible {
+  fill: #0ea5e9;
+  stroke: #0284c7;
+}
+
+.app.theme-light .profile-chart-point {
+  fill: #ffffff;
+  stroke: #0ea5e9;
+}
+
+.app.theme-light .profile-chart-point.is-active {
+  fill: #0ea5e9;
+  stroke: #ffffff;
+}
+
+.app.theme-light .profile-activity-charts {
+  border-top-color: rgba(15, 23, 42, 0.1);
 }
 
 .app.theme-light .oops-test-pass {

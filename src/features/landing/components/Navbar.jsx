@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import { getLanguages } from "../../docs/services/api";
-import { ALL_COURSES as COURSES } from "../../learn/shared/allCourses";
+import { COURSE_GROUPS, COURSE_PANEL_LIMIT, STACK_NAV_LIMIT, getAllCoursesPath } from "../../learn/shared/allCourses";
 import ThemeSettingsMenu from "../../../shared/theme/ThemeSettingsMenu";
 
 const NAV_LINKS = [
   { href: "#modules", label: "Features" },
-  { href: "/hub", label: "Docs" },
+  { href: "/playground", label: "Playground" },
 ];
 
 export default function Navbar({ theme = "dark", onThemeChange }) {
@@ -15,6 +15,10 @@ export default function Navbar({ theme = "dark", onThemeChange }) {
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileCoursesOpen, setMobileCoursesOpen] = useState(false);
+  const [mobileExpandedGroup, setMobileExpandedGroup] = useState(null);
+  const [activeCourseGroup, setActiveCourseGroup] = useState(
+    COURSE_GROUPS[0]?.id ?? null,
+  );
   const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [languages, setLanguages] = useState([]);
   const coursesRef = useRef(null);
@@ -57,7 +61,37 @@ export default function Navbar({ theme = "dark", onThemeChange }) {
     setMobileOpen(false);
     setMobileCoursesOpen(false);
     setMobileLangOpen(false);
+    setMobileExpandedGroup(null);
   };
+
+  const activeGroup =
+    COURSE_GROUPS.find((group) => group.id === activeCourseGroup) ||
+    COURSE_GROUPS[0] ||
+    null;
+
+  const hasMoreStacks = COURSE_GROUPS.length > STACK_NAV_LIMIT;
+  const visibleStacks = useMemo(
+    () =>
+      hasMoreStacks
+        ? COURSE_GROUPS.slice(0, STACK_NAV_LIMIT)
+        : COURSE_GROUPS,
+    [hasMoreStacks],
+  );
+
+  useEffect(() => {
+    if (
+      activeCourseGroup &&
+      !visibleStacks.some((group) => group.id === activeCourseGroup)
+    ) {
+      setActiveCourseGroup(visibleStacks[0]?.id ?? null);
+    }
+  }, [activeCourseGroup, visibleStacks]);
+
+  useEffect(() => {
+    if (coursesOpen && COURSE_GROUPS[0] && !activeCourseGroup) {
+      setActiveCourseGroup(COURSE_GROUPS[0].id);
+    }
+  }, [coursesOpen, activeCourseGroup]);
 
   const handleNav = (href) => {
     setCoursesOpen(false);
@@ -102,7 +136,7 @@ export default function Navbar({ theme = "dark", onThemeChange }) {
             <nav className="landing-nav-links">
               {NAV_LINKS.map((link) => (
                 <button
-                  key={link.label}
+                  key={link.href}
                   className="landing-nav-link"
                   onClick={() => handleNav(link.href)}
                 >
@@ -124,29 +158,120 @@ export default function Navbar({ theme = "dark", onThemeChange }) {
                 </button>
 
                 {coursesOpen && (
-                  <div className="ln-dropdown">
-                    <p className="ln-dropdown-label">Available Courses</p>
-                    {COURSES.map((course) => {
-                      const Icon = course.icon;
-                      return (
-                        <button
-                          key={course.label}
-                          className="ln-dropdown-item"
-                          style={{ "--lang-accent": course.accent }}
-                          onClick={() => handleNav(course.href)}
+                  <div className="ln-dropdown ln-dropdown--grouped">
+                    <p className="ln-dropdown-label">Browse by stack</p>
+                    <div className="ln-course-groups-wrap">
+                      <div className="ln-course-groups">
+                        <div
+                          className="ln-course-groups-nav"
+                          role="tablist"
+                          aria-label="Course stacks"
                         >
-                          <div className="ln-dropdown-icon">
-                            <Icon size={16} />
+                          {visibleStacks.map((group) => (
+                            <button
+                              key={group.id}
+                              type="button"
+                              role="tab"
+                              aria-selected={activeGroup?.id === group.id}
+                              className={`ln-course-group-tab${
+                                activeGroup?.id === group.id
+                                  ? " ln-course-group-tab--active"
+                                  : ""
+                              }`}
+                              style={{ "--stack-accent": group.accent }}
+                              onMouseEnter={() => setActiveCourseGroup(group.id)}
+                              onFocus={() => setActiveCourseGroup(group.id)}
+                              onClick={() => setActiveCourseGroup(group.id)}
+                            >
+                              <span className="ln-course-group-tab-label">
+                                {group.label}
+                              </span>
+                              <span className="ln-course-group-tab-count">
+                                {group.courses.length}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+
+                        {activeGroup ? (
+                          <div
+                            className="ln-course-groups-panel"
+                            role="tabpanel"
+                            aria-label={`${activeGroup.label} courses`}
+                          >
+                            <p className="ln-course-groups-panel-title">
+                              {activeGroup.label} courses
+                            </p>
+                            {(activeGroup.courses.length > COURSE_PANEL_LIMIT
+                              ? activeGroup.courses.slice(0, COURSE_PANEL_LIMIT)
+                              : activeGroup.courses
+                            ).map((course) => {
+                              const Icon = course.icon;
+                              return (
+                                <button
+                                  key={course.href}
+                                  type="button"
+                                  className="ln-dropdown-item ln-dropdown-item--sub"
+                                  style={{ "--lang-accent": course.accent }}
+                                  onClick={() => handleNav(course.href)}
+                                >
+                                  <div className="ln-dropdown-icon">
+                                    <Icon size={15} />
+                                  </div>
+                                  <div className="ln-dropdown-text">
+                                    <span className="ln-dropdown-name">
+                                      {course.title}
+                                    </span>
+                                    <span className="ln-dropdown-sub">
+                                      {course.tag}
+                                    </span>
+                                  </div>
+                                  <ArrowRight
+                                    size={13}
+                                    className="ln-dropdown-arrow"
+                                  />
+                                </button>
+                              );
+                            })}
+                            {activeGroup.courses.length > COURSE_PANEL_LIMIT ? (
+                              <button
+                                type="button"
+                                className="ln-course-group-see-all"
+                                style={{ "--stack-accent": activeGroup.accent }}
+                                onClick={() =>
+                                  handleNav(getAllCoursesPath(activeGroup.id))
+                                }
+                              >
+                                See all {activeGroup.courses.length}{" "}
+                                {activeGroup.label} courses
+                                <ArrowRight size={13} />
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                className="ln-course-group-all"
+                                style={{ "--stack-accent": activeGroup.accent }}
+                                onClick={() => handleNav(activeGroup.languagePath)}
+                              >
+                                All {activeGroup.label} courses
+                                <ArrowRight size={13} />
+                              </button>
+                            )}
                           </div>
-                          <div className="ln-dropdown-text">
-                            <span className="ln-dropdown-name">
-                              {course.title}
-                            </span>
-                          </div>
-                          <ArrowRight size={13} className="ln-dropdown-arrow" />
+                        ) : null}
+                      </div>
+
+                      {hasMoreStacks ? (
+                        <button
+                          type="button"
+                          className="ln-course-groups-view-all"
+                          onClick={() => handleNav(getAllCoursesPath())}
+                        >
+                          View all courses
+                          <ArrowRight size={14} />
                         </button>
-                      );
-                    })}
+                      ) : null}
+                    </div>
                   </div>
                 )}
               </div>
@@ -234,7 +359,7 @@ export default function Navbar({ theme = "dark", onThemeChange }) {
         <nav className="landing-mobile-nav">
           {NAV_LINKS.map((link) => (
             <button
-              key={link.label}
+              key={link.href}
               type="button"
               className="landing-mobile-nav-link"
               onClick={() => handleNav(link.href)}
@@ -256,22 +381,87 @@ export default function Navbar({ theme = "dark", onThemeChange }) {
             />
           </button>
           {mobileCoursesOpen ? (
-            <div className="landing-mobile-subnav">
-              {COURSES.map((course) => {
-                const Icon = course.icon;
+            <div className="landing-mobile-subnav landing-mobile-subnav--grouped">
+              {visibleStacks.map((group) => {
+                const expanded = mobileExpandedGroup === group.id;
                 return (
-                  <button
-                    key={course.label}
-                    type="button"
-                    className="landing-mobile-subnav-link"
-                    style={{ "--lang-accent": course.accent }}
-                    onClick={() => handleNav(course.href)}
-                  >
-                    <Icon size={15} />
-                    {course.title}
-                  </button>
+                  <div key={group.id} className="landing-mobile-course-group">
+                    <button
+                      type="button"
+                      className="landing-mobile-course-group-trigger"
+                      style={{ "--stack-accent": group.accent }}
+                      aria-expanded={expanded}
+                      onClick={() =>
+                        setMobileExpandedGroup(expanded ? null : group.id)
+                      }
+                    >
+                      <span>{group.label}</span>
+                      <span className="landing-mobile-course-group-meta">
+                        {group.courses.length} courses
+                        <ChevronDown
+                          size={14}
+                          className={`landing-mobile-chevron${
+                            expanded ? " landing-mobile-chevron--open" : ""
+                          }`}
+                        />
+                      </span>
+                    </button>
+                    {expanded ? (
+                      <div className="landing-mobile-course-group-items">
+                        {(group.courses.length > COURSE_PANEL_LIMIT
+                          ? group.courses.slice(0, COURSE_PANEL_LIMIT)
+                          : group.courses
+                        ).map((course) => {
+                          const Icon = course.icon;
+                          return (
+                            <button
+                              key={course.href}
+                              type="button"
+                              className="landing-mobile-subnav-link"
+                              style={{ "--lang-accent": course.accent }}
+                              onClick={() => handleNav(course.href)}
+                            >
+                              <Icon size={15} />
+                              {course.title}
+                            </button>
+                          );
+                        })}
+                        {group.courses.length > COURSE_PANEL_LIMIT ? (
+                          <button
+                            type="button"
+                            className="landing-mobile-course-group-see-all"
+                            style={{ "--stack-accent": group.accent }}
+                            onClick={() =>
+                              handleNav(getAllCoursesPath(group.id))
+                            }
+                          >
+                            See all {group.courses.length} courses
+                            <ArrowRight size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="landing-mobile-course-group-all"
+                            onClick={() => handleNav(group.languagePath)}
+                          >
+                            All {group.label} courses →
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
                 );
               })}
+              {hasMoreStacks ? (
+                <button
+                  type="button"
+                  className="landing-mobile-course-groups-view-all"
+                  onClick={() => handleNav(getAllCoursesPath())}
+                >
+                  View all courses
+                  <ArrowRight size={14} />
+                </button>
+              ) : null}
             </div>
           ) : null}
 

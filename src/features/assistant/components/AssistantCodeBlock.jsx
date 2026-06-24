@@ -16,6 +16,8 @@ function loadThemes() {
   return themesPromise;
 }
 
+loadThemes();
+
 const LANGUAGE_LABELS = {
   python: "Python",
   javascript: "JavaScript",
@@ -56,6 +58,28 @@ function prismLanguage(language) {
   return key || "text";
 }
 
+function makeSyntaxStyle(baseStyle) {
+  return {
+    ...baseStyle,
+    'pre[class*="language-"]': {
+      ...baseStyle['pre[class*="language-"]'],
+      margin: 0,
+      padding: "14px 16px",
+      background: "transparent",
+      fontSize: "0.8125rem",
+      lineHeight: 1.65,
+      overflow: "auto",
+    },
+    'code[class*="language-"]': {
+      ...baseStyle['code[class*="language-"]'],
+      background: "transparent",
+      fontFamily: "var(--font-mono, ui-monospace, 'Cascadia Code', monospace)",
+      whiteSpace: "pre",
+      wordBreak: "normal",
+    },
+  };
+}
+
 function CodeSkeleton({ code }) {
   return (
     <pre className="assistant-code-pre assistant-code-pre--loading">{code}</pre>
@@ -78,31 +102,21 @@ function HighlightedCode({ language, code, isLight }) {
   if (!themes) return <CodeSkeleton code={code} />;
 
   const baseStyle = isLight ? themes.light : themes.dark;
+  const syntaxStyle = makeSyntaxStyle(baseStyle);
+  const lineCount = code.split("\n").length;
 
   return (
     <SyntaxHighlighter
       language={prismLanguage(language)}
-      style={baseStyle}
-      customStyle={{
-        margin: 0,
-        padding: "14px 16px",
-        background: "transparent",
-        fontSize: "0.8125rem",
-        lineHeight: 1.65,
-      }}
-      codeTagProps={{
-        style: {
-          fontFamily: "var(--font-mono, ui-monospace, 'Cascadia Code', monospace)",
-        },
-      }}
-      showLineNumbers={code.split("\n").length > 1}
+      style={syntaxStyle}
+      showLineNumbers={lineCount > 3}
       lineNumberStyle={{
-        minWidth: "2.2em",
-        paddingRight: "1em",
-        color: "#9ca3af",
+        minWidth: "2.25em",
+        paddingRight: "0.85em",
+        color: isLight ? "rgba(71, 85, 105, 0.55)" : "rgba(148, 163, 184, 0.45)",
         userSelect: "none",
       }}
-      wrapLongLines
+      wrapLongLines={false}
     >
       {code}
     </SyntaxHighlighter>
@@ -148,8 +162,27 @@ function useIsLightTheme() {
 export default function AssistantCodeBlock({ language = "code", code }) {
   const [copied, setCopied] = useState(false);
   const isLight = useIsLightTheme();
+  const lineCount = code.split("\n").length;
+  const showLineNumbers = lineCount > 3;
 
-  const handleCopy = async () => {
+  const handleCopy = (event) => {
+    const target = event.target;
+    if (target instanceof HTMLTextAreaElement) {
+      const { selectionStart, selectionEnd, value } = target;
+      if (selectionStart !== selectionEnd) {
+        event.clipboardData.setData(
+          "text/plain",
+          value.slice(selectionStart, selectionEnd),
+        );
+        event.preventDefault();
+        return;
+      }
+    }
+    event.preventDefault();
+    event.clipboardData.setData("text/plain", code);
+  };
+
+  const handleCopyClick = async () => {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
@@ -171,17 +204,28 @@ export default function AssistantCodeBlock({ language = "code", code }) {
         <button
           type="button"
           className="assistant-code-copy"
-          onClick={handleCopy}
+          onClick={handleCopyClick}
           aria-label={copied ? "Copied" : "Copy code"}
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
           <span>{copied ? "Copied" : "Copy"}</span>
         </button>
       </div>
-      <div className="assistant-code-body">
-        <Suspense fallback={<CodeSkeleton code={code} />}>
-          <HighlightedCode language={language} code={code} isLight={isLight} />
-        </Suspense>
+      <div className="assistant-code-body" onCopy={handleCopy}>
+        <textarea
+          readOnly
+          className={`assistant-code-source${
+            showLineNumbers ? " assistant-code-source--numbered" : ""
+          }`}
+          value={code}
+          aria-label={`${languageLabel(language)} source code`}
+          spellCheck={false}
+        />
+        <div className="assistant-code-highlight" aria-hidden="true">
+          <Suspense fallback={<CodeSkeleton code={code} />}>
+            <HighlightedCode language={language} code={code} isLight={isLight} />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

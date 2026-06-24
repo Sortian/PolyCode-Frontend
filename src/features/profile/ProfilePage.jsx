@@ -28,6 +28,10 @@ import {
   getProfileByUsername,
   setFollowStatus,
 } from "./services/profileApi";
+import {
+  ActivityBarChart,
+  ActivityLineChart,
+} from "./components/ActivityCharts";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MIN_ACTIVITY_DAYS = 30;
@@ -146,6 +150,11 @@ function ActivityGraph({ days }) {
           ))}
           <span>More</span>
         </div>
+      </div>
+
+      <div className="profile-activity-charts">
+        <ActivityLineChart days={days} />
+        <ActivityBarChart days={days} />
       </div>
     </section>
   );
@@ -513,6 +522,9 @@ export default function ProfilePage() {
         isAuthenticated={isAuthenticated}
         canEdit={isAuthenticated && isOwnProfile}
         totalStreak={totalStreak}
+        totalCompleted={totalCompleted}
+        totalLessons={totalLessons}
+        totalPct={totalPct}
         editOpen={editOpen}
         onToggleEdit={() => setEditOpen((open) => !open)}
         isFollowing={isFollowing}

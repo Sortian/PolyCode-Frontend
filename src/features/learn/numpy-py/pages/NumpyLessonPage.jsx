@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { LEARN_ACCENT } from "../../shared/learnAccent";
 import { useNavigate, useParams } from "react-router-dom";
 import ConceptCard from "../../oops-cpp/components/ConceptCard";
 import NumpyIntroTheory from "../components/NumpyIntroTheory";
@@ -76,15 +77,12 @@ export default function NumpyLessonPage() {
     isAuthenticated,
     completedMap: progress,
     savedCodeMap,
-    getLessonNote,
     bookmarks,
     completeLesson,
     rememberLesson,
     saveCode,
-    saveNote,
     toggleBookmark,
   } = useNumpyProgress();
-  const [noteDraft, setNoteDraft] = useState("");
   const codeSaveTimer = useRef(null);
 
   const lesson = NUMPY_LESSONS.find((item) => item.id === lessonId);
@@ -123,10 +121,6 @@ export default function NumpyLessonPage() {
     if (lessonId) rememberLesson(lessonId);
   }, [lessonId, rememberLesson]);
 
-  useEffect(() => {
-    setNoteDraft(getLessonNote(lessonId));
-  }, [lessonId, getLessonNote]);
-
   useEffect(
     () => () => {
       window.clearTimeout(codeSaveTimer.current);
@@ -159,10 +153,6 @@ export default function NumpyLessonPage() {
     await completeLesson(lesson);
   }
 
-  function handleSaveNote() {
-    saveNote(lessonId, noteDraft);
-  }
-
   function handleCodeChange(code) {
     window.clearTimeout(codeSaveTimer.current);
     codeSaveTimer.current = window.setTimeout(() => {
@@ -190,7 +180,7 @@ export default function NumpyLessonPage() {
             ← NumPy · Python
           </button>
           <div className="oops-lesson-breadcrumb">
-            <span style={{ color: lesson.chapterColor }}>{lesson.chapterTitle}</span>
+            <span className="learn-lesson-chapter-tag">{lesson.chapterTitle}</span>
             <span className="oops-bc-sep">›</span>
             <span>{lesson.title}</span>
           </div>
@@ -253,9 +243,6 @@ export default function NumpyLessonPage() {
             useFriendlyTheory ? (
               <NumpyIntroTheory
                 lesson={lesson}
-                noteDraft={noteDraft}
-                onNoteChange={setNoteDraft}
-                onSaveNote={handleSaveNote}
                 confidence={confidence}
                 onConfidenceChange={handleConfidenceChange}
                 markedAsRead={markedAsRead}
@@ -341,25 +328,10 @@ export default function NumpyLessonPage() {
                 <ConceptCard
                   key={index}
                   block={block}
-                  accentColor={lesson.chapterColor}
+                  accentColor={LEARN_ACCENT}
                   runnableCodeLangs={["python"]}
                 />
               ))}
-
-              <div className="oops-notes-panel">
-                <div>
-                  <span className="oops-interactive-label">Lesson Notes</span>
-                  <h3>Your notes</h3>
-                </div>
-                <textarea
-                  value={noteDraft}
-                  onChange={(e) => setNoteDraft(e.target.value)}
-                  placeholder="Write a NumPy rule or gotcha..."
-                />
-                <button type="button" onClick={handleSaveNote}>
-                  Save Note
-                </button>
-              </div>
 
               <div className="oops-confidence-panel">
                 <div>
@@ -398,7 +370,7 @@ export default function NumpyLessonPage() {
           ) : (
             <PythonCodeChallenge
               challenge={lesson.challenge}
-              accentColor={lesson.chapterColor}
+              accentColor={LEARN_ACCENT}
               isCompleted={isCompleted}
               onComplete={handleChallengeComplete}
               initialCode={savedCodeMap[lessonId]}
