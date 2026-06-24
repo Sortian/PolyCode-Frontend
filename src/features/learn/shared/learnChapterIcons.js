@@ -46,6 +46,8 @@ import {
   Tags,
   Target,
   Terminal,
+  Timer,
+  Eye,
   TreePine,
   TrendingUp,
   Trophy,
@@ -111,6 +113,8 @@ export const CHAPTER_ICONS = {
   target: Target,
   eraser: Eraser,
   link: Link,
+  timer: Timer,
+  eye: Eye,
   save: Save,
   "line-chart": LineChart,
 };

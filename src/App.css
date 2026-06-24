@@ -8473,6 +8473,16 @@ body {
   background: color-mix(in srgb, var(--vscode-panel, #12141c) 88%, transparent);
 }
 
+.numpy-lesson-outcomes-first {
+  margin-bottom: 24px;
+  border-color: color-mix(
+    in srgb,
+    var(--numpy-accent, var(--acid, #ffe566)) 35%,
+    var(--border, rgba(255, 255, 255, 0.1))
+  );
+  box-shadow: inset 3px 0 0 var(--numpy-accent, var(--acid, #ffe566));
+}
+
 .numpy-outcomes-heading {
   margin: 0 0 14px;
   font-size: 0.78rem;

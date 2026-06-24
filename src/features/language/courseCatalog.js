@@ -155,7 +155,7 @@ export const languageCourses = {
       tag: "Web Course",
       icon: Globe,
       description:
-        "Build for the browser: DOM, events, forms, fetch APIs, storage, and interactive project patterns.",
+        "Beginner to advanced browser track: DOM, events, forms, fetch, storage, performance, routing, a11y, security, and capstone projects.",
       href: "/learn/js-web-dev",
       accent: "#22c55e",
     },

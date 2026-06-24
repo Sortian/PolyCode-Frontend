@@ -1,4 +1,4 @@
-/** YouTube URLs keyed by lesson id (jsweb-0 … jsweb-14). */
+/** YouTube URLs keyed by lesson id (jsweb-0 … jsweb-29). */
 export const JS_WEB_DEV_VIDEO_LINKS = {
   "jsweb-0": "",
   "jsweb-1": "",
@@ -15,4 +15,19 @@ export const JS_WEB_DEV_VIDEO_LINKS = {
   "jsweb-12": "",
   "jsweb-13": "",
   "jsweb-14": "",
+  "jsweb-15": "",
+  "jsweb-16": "",
+  "jsweb-17": "",
+  "jsweb-18": "",
+  "jsweb-19": "",
+  "jsweb-20": "",
+  "jsweb-21": "",
+  "jsweb-22": "",
+  "jsweb-23": "",
+  "jsweb-24": "",
+  "jsweb-25": "",
+  "jsweb-26": "",
+  "jsweb-27": "",
+  "jsweb-28": "",
+  "jsweb-29": "",
 };

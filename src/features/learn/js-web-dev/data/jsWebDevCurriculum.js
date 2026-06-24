@@ -1,9 +1,10 @@
-// PolyCode — JavaScript Web Development course
-// 5 chapters · 15 lessons · browser worker challenges (DOM simulated in code)
+// PolyCode — JavaScript Web Development course (beginner → advanced)
+// 11 chapters · 30 lessons · browser worker challenges (DOM simulated in code)
 // YouTube links: edit jsWebDevVideoLinks.js
 
 import { applyLessonVideoLinks } from "../../shared/applyLessonVideoLinks";
 import { JS_WEB_DEV_VIDEO_LINKS } from "./jsWebDevVideoLinks";
+import { JS_WEB_DEV_EXTENDED_CHAPTERS } from "./jsWebDevChaptersExtended";
 import {
   quiz,
   callout,
@@ -1741,6 +1742,7 @@ console.log(state.bookmarks.length);`,
       },
     ],
   },
+  ...JS_WEB_DEV_EXTENDED_CHAPTERS,
 ];
 
 export const JS_WEB_DEV_LESSONS = applyLessonVideoLinks(

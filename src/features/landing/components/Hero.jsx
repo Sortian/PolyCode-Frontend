@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { useAuth } from "../../auth/context/AuthContext";
-import { resolveResumePath } from "../../../shared/navigation/lastRoute";
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -13,10 +12,7 @@ export default function Hero() {
 
   function handlePrimaryAction() {
     if (isLoggedIn) {
-      const fallback = localStorage.getItem("selectedLanguage")
-        ? "/hub"
-        : "/select-language";
-      navigate(resolveResumePath(fallback));
+      navigate("/courses");
       return;
     }
     navigate("/login");

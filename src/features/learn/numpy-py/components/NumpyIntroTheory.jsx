@@ -648,20 +648,47 @@ export default function NumpyIntroTheory({
   onGoChallenge,
 }) {
   const accentColor = LEARN_ACCENT;
-  const firstText = lesson.theory.find(
+  const theoryWithoutObjectives = lesson.theory.filter(
+    (block) => block.type !== "objectives",
+  );
+  const objectivesBlock = lesson.theory.find((block) => block.type === "objectives");
+  const outcomeItems =
+    lesson.outcomes?.length > 0
+      ? lesson.outcomes
+      : objectivesBlock?.items || [];
+  const firstText = theoryWithoutObjectives.find(
     (block) => block.type === "text" && !block.code,
   );
-  const firstTextIndex = lesson.theory.findIndex(
+  const firstTextIndex = theoryWithoutObjectives.findIndex(
     (block) => block.type === "text" && !block.code,
   );
   const theoryBlocks =
     firstTextIndex >= 0
-      ? lesson.theory.filter((_, index) => index !== firstTextIndex)
-      : lesson.theory;
+      ? theoryWithoutObjectives.filter((_, index) => index !== firstTextIndex)
+      : theoryWithoutObjectives;
   let stepCounter = 0;
 
   return (
     <div className="numpy-intro-theory">
+      {outcomeItems.length > 0 && (
+        <section
+          className="numpy-lesson-outcomes numpy-lesson-outcomes-first"
+          style={{ "--numpy-accent": accentColor }}
+          aria-labelledby="numpy-outcomes-heading"
+        >
+          <h2 id="numpy-outcomes-heading" className="numpy-outcomes-heading">
+            Learning outcomes
+          </h2>
+          <ul className="numpy-outcomes-list">
+            {outcomeItems.map((item) => (
+              <li key={item}>
+                <InlineText text={item} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <header
         className="numpy-lesson-hero"
         style={{ "--numpy-accent": accentColor }}
@@ -675,25 +702,6 @@ export default function NumpyIntroTheory({
             "We'll explain this idea in plain English — no jargon overload."}
         </p>
       </header>
-
-      {lesson.outcomes?.length > 0 && (
-        <section
-          className="numpy-lesson-outcomes"
-          style={{ "--numpy-accent": accentColor }}
-          aria-labelledby="numpy-outcomes-heading"
-        >
-          <h2 id="numpy-outcomes-heading" className="numpy-outcomes-heading">
-            Learning outcomes
-          </h2>
-          <ul className="numpy-outcomes-list">
-            {lesson.outcomes.map((item) => (
-              <li key={item}>
-                <InlineText text={item} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       <div className="numpy-learn-path">
         <div className="numpy-path-label">

@@ -83,8 +83,9 @@ export default function JsWebDevHub() {
           <span className="oops-hero-accent">Web Development</span>
         </h1>
         <p className="oops-hero-sub">
-          Build interactive pages: DOM, events, forms, fetch APIs, browser storage,
-          and a capstone project — with diagrams, tables, and hands-on challenges.
+          Beginner to advanced browser development: DOM, events, forms, fetch,
+          storage, performance, routing, accessibility, security, and a capstone
+          dashboard — with diagrams, tables, and hands-on challenges.
         </p>
 
         <div className="oops-hero-grid">
