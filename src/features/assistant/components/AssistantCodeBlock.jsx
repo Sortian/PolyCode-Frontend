@@ -162,8 +162,27 @@ function useIsLightTheme() {
 export default function AssistantCodeBlock({ language = "code", code }) {
   const [copied, setCopied] = useState(false);
   const isLight = useIsLightTheme();
+  const lineCount = code.split("\n").length;
+  const showLineNumbers = lineCount > 3;
 
-  const handleCopy = async () => {
+  const handleCopy = (event) => {
+    const target = event.target;
+    if (target instanceof HTMLTextAreaElement) {
+      const { selectionStart, selectionEnd, value } = target;
+      if (selectionStart !== selectionEnd) {
+        event.clipboardData.setData(
+          "text/plain",
+          value.slice(selectionStart, selectionEnd),
+        );
+        event.preventDefault();
+        return;
+      }
+    }
+    event.preventDefault();
+    event.clipboardData.setData("text/plain", code);
+  };
+
+  const handleCopyClick = async () => {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
@@ -185,17 +204,28 @@ export default function AssistantCodeBlock({ language = "code", code }) {
         <button
           type="button"
           className="assistant-code-copy"
-          onClick={handleCopy}
+          onClick={handleCopyClick}
           aria-label={copied ? "Copied" : "Copy code"}
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
           <span>{copied ? "Copied" : "Copy"}</span>
         </button>
       </div>
-      <div className="assistant-code-body">
-        <Suspense fallback={<CodeSkeleton code={code} />}>
-          <HighlightedCode language={language} code={code} isLight={isLight} />
-        </Suspense>
+      <div className="assistant-code-body" onCopy={handleCopy}>
+        <textarea
+          readOnly
+          className={`assistant-code-source${
+            showLineNumbers ? " assistant-code-source--numbered" : ""
+          }`}
+          value={code}
+          aria-label={`${languageLabel(language)} source code`}
+          spellCheck={false}
+        />
+        <div className="assistant-code-highlight" aria-hidden="true">
+          <Suspense fallback={<CodeSkeleton code={code} />}>
+            <HighlightedCode language={language} code={code} isLight={isLight} />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

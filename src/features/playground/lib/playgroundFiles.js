@@ -100,6 +100,7 @@ export function createWorkspace(language, seedCode) {
     expandedFolders: { "": true },
     selectedFolder: "",
     activeFileId: file.id,
+    stdin: "",
     output: [],
     previewHTML: null,
     activeTab: "output",
@@ -167,6 +168,7 @@ export function saveLocalWorkspaces(workspaces) {
         expandedFolders: workspace.expandedFolders || { "": true },
         selectedFolder: workspace.selectedFolder || "",
         activeFileId: workspace.activeFileId,
+        stdin: workspace.stdin || "",
       };
     });
     localStorage.setItem(LOCAL_FILES_KEY, JSON.stringify(payload));
@@ -187,6 +189,7 @@ export function mergeLocalWorkspace(language, seedCode) {
     expandedFolders: stored.expandedFolders || { "": true },
     selectedFolder: stored.selectedFolder || "",
     activeFileId: stored.activeFileId || stored.files[0]?.id,
+    stdin: stored.stdin || "",
     cloudLoaded: false,
   };
 }

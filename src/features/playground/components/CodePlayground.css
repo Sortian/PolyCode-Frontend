@@ -1057,6 +1057,55 @@
   background: var(--pg-hover);
 }
 
+.pg-stdin-panel {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--pg-accent) 35%, var(--pg-border-soft));
+  background: color-mix(in srgb, var(--pg-accent) 8%, var(--pg-bg-panel));
+}
+
+.pg-stdin-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pg-accent-strong);
+  margin-bottom: 6px;
+}
+
+.pg-stdin-hint {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--pg-text-muted);
+}
+
+.pg-stdin-hint code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.85em;
+}
+
+.pg-stdin-input {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  border-radius: 6px;
+  border: 1px solid var(--pg-border-soft);
+  background: var(--pg-bg-input);
+  color: var(--pg-text-strong);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  padding: 10px 12px;
+}
+
+.pg-stdin-input:focus {
+  outline: none;
+  border-color: var(--pg-accent-strong);
+}
+
 .pg-output-body {
   flex: 1;
   overflow-y: auto;

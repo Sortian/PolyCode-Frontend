@@ -247,6 +247,25 @@ sys.stderr = _Cap()
 `);
 }
 
+function setupPyodideStdin(py, stdin = "") {
+  if (!stdin) return;
+  py.runPython(`
+import sys, io
+sys.stdin = io.StringIO(${JSON.stringify(stdin)})
+`);
+}
+
+export function codeNeedsStdin(code = "", language = "") {
+  const lang = String(language).toLowerCase();
+  const source = String(code);
+  if (lang === "python" || lang === "py") return /\binput\s*\(/.test(source);
+  if (lang === "cpp" || lang === "c++" || lang === "c") {
+    return /\bcin\s*>>/.test(source) || /\bscanf\s*\(/.test(source);
+  }
+  if (lang === "java") return /\bScanner\b/.test(source) || /\bSystem\.in\b/.test(source);
+  return false;
+}
+
 function codeUsesMatplotlib(source = '') {
   return /(?:^|\n)\s*(?:import|from)\s+matplotlib\b/m.test(source) ||
     /\bmatplotlib\.pyplot\b/.test(source) ||
@@ -335,6 +354,7 @@ export async function runPython(code, stdin = '') {
       await ensureMatplotlibPyodideSetup(py);
     }
     resetPyodideIO(py);
+    setupPyodideStdin(py, stdin);
     if (usesMatplotlib && matplotlibPyodideReady) {
       py.runPython('_polycode_clear_figures()');
     }
@@ -344,6 +364,17 @@ export async function runPython(code, stdin = '') {
       py.runPython(code);
     } catch (e) {
       error = e.message;
+      if (
+        !stdin &&
+        /\binput\s*\(/.test(code) &&
+        /I\/O error|EOF|stdin/i.test(error)
+      ) {
+        error = [
+          error,
+          "",
+          "💡 This program calls input(). Add values in the Program input (stdin) panel below — one line per input() call.",
+        ].join("\n");
+      }
     }
     
     const stdout = py.runPython('sys.stdout.getvalue()');
@@ -537,9 +568,34 @@ function makeSimulationHeader(language) {
 
 function runServerLanguageLocally(language, code) {
   try {
+    const header = makeSimulationHeader(language);
+    const lowerLang = language.toLowerCase();
+
+    if (
+      (lowerLang === "cpp" || lowerLang === "c++" || lowerLang === "c") &&
+      (/\bcin\s*>>/.test(code) || /\bscanf\s*\(/.test(code))
+    ) {
+      return Promise.resolve(
+        ok(
+          [
+            header,
+            "",
+            "⚠️  This program uses interactive input (cin / scanf).",
+            "Browser mode cannot compile or run it — only static print lines are simulated.",
+            "",
+            "To run it properly:",
+            "• Fill in the Program input (stdin) panel below (one value per line)",
+            "• Ensure the PolyCode backend is running — it will compile with g++",
+            "",
+            "For quick tests without input, assign values directly:",
+            "  int num = 10;  // instead of cin >> num;",
+          ].join("\n"),
+        ),
+      );
+    }
+
     const lines = code.split('\n');
     const out = [];
-    const lowerLang = language.toLowerCase();
     const pushTexts = (texts) => texts.forEach(t => out.push(t));
 
     for (const rawLine of lines) {
@@ -596,7 +652,6 @@ function runServerLanguageLocally(language, code) {
       }
     }
 
-    const header = makeSimulationHeader(language);
     if (out.length) {
       return Promise.resolve(ok([header, '', ...out].join('\n')));
     }

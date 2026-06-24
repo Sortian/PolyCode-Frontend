@@ -1,7 +1,11 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import { useAuth } from "../../auth/context/AuthContext";
-import { executeCode, resolveEngine } from "../services/BrowserExecutor";
+import { runPlaygroundCode } from "../services/playgroundExecutor";
+import { codeNeedsStdin, resolveEngine } from "../services/BrowserExecutor";
+import {
+  suggestStdinSample,
+} from "../lib/playgroundStdin";
 import PlaygroundExplorer from "./PlaygroundExplorer";
 import {
   createPlaygroundFile,
@@ -50,6 +54,7 @@ import {
   POLYCODE_PLAYGROUND_LIGHT_THEME,
 } from "../../../shared/utils/monacoTheme";
 import { isLightTheme } from "../../../shared/theme/themes";
+import { attachMonacoPasteNormalizer } from "../../../shared/utils/normalizeBrokenCodePaste";
 import { useDocumentThemeId } from "../hooks/useDocumentThemeId";
 import "./CodePlayground.css";
 
@@ -253,6 +258,7 @@ export default function CodePlayground({
   const outputRef = useRef(null);
   const panesRef = useRef(null);
   const paneDragRef = useRef(null);
+  const detachPasteNormalizerRef = useRef(null);
   const consoleRatioRef = useRef(consoleRatio);
   const workspacesRef = useRef(workspaces);
   const saveTimerRef = useRef(null);
@@ -263,7 +269,15 @@ export default function CodePlayground({
   const currentWorkspace = workspaces[language] || createWorkspace(language);
   const activeFile = getActiveFile(currentWorkspace);
   const code = activeFile?.content || "";
-  const { files, output, previewHTML, activeTab } = currentWorkspace;
+  const { files, output, previewHTML, activeTab, stdin = "" } = currentWorkspace;
+  const needsStdin = useMemo(
+    () => codeNeedsStdin(code, language),
+    [code, language],
+  );
+  const stdinPlaceholder = useMemo(
+    () => suggestStdinSample(code, language),
+    [code, language],
+  );
   const folders = useMemo(
     () => currentWorkspace.folders || [],
     [currentWorkspace.folders],
@@ -992,7 +1006,9 @@ export default function CodePlayground({
     let activeTabAfter = "output";
 
     try {
-      const result = await executeCode(currentCode, currentLanguage);
+      const result = await runPlaygroundCode(currentCode, currentLanguage, {
+        stdin: workspacesRef.current[currentLanguage]?.stdin || "",
+      });
       const ms = ((performance.now() - t0) / 1000).toFixed(2);
 
       if (result.previewHTML) {
@@ -1072,6 +1088,21 @@ export default function CodePlayground({
     [handleRun],
   );
 
+  const handleEditorMount = useCallback((editor, monaco) => {
+    definePolycodeMonacoTheme(monaco);
+    definePolycodeMonacoLightTheme(monaco);
+    definePolycodePlaygroundThemes(monaco);
+    detachPasteNormalizerRef.current?.();
+    detachPasteNormalizerRef.current = attachMonacoPasteNormalizer(editor);
+  }, []);
+
+  useEffect(
+    () => () => {
+      detachPasteNormalizerRef.current?.();
+    },
+    [],
+  );
+
   const langInfo = resolveEngine(language);
   const isServerBased = langInfo.engine === "server";
   const hasPreview = previewHTML !== null;
@@ -1109,7 +1140,11 @@ export default function CodePlayground({
             </span>
           )}
           {isServerBased ? (
-            <span className="pg-server-badge">✓ Print simulation (no compiler)</span>
+            <span className="pg-server-badge">
+              {needsStdin
+                ? "Uses server compiler when available · stdin panel below"
+                : "Tries server compiler · print simulation fallback"}
+            </span>
           ) : (
             <span className="pg-browser-badge">✓ Browser runtime (JS / Pyodide)</span>
           )}
@@ -1240,11 +1275,7 @@ export default function CodePlayground({
               height="100%"
               language={editorLanguage}
               value={code}
-              beforeMount={(monaco) => {
-                definePolycodeMonacoTheme(monaco);
-                definePolycodeMonacoLightTheme(monaco);
-                definePolycodePlaygroundThemes(monaco);
-              }}
+              onMount={handleEditorMount}
               onChange={(v) => updateActiveFileContent(v || "")}
               theme={editorTheme}
               key={`editor-${language}-${activeFile?.id}-${editorLanguage}-${editorTheme}`}
@@ -1331,6 +1362,28 @@ export default function CodePlayground({
           </div>
 
           <div className="pg-output-body" ref={outputRef}>
+            {activeTab === "output" && needsStdin ? (
+              <div className="pg-stdin-panel">
+                <label className="pg-stdin-label" htmlFor="pg-stdin-input">
+                  Program input (stdin)
+                </label>
+                <p className="pg-stdin-hint">
+                  One value per line — matches each <code>input()</code> or{" "}
+                  <code>cin &gt;&gt;</code> call in order.
+                </p>
+                <textarea
+                  id="pg-stdin-input"
+                  className="pg-stdin-input"
+                  value={stdin}
+                  onChange={(e) =>
+                    updateWorkspace(language, { stdin: e.target.value })
+                  }
+                  placeholder={stdinPlaceholder}
+                  spellCheck={false}
+                  rows={4}
+                />
+              </div>
+            ) : null}
             {activeTab === "output" && (
               <>
                 {output.length === 0 ? (
