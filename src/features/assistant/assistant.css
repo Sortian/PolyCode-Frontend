@@ -503,7 +503,7 @@
 }
 
 .assistant-code-pre--loading {
-  opacity: 0.65;
+  opacity: 1;
 }
 
 /* ── Panel chrome (themeable via html[data-theme="light"]) ── */

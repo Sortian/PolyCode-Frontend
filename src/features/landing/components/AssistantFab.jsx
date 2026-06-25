@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
-  ChevronRight,
   Minus,
   Sparkles,
   ThumbsDown,
@@ -26,7 +25,7 @@ import {
   postAssistantFeedback,
 } from "../lib/assistantApi";
 import { ASSISTANT_CONFIG } from "../lib/assistantConfig";
-import { useTypewriter } from "../lib/useTypewriter";
+import AssistantComposer from "./AssistantComposer";
 import AssistantAvatar from "./AssistantAvatar";
 import AssistantMarkdown from "../../assistant/components/AssistantMarkdown";
 
@@ -186,25 +185,13 @@ function ReplyFeedback({ feedback, onRate, disabled, required }) {
   );
 }
 
-function MentorReply({
+const MentorReply = memo(function MentorReply({
   msg,
-  reduceMotion,
   showFeedback,
   onRate,
-  onStreamComplete,
   feedbackRequired,
 }) {
-  const shouldStream = Boolean(msg.stream) && !reduceMotion;
-  const { displayed, done } = useTypewriter(msg.content, shouldStream);
-  const visible = shouldStream ? displayed : msg.content;
-  const canRate = showFeedback && done && msg.content && msg.id !== "welcome";
-
-  useEffect(() => {
-    if (!msg.stream || !onStreamComplete) return;
-    if (!shouldStream || done) {
-      onStreamComplete(msg.id);
-    }
-  }, [shouldStream, done, msg.id, msg.stream, onStreamComplete]);
+  const canRate = showFeedback && msg.content && msg.id !== "welcome";
 
   return (
     <article className="assistant-mentor-reply">
@@ -215,10 +202,7 @@ function MentorReply({
           <span className="assistant-mentor-name">{ASSISTANT_CONFIG.name}</span>
         </div>
         <div className="assistant-markdown">
-          <AssistantMarkdown content={visible} streaming={shouldStream && !done} />
-          {!done && shouldStream ? (
-            <span className="assistant-stream-cursor" />
-          ) : null}
+          <AssistantMarkdown content={msg.content} streaming={false} />
         </div>
         {canRate ? (
           <ReplyFeedback
@@ -231,17 +215,9 @@ function MentorReply({
       </div>
     </article>
   );
-}
+});
 
-function ThinkingIndicator() {
-  return (
-    <div className="assistant-thinking">
-      <span className="assistant-thinking-text">PolyMentor is thinking…</span>
-    </div>
-  );
-}
-
-function UserReply({ content, user }) {
+const UserReply = memo(function UserReply({ content, user }) {
   return (
     <div className="assistant-user-row">
       {user ? (
@@ -252,6 +228,14 @@ function UserReply({ content, user }) {
       <div className="assistant-user-bubble">
         <p>{content}</p>
       </div>
+    </div>
+  );
+});
+
+function ThinkingIndicator() {
+  return (
+    <div className="assistant-thinking">
+      <span className="assistant-thinking-text">PolyMentor is thinking…</span>
     </div>
   );
 }
@@ -280,13 +264,11 @@ export default function AssistantFab() {
   const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [session, setSession] = useState(() => loadSession());
-  const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
   const [assistantLevel, setAssistantLevel] = useState(() => loadAssistantLevel());
   const messagesEndRef = useRef(null);
   const messagesScrollRef = useRef(null);
-  const inputRef = useRef(null);
   const sessionRef = useRef(session);
   const dockRef = useRef(null);
   const dragStateRef = useRef(null);
@@ -458,10 +440,6 @@ export default function AssistantFab() {
   }, [open, session.messages.length]);
 
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 150);
-  }, [open]);
-
-  useEffect(() => {
     saveSession(session);
   }, [session]);
 
@@ -542,15 +520,6 @@ export default function AssistantFab() {
     [assistantContext],
   );
 
-  const handleStreamComplete = useCallback((messageId) => {
-    setSession((prev) => ({
-      ...prev,
-      messages: prev.messages.map((message) =>
-        message.id === messageId ? { ...message, stream: false } : message,
-      ),
-    }));
-  }, []);
-
   const sendText = useCallback(
     async (text) => {
       if (!text.trim() || sending) return;
@@ -564,7 +533,6 @@ export default function AssistantFab() {
         ...prev,
         messages: [...prev.messages, userMsg, pendingMsg],
       }));
-      setDraft("");
       setSending(true);
       setError(null);
 
@@ -588,7 +556,6 @@ export default function AssistantFab() {
           role: "assistant",
           content: res.response,
           feedback: null,
-          stream: true,
         };
         setSession((prev) => ({
           ...prev,
@@ -606,17 +573,6 @@ export default function AssistantFab() {
     },
     [sending, assistantContext, assistantLevel],
   );
-
-  const send = useCallback(async () => {
-    await sendText(draft);
-  }, [draft, sendText]);
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      send();
-    }
-  };
 
   const pendingFeedback = getPendingFeedbackMessage(session.messages);
   const inputLocked = sending || Boolean(pendingFeedback);
@@ -823,10 +779,8 @@ export default function AssistantFab() {
                   ) : (
                     <MentorReply
                       msg={{ ...msg, content: messageContent(msg) }}
-                      reduceMotion={reduceMotion}
                       showFeedback
                       feedbackRequired={msg.id === pendingFeedback?.id}
-                      onStreamComplete={handleStreamComplete}
                       onRate={(rating) =>
                         handleFeedback(msg.id, rating, msg.content)
                       }
@@ -866,35 +820,18 @@ export default function AssistantFab() {
                   Like or dislike the last answer before sending another message.
                 </p>
               ) : null}
-              <div
-                className={`assistant-composer${inputLocked && !sending ? " assistant-composer--locked" : ""}`}
-              >
-                <span className="assistant-composer-prompt">&gt;</span>
-                <textarea
-                  ref={inputRef}
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={
-                    pendingFeedback
-                      ? "Rate the reply above to continue…"
-                      : ASSISTANT_CONFIG.inputPlaceholder
-                  }
-                  rows={1}
-                  disabled={inputLocked}
-                  aria-label="Ask PolyMentor"
-                  className="assistant-composer-input"
-                />
-                <button
-                  type="button"
-                  onClick={send}
-                  disabled={!draft.trim() || inputLocked}
-                  aria-label="Send"
-                  className="assistant-composer-send"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
+              <AssistantComposer
+                autoFocus={open}
+                onSend={sendText}
+                disabled={inputLocked}
+                locked={Boolean(pendingFeedback)}
+                sending={sending}
+                placeholder={
+                  pendingFeedback
+                    ? "Rate the reply above to continue…"
+                    : ASSISTANT_CONFIG.inputPlaceholder
+                }
+              />
               <p className="assistant-powered-by">{ASSISTANT_CONFIG.poweredByLabel}</p>
             </div>
           </motion.aside>

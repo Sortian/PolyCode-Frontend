@@ -40,7 +40,13 @@ export default function AssistantMarkdown({ content, streaming = false }) {
             Boolean(match) || codeStr.includes("\n") || codeStr.length > 60;
 
           if (isBlock) {
-            return <AssistantCodeBlock language={lang || "code"} code={codeStr} />;
+            return (
+              <AssistantCodeBlock
+                language={lang || "code"}
+                code={codeStr}
+                streaming={streaming}
+              />
+            );
           }
 
           return (

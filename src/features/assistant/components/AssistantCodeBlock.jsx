@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, Suspense, memo, useState } from "react";
 import { Check, Copy } from "lucide-react";
 
 const SyntaxHighlighter = lazy(() =>
@@ -159,7 +159,11 @@ function useIsLightTheme() {
   return isLight;
 }
 
-export default function AssistantCodeBlock({ language = "code", code }) {
+export default memo(function AssistantCodeBlock({
+  language = "code",
+  code,
+  streaming = false,
+}) {
   const [copied, setCopied] = useState(false);
   const isLight = useIsLightTheme();
   const lineCount = code.split("\n").length;
@@ -222,11 +226,15 @@ export default function AssistantCodeBlock({ language = "code", code }) {
           spellCheck={false}
         />
         <div className="assistant-code-highlight" aria-hidden="true">
-          <Suspense fallback={<CodeSkeleton code={code} />}>
-            <HighlightedCode language={language} code={code} isLight={isLight} />
-          </Suspense>
+          {streaming ? (
+            <CodeSkeleton code={code} />
+          ) : (
+            <Suspense fallback={<CodeSkeleton code={code} />}>
+              <HighlightedCode language={language} code={code} isLight={isLight} />
+            </Suspense>
+          )}
         </div>
       </div>
     </div>
   );
-}
+});
