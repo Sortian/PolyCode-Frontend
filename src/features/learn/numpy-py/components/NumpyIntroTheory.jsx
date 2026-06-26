@@ -304,7 +304,9 @@ function NumpyArrayVisual({ block, accentColor }) {
 function NumpyVisualTable({ block }) {
   const rowAccent = block.rowAccent || "#a855f7";
   const colAccent = block.colAccent || "#6366f1";
-  const showTotals = block.showTotals !== false;
+  const hasTotals =
+    Array.isArray(block.rowTotals) && Array.isArray(block.colTotals);
+  const showTotals = block.showTotals !== false && hasTotals;
 
   return (
     <div className="numpy-visual-table-wrap">
@@ -330,11 +332,11 @@ function NumpyVisualTable({ block }) {
         <tbody>
           {block.rows.map((row, rowIndex) => (
             <tr
-              key={row.label}
+              key={row.label || rowIndex}
               className={block.highlightRows?.includes(rowIndex) ? "numpy-vt-row-highlight" : ""}
             >
               <th className="numpy-vt-row-head">{row.label}</th>
-              {row.values.map((value, colIndex) => (
+              {(row.values || []).map((value, colIndex) => (
                 <td key={`${row.label}-${colIndex}`} className="numpy-vt-cell">
                   {value}
                 </td>
