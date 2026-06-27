@@ -177,9 +177,9 @@
   --learn-pill-text: #2563eb;
   --learn-tile-bg: #f8fafc;
   --learn-tile-border: rgba(15, 23, 42, 0.1);
-  --learn-chapter-icon-bg: rgba(15, 23, 42, 0.04);
-  --learn-chapter-icon-border: rgba(15, 23, 42, 0.1);
-  --learn-chapter-icon-color: #64748b;
+  --learn-chapter-icon-bg: rgba(37, 99, 235, 0.08);
+  --learn-chapter-icon-border: rgba(37, 99, 235, 0.18);
+  --learn-chapter-icon-color: #2563eb;
   --learn-chapter-progress-track: rgba(37, 99, 235, 0.08);
   --learn-chapter-progress-track-border: rgba(37, 99, 235, 0.12);
   --learn-chapter-progress-fill: #2563eb;
@@ -218,6 +218,59 @@
 
 .app.theme-light .main-content.learn-content .oops-chapter-cta {
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+/* Course sidebar — blue chapter icons & accents in light mode */
+.app.theme-light .main-content.learn-content .oops-sidebar,
+.app.theme-light .main-content.learn-content .oops-sidebar-header {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-title {
+  color: #1e293b;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-toggle {
+  color: #64748b;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-toggle:hover {
+  color: #2563eb;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-chapter-btn {
+  color: #334155;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-chapter-btn:hover,
+.app.theme-light .main-content.learn-content .oops-sidebar-lesson-btn:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-lesson-btn {
+  color: #64748b;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-lesson-btn.current {
+  color: #2563eb;
+}
+
+.app.theme-light .main-content.learn-content .oops-sidebar-chapter-btn.done .oops-sb-check,
+.app.theme-light .main-content.learn-content .oops-sidebar-lesson-btn.done .oops-sb-check {
+  color: #2563eb;
+}
+
+.app.theme-light .main-content.learn-content .oops-sb-caret {
+  color: #60a5fa;
+}
+
+.app.theme-light .main-content.learn-content .learn-chapter-icon,
+.app.theme-light .main-content.learn-content .oops-sb-icon .learn-chapter-icon,
+.app.theme-light .main-content.learn-content .oops-path-step-icon .learn-chapter-icon,
+.app.theme-light .main-content.learn-content .oops-chapter-icon-wrap .learn-chapter-icon {
+  color: #2563eb;
 }
 
 /* ── Classic — retro amber terminal + phosphor green ── */
