@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -139,13 +139,15 @@ function ReplyFeedback({ feedback, onRate, disabled, required }) {
 }
 
 const MentorReply = memo(function MentorReply({
-  msg,
+  content,
+  messageId,
+  feedback,
   showFeedback,
   onRate,
   feedbackRequired,
   isWelcome = false,
 }) {
-  const canRate = showFeedback && msg.content && msg.id !== "welcome";
+  const canRate = showFeedback && content && messageId !== "welcome";
 
   return (
     <article className="assistant-mentor-reply">
@@ -160,11 +162,11 @@ const MentorReply = memo(function MentorReply({
           <span className="assistant-mentor-name">{ASSISTANT_CONFIG.name}</span>
         </div>
         <div className="assistant-markdown">
-          <AssistantMarkdown content={msg.content} streaming={false} />
+          <AssistantMarkdown content={content} streaming={false} />
         </div>
         {canRate ? (
           <ReplyFeedback
-            feedback={msg.feedback}
+            feedback={feedback}
             onRate={onRate}
             disabled={false}
             required={feedbackRequired}
@@ -226,6 +228,8 @@ export default function AssistantFab() {
   const [assistantLevel, setAssistantLevel] = useState(() => loadAssistantLevel());
   const messagesEndRef = useRef(null);
   const messagesScrollRef = useRef(null);
+  const stickToBottomRef = useRef(true);
+  const scrollRafRef = useRef(null);
   const sessionRef = useRef(session);
   const dockRef = useRef(null);
   const lastUserIdRef = useRef(userId);
@@ -296,27 +300,41 @@ export default function AssistantFab() {
     };
   }, []);
 
+  const scrollMessagesToBottom = useCallback((behavior = "auto") => {
+    if (scrollRafRef.current) {
+      window.cancelAnimationFrame(scrollRafRef.current);
+    }
+
+    scrollRafRef.current = window.requestAnimationFrame(() => {
+      scrollRafRef.current = null;
+      const scrollNode = messagesScrollRef.current;
+      if (!scrollNode) return;
+
+      if (behavior === "smooth") {
+        messagesEndRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+        return;
+      }
+
+      scrollNode.scrollTop = scrollNode.scrollHeight;
+    });
+  }, []);
+
   useEffect(() => {
+    return () => {
+      if (scrollRafRef.current) {
+        window.cancelAnimationFrame(scrollRafRef.current);
+      }
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     if (!open) return;
 
-    const scrollNode = messagesScrollRef.current;
-    if (!scrollNode) return;
+    stickToBottomRef.current = true;
+    scrollMessagesToBottom("auto");
+  }, [open, scrollMessagesToBottom]);
 
-    const scrollToBottom = () => {
-      scrollNode.scrollTop = scrollNode.scrollHeight;
-    };
-
-    scrollToBottom();
-    const rafId = window.requestAnimationFrame(scrollToBottom);
-    const timerId = window.setTimeout(scrollToBottom, 200);
-
-    return () => {
-      window.cancelAnimationFrame(rafId);
-      window.clearTimeout(timerId);
-    };
-  }, [open]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open) return;
 
     const scrollNode = messagesScrollRef.current;
@@ -324,14 +342,29 @@ export default function AssistantFab() {
 
     const distanceFromBottom =
       scrollNode.scrollHeight - scrollNode.scrollTop - scrollNode.clientHeight;
-    const shouldStickToBottom = sending || distanceFromBottom < 96;
 
-    if (!shouldStickToBottom) return;
+    if (sending || distanceFromBottom < 120) {
+      stickToBottomRef.current = true;
+      scrollMessagesToBottom("auto");
+      return;
+    }
 
-    window.requestAnimationFrame(() => {
-      scrollNode.scrollTop = scrollNode.scrollHeight;
-    });
-  }, [session.messages, sending, open]);
+    stickToBottomRef.current = false;
+  }, [session.messages, sending, open, scrollMessagesToBottom]);
+
+  useEffect(() => {
+    const scrollNode = messagesScrollRef.current;
+    if (!open || !scrollNode) return undefined;
+
+    const onScroll = () => {
+      const distanceFromBottom =
+        scrollNode.scrollHeight - scrollNode.scrollTop - scrollNode.clientHeight;
+      stickToBottomRef.current = distanceFromBottom < 120;
+    };
+
+    scrollNode.addEventListener("scroll", onScroll, { passive: true });
+    return () => scrollNode.removeEventListener("scroll", onScroll);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -625,7 +658,9 @@ export default function AssistantFab() {
                     />
                   ) : (
                     <MentorReply
-                      msg={{ ...msg, content: messageContent(msg) }}
+                      messageId={msg.id}
+                      content={messageContent(msg)}
+                      feedback={msg.feedback}
                       isWelcome={msg.id === "welcome"}
                       showFeedback
                       feedbackRequired={msg.id === pendingFeedback?.id}

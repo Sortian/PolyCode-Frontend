@@ -8,29 +8,25 @@
 }
 
 .polym_mentor-scroll {
-  scrollbar-width: none;
-  overscroll-behavior: contain;
-}
-
-.polym_mentor-scroll:hover,
-.polym_mentor-scroll:focus-within {
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: color-mix(in srgb, var(--border) 65%, transparent) transparent;
+  overscroll-behavior: contain;
+  overflow-anchor: none;
 }
 
 .polym_mentor-scroll::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
-.polym_mentor-scroll:hover::-webkit-scrollbar,
-.polym_mentor-scroll:focus-within::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 .polym_mentor-scroll::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: var(--border);
+  background: color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.polym_mentor-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .polym_mentor-dock {
@@ -48,24 +44,24 @@
 .polym_mentor-dock.assistant-dock-btn--compact {
   align-items: center;
   justify-content: center;
-  width: 108px;
-  height: 108px;
+  width: 64px;
+  height: 64px;
   padding: 0;
   background: color-mix(in srgb, var(--ink-2, #05070f) 88%, var(--assistant-dock-bg));
   border-color: color-mix(in srgb, var(--acid) 28%, var(--border));
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--acid) 32%, var(--border)),
-    0 14px 40px -6px rgba(0, 0, 0, 0.58),
-    0 0 44px color-mix(in srgb, var(--acid) 18%, transparent);
+    0 10px 28px -6px rgba(0, 0, 0, 0.5),
+    0 0 32px color-mix(in srgb, var(--acid) 14%, transparent);
 }
 
 .polym_mentor-dock.assistant-dock-btn--compact:hover {
   padding: 0;
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-1px) scale(1.02);
   box-shadow:
     0 0 0 1px var(--acid),
-    0 18px 48px -6px rgba(0, 0, 0, 0.62),
-    0 0 52px color-mix(in srgb, var(--acid) 24%, transparent);
+    0 12px 32px -6px rgba(0, 0, 0, 0.55),
+    0 0 36px color-mix(in srgb, var(--acid) 20%, transparent);
 }
 
 .polym_mentor-dock.assistant-dock-btn--compact .assistant-dock-inner {
@@ -256,18 +252,18 @@
 .assistant-avatar-wrap--mascot.assistant-avatar-wrap--highlight {
   border: 2px solid color-mix(in srgb, var(--acid) 22%, rgba(255, 255, 255, 0.2));
   background: #12151f;
-  padding: 4px;
+  padding: 3px;
   filter: none;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 0 0 1px color-mix(in srgb, var(--acid) 28%, var(--border)),
-    0 8px 28px -4px rgba(0, 0, 0, 0.5),
-    0 0 32px color-mix(in srgb, var(--acid) 16%, transparent);
+    0 6px 20px -4px rgba(0, 0, 0, 0.45),
+    0 0 24px color-mix(in srgb, var(--acid) 14%, transparent);
 }
 
 .assistant-avatar-wrap--highlight .assistant-avatar-img--mascot {
   object-position: center center;
-  transform: scale(1.12);
+  transform: scale(1.06);
 }
 
 .assistant-avatar-img {
@@ -393,6 +389,7 @@
   line-height: 1.65;
   color: var(--assistant-text);
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .assistant-markdown > :first-child {
@@ -698,6 +695,7 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  overflow-anchor: none;
   -webkit-overflow-scrolling: touch;
   padding: 1.25rem;
   display: flex;
@@ -887,6 +885,7 @@
 .assistant-mentor-reply {
   position: relative;
   padding-left: 1.25rem;
+  contain: layout;
 }
 
 .assistant-mentor-accent {
@@ -894,7 +893,7 @@
   position: absolute;
   left: 0;
   top: 0.75rem;
-  height: calc(100% - 12px);
+  bottom: 0.75rem;
   width: 3px;
   border-radius: 999px;
   background: var(--acid);
@@ -905,6 +904,7 @@
   border: 1px solid var(--assistant-header-border, var(--border));
   background: var(--assistant-card-bg);
   padding: 1rem;
+  contain: layout style;
 }
 
 .assistant-mentor-card--welcome {
@@ -958,6 +958,7 @@
   border: 1px solid var(--assistant-thinking-border);
   background: var(--assistant-thinking-bg);
   padding: 0.65rem 1rem 0.55rem;
+  min-height: 3.25rem;
 }
 
 .assistant-thinking .assistant-avatar-wrap--sm {
@@ -988,18 +989,18 @@
   }
 
   .polym_mentor-dock.assistant-dock-btn--compact {
-    width: 96px;
-    height: 96px;
+    width: 58px;
+    height: 58px;
   }
 
   .polym_mentor-dock.assistant-dock-btn--compact .assistant-avatar-wrap--dock {
-    width: 80px !important;
-    height: 80px !important;
+    width: 50px !important;
+    height: 50px !important;
   }
 
   .polym_mentor-dock.assistant-dock-btn--compact .assistant-avatar-img--mascot {
-    width: 74px !important;
-    height: 74px !important;
+    width: 44px !important;
+    height: 44px !important;
   }
 
   .assistant-dock-hint {
