@@ -3,10 +3,6 @@ import RunnableCodeBlock from "../../shared/RunnableCodeBlock";
 import LessonReadGate from "../../shared/LessonReadGate";
 import { LEARN_ACCENT } from "../../shared/learnAccent";
 
-function plainText(text = "") {
-  return text.replace(/\*\*/g, "").replace(/`/g, "");
-}
-
 function InlineText({ text }) {
   const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
   return (
@@ -656,20 +652,38 @@ export default function NumpyIntroTheory({
     lesson.outcomes?.length > 0
       ? lesson.outcomes
       : objectivesBlock?.items || [];
-  const firstText = theoryWithoutObjectives.find(
+  const introText = theoryWithoutObjectives.find(
     (block) => block.type === "text" && !block.code,
   );
-  const firstTextIndex = theoryWithoutObjectives.findIndex(
+  const introTextIndex = theoryWithoutObjectives.findIndex(
     (block) => block.type === "text" && !block.code,
   );
   const theoryBlocks =
-    firstTextIndex >= 0
-      ? theoryWithoutObjectives.filter((_, index) => index !== firstTextIndex)
+    introTextIndex >= 0
+      ? theoryWithoutObjectives.filter((_, index) => index !== introTextIndex)
       : theoryWithoutObjectives;
   let stepCounter = 0;
 
   return (
     <div className="numpy-intro-theory">
+      <header
+        className="numpy-lesson-hero"
+        style={{ "--numpy-accent": accentColor }}
+      >
+        <span className="numpy-chapter-badge">{lesson.chapterTitle}</span>
+        <h2 className="numpy-lesson-title" id="numpy-lesson-heading">
+          {lesson.title}
+        </h2>
+        <p className="numpy-lesson-intro-label">Introduction</p>
+        <p className="numpy-lesson-hook">
+          {introText?.content ? (
+            <InlineText text={introText.content} />
+          ) : (
+            "We'll explain this idea in plain English — no jargon overload."
+          )}
+        </p>
+      </header>
+
       {outcomeItems.length > 0 && (
         <section
           className="numpy-lesson-outcomes numpy-lesson-outcomes-first"
@@ -689,23 +703,10 @@ export default function NumpyIntroTheory({
         </section>
       )}
 
-      <header
-        className="numpy-lesson-hero"
-        style={{ "--numpy-accent": accentColor }}
-      >
-        <span className="numpy-chapter-badge">{lesson.chapterTitle}</span>
-        <h2 className="numpy-lesson-title" id="numpy-lesson-heading">
-          {lesson.title}
-        </h2>
-        <p className="numpy-lesson-hook">
-          {plainText(firstText?.content) ||
-            "We'll explain this idea in plain English — no jargon overload."}
-        </p>
-      </header>
-
       <div className="numpy-learn-path">
         <div className="numpy-path-label">
           <span>Your learning path</span>
+          <small>Read the idea, then run the code right below it</small>
         </div>
 
         {theoryBlocks.map((block, index) => {

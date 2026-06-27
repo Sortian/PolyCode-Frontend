@@ -8723,6 +8723,15 @@ body {
   margin: 0;
 }
 
+.numpy-lesson-intro-label {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--numpy-accent, var(--acid, #818cf8));
+}
+
 .numpy-path-label {
   display: flex;
   align-items: baseline;
