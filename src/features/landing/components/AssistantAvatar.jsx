@@ -5,7 +5,7 @@ const SIZES = {
   sm: { boxW: 36, boxH: 40, imgW: 34, imgH: 38, cls: "assistant-avatar-wrap--sm" },
   md: { boxW: 72, boxH: 80, imgW: 68, imgH: 76, cls: "assistant-avatar-wrap--md" },
   lg: { boxW: 88, boxH: 96, imgW: 84, imgH: 92, cls: "assistant-avatar-wrap--lg" },
-  dock: { boxW: 90, boxH: 90, imgW: 84, imgH: 84, cls: "assistant-avatar-wrap--dock" },
+  dock: { boxW: 56, boxH: 56, imgW: 50, imgH: 50, cls: "assistant-avatar-wrap--dock" },
   header: { boxW: 84, boxH: 84, imgW: 78, imgH: 78, cls: "assistant-avatar-wrap--header" },
 };
 
