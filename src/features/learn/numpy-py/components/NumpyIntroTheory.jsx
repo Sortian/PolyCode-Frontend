@@ -195,7 +195,10 @@ function NumpyArrayVisual({ block, accentColor }) {
         const ok = new Set(row.okIndexes || []);
         const colCount = row.values.length;
         const isCompact = Boolean(row.label) && colCount === 1;
-        const valueColumns = `repeat(${colCount}, minmax(56px, 88px))`;
+        const valueColumns =
+          colCount > 8
+            ? `repeat(${colCount}, minmax(40px, 56px))`
+            : `repeat(${colCount}, minmax(56px, 88px))`;
         const gridTemplateColumns = row.label
           ? `72px ${valueColumns}`
           : valueColumns;
@@ -240,50 +243,55 @@ function NumpyArrayVisual({ block, accentColor }) {
         }
 
         return (
-          <div key={`${row.label}-${rowIndex}`} className="numpy-array-row-block">
-            {row.colLabels?.length > 0 ? (
+          <div
+            key={`${row.label}-${rowIndex}`}
+            className={`numpy-array-row-block${colCount > 8 ? " numpy-array-row-block-wide" : ""}`}
+          >
+            <div className="numpy-array-scroll">
+              {row.colLabels?.length > 0 ? (
+                <div
+                  className="numpy-array-col-labels"
+                  style={{ gridTemplateColumns }}
+                >
+                  {row.label ? <span className="numpy-array-corner" /> : null}
+                  {row.colLabels.map((colLabel) => (
+                    <span key={colLabel} className="numpy-array-col-label">
+                      {colLabel}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
               <div
-                className="numpy-array-col-labels"
+                className="numpy-array-data-row"
                 style={{ gridTemplateColumns }}
               >
-                {row.label ? <span className="numpy-array-corner" /> : null}
-                {row.colLabels.map((colLabel) => (
-                  <span key={colLabel} className="numpy-array-col-label">
-                    {colLabel}
-                  </span>
-                ))}
-              </div>
-            ) : null}
-            <div
-              className="numpy-array-data-row"
-              style={{ gridTemplateColumns }}
-            >
-              {row.label ? (
-                <span className="numpy-array-row-label">{row.label}</span>
-              ) : null}
-              {row.values.map((value, index) => {
-                const isMissing = missing.has(index);
-                const isOk = ok.has(index);
-                const cellAccent = isMissing
-                  ? missingAccent
-                  : isOk
-                    ? okAccent
-                    : accent;
+                {row.label ? (
+                  <span className="numpy-array-row-label">{row.label}</span>
+                ) : null}
+                {row.values.map((value, index) => {
+                  const isMissing = missing.has(index);
+                  const isOk = ok.has(index);
+                  const cellAccent = isMissing
+                    ? missingAccent
+                    : isOk
+                      ? okAccent
+                      : accent;
 
-                return (
-                  <span
-                    key={`${row.label}-${index}`}
-                    className={`numpy-array-cell${isMissing ? " numpy-array-cell-missing" : ""}${isOk ? " numpy-array-cell-ok" : ""}`}
-                    style={{
-                      borderColor: `${cellAccent}66`,
-                      background: `${cellAccent}18`,
-                      color: isMissing ? missingAccent : undefined,
-                    }}
-                  >
-                    {value}
-                  </span>
-                );
-              })}
+                  return (
+                    <span
+                      key={`${row.label}-${index}`}
+                      className={`numpy-array-cell${isMissing ? " numpy-array-cell-missing" : ""}${isOk ? " numpy-array-cell-ok" : ""}`}
+                      style={{
+                        borderColor: `${cellAccent}66`,
+                        background: `${cellAccent}18`,
+                        color: isMissing ? missingAccent : undefined,
+                      }}
+                    >
+                      {value}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           </div>
         );
@@ -680,25 +688,6 @@ export default function NumpyIntroTheory({
         </p>
       </header>
 
-      {outcomeItems.length > 0 && (
-        <section
-          className="numpy-lesson-outcomes numpy-lesson-outcomes-first"
-          style={{ "--numpy-accent": accentColor }}
-          aria-labelledby="numpy-outcomes-heading"
-        >
-          <h2 id="numpy-outcomes-heading" className="numpy-outcomes-heading">
-            Learning outcomes
-          </h2>
-          <ul className="numpy-outcomes-list">
-            {outcomeItems.map((item) => (
-              <li key={item}>
-                <InlineText text={item} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       <div className="numpy-learn-path">
         <div className="numpy-path-label">
           <span>Your learning path</span>
@@ -725,6 +714,25 @@ export default function NumpyIntroTheory({
           );
         })}
       </div>
+
+      {outcomeItems.length > 0 && (
+        <section
+          className="numpy-lesson-outcomes"
+          style={{ "--numpy-accent": accentColor }}
+          aria-labelledby="numpy-outcomes-heading"
+        >
+          <h2 id="numpy-outcomes-heading" className="numpy-outcomes-heading">
+            Learning outcomes
+          </h2>
+          <ul className="numpy-outcomes-list">
+            {outcomeItems.map((item) => (
+              <li key={item}>
+                <InlineText text={item} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <LessonReadGate
         markedAsRead={markedAsRead}

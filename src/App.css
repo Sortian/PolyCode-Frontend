@@ -8696,10 +8696,6 @@ body {
   border-radius: 10px;
   border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
   background: color-mix(in srgb, var(--vscode-panel, #12141c) 88%, transparent);
-}
-
-.numpy-lesson-outcomes-first {
-  margin-bottom: 24px;
   border-color: color-mix(
     in srgb,
     var(--numpy-accent, var(--acid, #ffe566)) 35%,
@@ -8753,6 +8749,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  margin-bottom: 28px;
 }
 
 .numpy-chapter-badge {
@@ -8822,6 +8819,12 @@ body {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.025);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.numpy-array-card {
+  overflow: hidden;
 }
 
 .numpy-step-head {
@@ -8854,6 +8857,9 @@ body {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--txt-2, #6e7891);
+  flex: 1;
+  min-width: 0;
+  line-height: 1.45;
 }
 
 .numpy-step-text {
@@ -9051,6 +9057,8 @@ body {
   flex-direction: column;
   gap: 14px;
   margin-top: 4px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .numpy-array-row-block {
@@ -9059,6 +9067,27 @@ body {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.numpy-array-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+.numpy-array-row-block-wide .numpy-array-col-labels,
+.numpy-array-row-block-wide .numpy-array-data-row {
+  width: max-content;
+  min-width: 100%;
+}
+
+.numpy-array-row-block-wide .numpy-array-cell {
+  min-width: 40px;
+  padding: 6px 8px;
 }
 
 .numpy-array-row-compact {
