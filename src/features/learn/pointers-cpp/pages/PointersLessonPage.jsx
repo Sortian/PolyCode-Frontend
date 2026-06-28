@@ -8,6 +8,8 @@ import LearnProfileMenu from "../../shared/LearnProfileMenu";
 import LessonContentShell from "../../shared/LessonContentShell";
 import LessonReadGate from "../../shared/LessonReadGate";
 import useLessonReadGate from "../../shared/useLessonReadGate";
+import useLessonQuizAttempts from "../../shared/useLessonQuizAttempts";
+import { mapTheoryWithQuizIndices } from "../../shared/lessonQuizUtils";
 import LessonChallengeTab from "../../shared/LessonChallengeTab";
 import {
   POINTER_CHAPTERS,
@@ -98,6 +100,14 @@ export default function PointersLessonPage() {
   const codeSaveTimer = useRef(null);
 
   const lesson = POINTER_LESSONS.find((item) => item.id === lessonId);
+  const {
+    preparedLesson,
+    quizCount,
+    attemptedCount,
+    recordAttempt,
+    getSelection,
+  } = useLessonQuizAttempts(READ_GATE_PREFIX, lessonId, lesson);
+  const theoryLesson = preparedLesson || lesson;
   const lessonIdx = POINTER_LESSONS.findIndex((item) => item.id === lessonId);
   const prev = POINTER_LESSONS[lessonIdx - 1];
   const next = POINTER_LESSONS[lessonIdx + 1];
@@ -331,14 +341,21 @@ export default function PointersLessonPage() {
                 </div>
               </div>
 
-              {lesson.theory.map((block, index) => (
+              {mapTheoryWithQuizIndices(theoryLesson?.theory || []).map(
+                ({ block, theoryIndex, quizIndex }) => (
                 <ConceptCard
-                  key={index}
+                  key={theoryIndex}
                   block={block}
                   accentColor={LEARN_ACCENT}
                   runnableCodeLangs={["cpp", "c++"]}
+                  quizIndex={quizIndex}
+                  quizSelection={
+                    quizIndex === null ? null : getSelection(quizIndex)
+                  }
+                  onQuizAnswer={recordAttempt}
                 />
-              ))}
+              ),
+              )}
 
               <LessonReadGate
                 markedAsRead={markedAsRead}
@@ -347,6 +364,8 @@ export default function PointersLessonPage() {
                 onConfidenceChange={handleConfidenceChange}
                 onGoChallenge={goToChallenge}
                 accentColor={LEARN_ACCENT}
+                quizzesRequired={quizCount}
+                quizzesAttempted={attemptedCount}
                 challengeLabel="Ready? Take the Challenge →"
               />
             </div>

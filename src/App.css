@@ -9548,6 +9548,14 @@ body {
   color: #9aa3b8;
 }
 
+.lesson-read-gate-error {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  font-weight: 600;
+  color: #f87171;
+}
+
 .lesson-mark-read-btn {
   padding: 9px 18px;
   border: 1px solid color-mix(in srgb, var(--lesson-accent, #818cf8) 60%, #fff);

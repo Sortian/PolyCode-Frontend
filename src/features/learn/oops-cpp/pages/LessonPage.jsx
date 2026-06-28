@@ -9,6 +9,8 @@ import LearnProfileMenu from "../../shared/LearnProfileMenu";
 import LessonContentShell from "../../shared/LessonContentShell";
 import LessonReadGate from "../../shared/LessonReadGate";
 import useLessonReadGate from "../../shared/useLessonReadGate";
+import useLessonQuizAttempts from "../../shared/useLessonQuizAttempts";
+import { mapTheoryWithQuizIndices } from "../../shared/lessonQuizUtils";
 import LessonChallengeTab from "../../shared/LessonChallengeTab";
 import useOopsProgress from "../hooks/useOopsProgress";
 import { useLessonAssistantContext } from "../../../assistant/hooks/useLessonAssistantContext";
@@ -101,6 +103,14 @@ export default function LessonPage() {
   const codeSaveTimer = useRef(null);
 
   const lesson = ALL_LESSONS.find((l) => l.id === lessonId);
+  const {
+    preparedLesson,
+    quizCount,
+    attemptedCount,
+    recordAttempt,
+    getSelection,
+  } = useLessonQuizAttempts(READ_GATE_PREFIX, lessonId, lesson);
+  const theoryLesson = preparedLesson || lesson;
   const lessonIdx = ALL_LESSONS.findIndex((l) => l.id === lessonId);
   const prev = ALL_LESSONS[lessonIdx - 1];
   const next = ALL_LESSONS[lessonIdx + 1];
@@ -351,14 +361,21 @@ export default function LessonPage() {
                   </ul>
                 </div>
               </div>
-              {lesson.theory.map((block, i) => (
+              {mapTheoryWithQuizIndices(theoryLesson?.theory || []).map(
+                ({ block, theoryIndex, quizIndex }) => (
                 <ConceptCard
-                  key={i}
+                  key={theoryIndex}
                   block={block}
                   accentColor={LEARN_ACCENT}
                   runnableCodeLangs={["cpp", "c++"]}
+                  quizIndex={quizIndex}
+                  quizSelection={
+                    quizIndex === null ? null : getSelection(quizIndex)
+                  }
+                  onQuizAnswer={recordAttempt}
                 />
-              ))}
+              ),
+              )}
 
               <LessonReadGate
                 markedAsRead={markedAsRead}
@@ -367,6 +384,8 @@ export default function LessonPage() {
                 onConfidenceChange={handleConfidenceChange}
                 onGoChallenge={goToChallenge}
                 accentColor={LEARN_ACCENT}
+                quizzesRequired={quizCount}
+                quizzesAttempted={attemptedCount}
                 challengeLabel="Ready? Take the Challenge →"
               />
             </div>

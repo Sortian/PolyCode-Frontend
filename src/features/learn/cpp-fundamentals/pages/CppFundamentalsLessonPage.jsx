@@ -191,6 +191,7 @@ export default function CppFundamentalsLessonPage() {
           {tab === "theory" ? (
             <NumpyIntroTheory
               lesson={lesson}
+              quizStoragePrefix={READ_GATE_PREFIX}
               confidence={confidence}
               onConfidenceChange={handleConfidenceChange}
               markedAsRead={markedAsRead}
