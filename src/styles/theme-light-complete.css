@@ -264,14 +264,14 @@
   border-color: var(--border) !important;
 }
 
-.app.theme-light .numpy-lesson-intro-label,
-.app.theme-light .numpy-chapter-badge,
-.app.theme-light .numpy-step-num {
+.app.theme-light .numpy-step-num:not(.numpy-step-num-code) {
   color: #ffffff !important;
+  background: var(--poly-blue) !important;
 }
 
-.app.theme-light .numpy-step-num:not(.numpy-step-num-code) {
-  background: var(--poly-blue) !important;
+.app.theme-light .main-content.learn-content .numpy-lesson-intro-label,
+.app.theme-light .main-content.learn-content .numpy-chapter-badge {
+  color: var(--poly-blue) !important;
 }
 
 .app.theme-light .numpy-step-num-code {
@@ -421,15 +421,53 @@ html[data-theme="light"] .lesson-annotator-fab-close,
   color: var(--poly-blue) !important;
 }
 
-/* Quizzes */
-.app.theme-light .numpy-quiz-option.selected {
-  border-color: var(--poly-blue) !important;
-  background: var(--poly-blue-light) !important;
+/* Quizzes — readable options (not dark gray slabs) */
+.app.theme-light .main-content.learn-content .numpy-quiz-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(37, 99, 235, 0.22) !important;
 }
 
-.app.theme-light .numpy-quiz-option.answer {
+.app.theme-light .main-content.learn-content .numpy-quiz-card.correct {
+  border-color: rgba(22, 163, 74, 0.45) !important;
+  background: #f0fdf4 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-quiz-card.wrong {
+  border-color: rgba(220, 38, 38, 0.4) !important;
+  background: #fef2f2 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-quiz-question {
+  color: #0f172a !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-quiz-option {
+  background: #f8fafc !important;
+  border: 1px solid rgba(37, 99, 235, 0.22) !important;
+  color: #334155 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-quiz-option:hover {
+  border-color: rgba(37, 99, 235, 0.45) !important;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-quiz-option.selected {
+  border-color: var(--poly-blue) !important;
+  background: var(--poly-blue-light) !important;
+  color: var(--poly-blue-deep) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-quiz-option.answer {
   border-color: #16a34a !important;
   background: #f0fdf4 !important;
+  color: #166534 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-quiz-feedback {
+  border-top-color: rgba(37, 99, 235, 0.15) !important;
+  color: #334155 !important;
 }
 
 /* Scrollbar */
@@ -757,8 +795,37 @@ html[data-theme="light"] .lesson-annotator-fab-close,
 }
 
 /* NumPy lesson theory — readable text + blue tables in light mode */
+.app.theme-light .main-content.learn-content .numpy-outcomes-heading,
+.app.theme-light .main-content.learn-content .numpy-path-label span {
+  color: var(--poly-blue) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-outcomes {
+  background: #eff6ff !important;
+  border-color: rgba(37, 99, 235, 0.28) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-path-label {
+  border-bottom-color: rgba(37, 99, 235, 0.15) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-path-label small {
+  color: #64748b !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-title {
+  color: #0f172a !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-hook {
+  color: #0f172a !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-hook strong {
+  color: #0f172a !important;
+}
+
 .app.theme-light .main-content.learn-content .numpy-step-text,
-.app.theme-light .main-content.learn-content .numpy-lesson-hook,
 .app.theme-light .main-content.learn-content .numpy-vt-footnote,
 .app.theme-light .main-content.learn-content .numpy-array-footnote,
 .app.theme-light .main-content.learn-content .numpy-matrix-footnote,
@@ -771,7 +838,6 @@ html[data-theme="light"] .lesson-annotator-fab-close,
 }
 
 .app.theme-light .main-content.learn-content .numpy-step-text strong,
-.app.theme-light .main-content.learn-content .numpy-lesson-hook strong,
 .app.theme-light .main-content.learn-content .numpy-vt-footnote strong,
 .app.theme-light .main-content.learn-content .numpy-array-footnote strong,
 .app.theme-light .main-content.learn-content .lesson-scenario strong {
