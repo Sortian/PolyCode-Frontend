@@ -4030,23 +4030,36 @@ print("Average roll:", rolls.mean())
           {
             type: "table",
             title: "More trials → steadier averages (fair die, target ≈ 3.5)",
-            columns: ["Trials", "Typical average", "Lesson"],
+            rowLabelHeader: "Trials",
+            columns: ["Typical average", "Lesson"],
             rows: [
               {
                 label: "5 rolls",
-                values: ["Might be 2.0 or 5.2", "Too few — luck swings big"],
+                values: [
+                  "Might be 2.0 or 5.2",
+                  "Too few — one lucky streak can fool you",
+                ],
               },
               {
                 label: "20 rolls",
-                values: ["Often 3.0 – 4.0", "Starting to stabilise"],
+                values: [
+                  "Often 3.0 – 4.0",
+                  "Starting to stabilise around fair-die average",
+                ],
               },
               {
                 label: "100 rolls",
-                values: ["Often near 3.3 – 3.7", "Pattern is clearer"],
+                values: [
+                  "Often near 3.3 – 3.7",
+                  "Pattern is clearer — trust the trend more",
+                ],
               },
               {
                 label: "1000 rolls",
-                values: ["Very close to 3.5", "Law of large numbers"],
+                values: [
+                  "Very close to 3.5",
+                  "Law of large numbers — many trials reveal truth",
+                ],
               },
             ],
             showTotals: false,

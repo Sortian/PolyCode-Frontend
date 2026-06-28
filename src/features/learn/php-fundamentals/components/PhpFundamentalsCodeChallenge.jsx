@@ -3,10 +3,9 @@ import { Link } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { useAuth } from "../../../auth/context/AuthContext";
 import {
-  definePolycodeMonacoTheme,
   getVSCodeEditorOptions,
-  POLYCODE_VSCODE_THEME,
 } from "../../../../shared/utils/monacoTheme";
+import { useSiteMonacoTheme } from "../../../../shared/hooks/useSiteMonacoTheme";
 // Assuming you have matching PHP runtime utilities in your shared folder:
 import {
   formatPhpOutput,
@@ -58,6 +57,7 @@ export default function PhpFundamentalsCodeChallenge({
   const runTestsRef = useRef(null);
   const { showCelebration, triggerCelebration, dismissCelebration } =
     useChallengeCelebration(challenge.id);
+  const { monacoTheme, beforeMount } = useSiteMonacoTheme();
 
   useEffect(() => {
     const challengeChanged = activeChallengeId.current !== challenge.id;
@@ -324,9 +324,9 @@ export default function PhpFundamentalsCodeChallenge({
             height="100%"
             language="php"
             value={showSolution ? challenge.solutionCode : code}
-            beforeMount={definePolycodeMonacoTheme}
+            beforeMount={beforeMount}
             onMount={handleEditorMount}
-            theme={POLYCODE_VSCODE_THEME}
+            theme={monacoTheme}
             onChange={(value) => {
               if (!showSolution) {
                 const next = value || "";

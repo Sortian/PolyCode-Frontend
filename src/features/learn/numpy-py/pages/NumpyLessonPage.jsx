@@ -242,8 +242,9 @@ export default function NumpyLessonPage() {
           {tab === "theory" ? (
             useFriendlyTheory ? (
               <NumpyIntroTheory
-                lesson={lesson}
-                confidence={confidence}
+              lesson={lesson}
+              quizStoragePrefix={READ_GATE_PREFIX}
+              confidence={confidence}
                 onConfidenceChange={handleConfidenceChange}
                 markedAsRead={markedAsRead}
                 onMarkAsRead={markAsRead}

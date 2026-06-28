@@ -6,7 +6,7 @@ const SIZES = {
   md: { boxW: 72, boxH: 80, imgW: 68, imgH: 76, cls: "assistant-avatar-wrap--md" },
   lg: { boxW: 88, boxH: 96, imgW: 84, imgH: 92, cls: "assistant-avatar-wrap--lg" },
   dock: { boxW: 56, boxH: 56, imgW: 50, imgH: 50, cls: "assistant-avatar-wrap--dock" },
-  header: { boxW: 48, boxH: 48, imgW: 44, imgH: 44, cls: "assistant-avatar-wrap--header" },
+  header: { boxW: 52, boxH: 52, imgW: 46, imgH: 46, cls: "assistant-avatar-wrap--header" },
 };
 
 /** Renders the PolyMentor mascot (full-character artwork). */

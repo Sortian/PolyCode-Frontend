@@ -240,6 +240,10 @@
   color: var(--txt-1) !important;
 }
 
+.app.theme-light .lesson-read-gate-error {
+  color: #dc2626 !important;
+}
+
 .app.theme-light .lesson-confidence-options button,
 .app.theme-light .numpy-confidence-options button {
   background: var(--poly-surface-muted) !important;
@@ -264,14 +268,14 @@
   border-color: var(--border) !important;
 }
 
-.app.theme-light .numpy-lesson-intro-label,
-.app.theme-light .numpy-chapter-badge,
-.app.theme-light .numpy-step-num {
+.app.theme-light .numpy-step-num:not(.numpy-step-num-code) {
   color: #ffffff !important;
+  background: var(--poly-blue) !important;
 }
 
-.app.theme-light .numpy-step-num:not(.numpy-step-num-code) {
-  background: var(--poly-blue) !important;
+.app.theme-light .main-content.learn-content .numpy-lesson-intro-label,
+.app.theme-light .main-content.learn-content .numpy-chapter-badge {
+  color: var(--poly-blue) !important;
 }
 
 .app.theme-light .numpy-step-num-code {
@@ -421,62 +425,53 @@ html[data-theme="light"] .lesson-annotator-fab-close,
   color: var(--poly-blue) !important;
 }
 
-/* Quizzes */
-.app.theme-light .numpy-quiz-card {
-  background: var(--poly-surface) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: var(--shadow-sm);
+/* Quizzes — readable options (not dark gray slabs) */
+.app.theme-light .main-content.learn-content .numpy-quiz-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(37, 99, 235, 0.22) !important;
 }
 
-.app.theme-light .numpy-quiz-card.correct {
-  border-color: rgba(22, 163, 74, 0.35) !important;
-  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 72%) !important;
+.app.theme-light .main-content.learn-content .numpy-quiz-card.correct {
+  border-color: rgba(22, 163, 74, 0.45) !important;
+  background: #f0fdf4 !important;
 }
 
-.app.theme-light .numpy-quiz-card.wrong {
-  border-color: rgba(239, 68, 68, 0.32) !important;
-  background: linear-gradient(180deg, #fef2f2 0%, #ffffff 72%) !important;
+.app.theme-light .main-content.learn-content .numpy-quiz-card.wrong {
+  border-color: rgba(220, 38, 38, 0.4) !important;
+  background: #fef2f2 !important;
 }
 
-.app.theme-light .numpy-quiz-question {
-  color: var(--txt-0) !important;
+.app.theme-light .main-content.learn-content .numpy-quiz-question {
+  color: #0f172a !important;
 }
 
-.app.theme-light .numpy-quiz-option {
-  background: var(--poly-surface) !important;
-  border: 1px solid var(--border) !important;
-  color: var(--txt-0) !important;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+.app.theme-light .main-content.learn-content .numpy-quiz-option {
+  background: #f8fafc !important;
+  border: 1px solid rgba(37, 99, 235, 0.22) !important;
+  color: #334155 !important;
 }
 
-.app.theme-light .numpy-quiz-option:hover {
-  border-color: var(--poly-blue-border) !important;
-  background: var(--poly-blue-light) !important;
-  color: var(--poly-blue-deep) !important;
+.app.theme-light .main-content.learn-content .numpy-quiz-option:hover {
+  border-color: rgba(37, 99, 235, 0.45) !important;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
 }
 
-.app.theme-light .numpy-quiz-option.selected {
+.app.theme-light .main-content.learn-content .numpy-quiz-option.selected {
   border-color: var(--poly-blue) !important;
   background: var(--poly-blue-light) !important;
   color: var(--poly-blue-deep) !important;
-  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
 }
 
-.app.theme-light .numpy-quiz-option.answer {
+.app.theme-light .main-content.learn-content .numpy-quiz-option.answer {
   border-color: #16a34a !important;
   background: #f0fdf4 !important;
   color: #166534 !important;
 }
 
-.app.theme-light .numpy-quiz-card.wrong .numpy-quiz-option.selected:not(.answer) {
-  border-color: #ef4444 !important;
-  background: #fef2f2 !important;
-  color: #b91c1c !important;
-}
-
-.app.theme-light .numpy-quiz-feedback {
-  color: var(--txt-1) !important;
-  border-top-color: var(--border) !important;
+.app.theme-light .main-content.learn-content .numpy-quiz-feedback {
+  border-top-color: rgba(37, 99, 235, 0.15) !important;
+  color: #334155 !important;
 }
 
 /* Scrollbar */
@@ -737,6 +732,18 @@ html[data-theme="light"] .lesson-annotator-fab-close,
   border-top-color: var(--border) !important;
 }
 
+.app.theme-light .main-content.learn-content .oops-theory-editor .monaco-editor,
+.app.theme-light .main-content.learn-content .oops-theory-editor .monaco-editor-background,
+.app.theme-light .main-content.learn-content .oops-theory-editor .margin-view-overlays {
+  background: #f8fafc !important;
+}
+
+.app.theme-light .main-content.learn-content .oops-theory-editor .monaco-editor .view-overlays .current-line,
+.app.theme-light .main-content.learn-content .oops-theory-editor .monaco-editor .margin-view-overlays .current-line {
+  background: #dbeafe !important;
+  border: none !important;
+}
+
 .app.theme-light .main-content.learn-content .oops-auth-gate-theory {
   border-top-color: var(--border) !important;
   background: var(--poly-surface-muted) !important;
@@ -756,52 +763,17 @@ html[data-theme="light"] .lesson-annotator-fab-close,
   color: var(--poly-blue) !important;
 }
 
-.app.theme-light .main-content.learn-content .oops-theory-editor .monaco-editor,
-.app.theme-light .main-content.learn-content .oops-theory-editor .monaco-editor-background,
-.app.theme-light .main-content.learn-content .oops-theory-editor .margin-view-overlays {
-  background: #ffffff !important;
-}
-
-.app.theme-light .main-content.learn-content .oops-editor-panel {
-  background: var(--poly-surface) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06) !important;
-}
-
-.app.theme-light .main-content.learn-content .oops-editor-topbar {
-  background: #f8fafc !important;
-  border-bottom: 1px solid var(--border) !important;
-}
-
-.app.theme-light .main-content.learn-content .oops-editor-lang {
-  color: var(--txt-0) !important;
-  font-weight: 600 !important;
-}
-
-.app.theme-light .main-content.learn-content .oops-editor {
-  background: #ffffff !important;
-}
-
 .app.theme-light .main-content.learn-content .oops-editor .monaco-editor,
 .app.theme-light .main-content.learn-content .oops-editor .monaco-editor-background,
-.app.theme-light .main-content.learn-content .oops-editor .margin-view-overlays,
-.app.theme-light .main-content.learn-content .oops-editor .monaco-editor .margin {
+.app.theme-light .main-content.learn-content .oops-editor .monaco-editor .margin,
+.app.theme-light .main-content.learn-content .oops-editor .monaco-editor .margin-view-overlays {
   background: #ffffff !important;
 }
 
-.app.theme-light .main-content.learn-content .oops-run-bar {
-  background: #f8fafc !important;
-  border-top: 1px solid var(--border) !important;
-}
-
-.app.theme-light .main-content.learn-content .oops-editor .monaco-editor .oops-fixed-selection-inline {
-  color: #0f172a !important;
-  background: rgba(37, 99, 235, 0.16) !important;
-  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.22) !important;
-}
-
-.app.theme-light .main-content.learn-content .oops-editor .monaco-editor .oops-fixed-selection-range {
-  background: rgba(37, 99, 235, 0.1) !important;
+.app.theme-light .main-content.learn-content .oops-editor .monaco-editor .view-overlays .current-line,
+.app.theme-light .main-content.learn-content .oops-editor .monaco-editor .margin-view-overlays .current-line {
+  background: #dbeafe !important;
+  border: none !important;
 }
 
 .app.theme-light .main-content.learn-content .oops-editor-action {
@@ -838,4 +810,102 @@ html[data-theme="light"] .lesson-annotator-fab-close,
 .app.theme-light .fastapi-hub .oops-hero-accent,
 .app.theme-light .ai-ml-hub .oops-hero-accent {
   color: var(--poly-blue) !important;
+}
+
+/* NumPy lesson theory — readable text + blue tables in light mode */
+.app.theme-light .main-content.learn-content .numpy-outcomes-heading,
+.app.theme-light .main-content.learn-content .numpy-path-label span {
+  color: var(--poly-blue) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-outcomes {
+  background: #eff6ff !important;
+  border-color: rgba(37, 99, 235, 0.28) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-path-label {
+  border-bottom-color: rgba(37, 99, 235, 0.15) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-path-label small {
+  color: #64748b !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-title {
+  color: #0f172a !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-hook {
+  color: #0f172a !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-lesson-hook strong {
+  color: #0f172a !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-step-text,
+.app.theme-light .main-content.learn-content .numpy-vt-footnote,
+.app.theme-light .main-content.learn-content .numpy-array-footnote,
+.app.theme-light .main-content.learn-content .numpy-matrix-footnote,
+.app.theme-light .main-content.learn-content .lesson-scenario p,
+.app.theme-light .main-content.learn-content .numpy-diagram-item ul,
+.app.theme-light .main-content.learn-content .numpy-diagram-item h4,
+.app.theme-light .main-content.learn-content .numpy-outcomes-list,
+.app.theme-light .main-content.learn-content .numpy-tip-box p {
+  color: #334155 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-step-text strong,
+.app.theme-light .main-content.learn-content .numpy-vt-footnote strong,
+.app.theme-light .main-content.learn-content .numpy-array-footnote strong,
+.app.theme-light .main-content.learn-content .lesson-scenario strong {
+  color: #1e293b !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-inline-code {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: #1d4ed8 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-visual-table th,
+.app.theme-light .main-content.learn-content .numpy-visual-table td {
+  border: 1px solid rgba(37, 99, 235, 0.28) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-vt-col-head,
+.app.theme-light .main-content.learn-content .numpy-vt-row-head,
+.app.theme-light .main-content.learn-content .numpy-vt-corner:not(:empty) {
+  color: #1d4ed8 !important;
+  background: #eff6ff !important;
+  font-weight: 600;
+}
+
+.app.theme-light .main-content.learn-content .numpy-vt-cell {
+  color: #334155 !important;
+  background: #ffffff !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-vt-row-highlight .numpy-vt-row-head,
+.app.theme-light .main-content.learn-content .numpy-vt-row-highlight .numpy-vt-cell {
+  background: rgba(37, 99, 235, 0.08) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-diagram-item {
+  background: #f8fafc !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-array-row-block {
+  background: #f8fafc !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-array-col-label,
+.app.theme-light .main-content.learn-content .numpy-array-row-label {
+  color: #2563eb !important;
+}
+
+.app.theme-light .main-content.learn-content .lesson-scenario {
+  background: #eff6ff !important;
+  border-color: rgba(37, 99, 235, 0.28) !important;
 }

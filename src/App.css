@@ -8739,10 +8739,6 @@ body {
   border-radius: 10px;
   border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
   background: color-mix(in srgb, var(--vscode-panel, #12141c) 88%, transparent);
-}
-
-.numpy-lesson-outcomes-first {
-  margin-bottom: 24px;
   border-color: color-mix(
     in srgb,
     var(--numpy-accent, var(--acid, #ffe566)) 35%,
@@ -8796,6 +8792,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.numpy-lesson-outcomes-top {
+  margin: 0 0 20px;
 }
 
 .numpy-chapter-badge {
@@ -8865,6 +8865,12 @@ body {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.025);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.numpy-array-card {
+  overflow: hidden;
 }
 
 .numpy-step-head {
@@ -8897,6 +8903,9 @@ body {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--txt-2, #6e7891);
+  flex: 1;
+  min-width: 0;
+  line-height: 1.45;
 }
 
 .numpy-step-text {
@@ -9026,6 +9035,13 @@ body {
 .numpy-vt-corner,
 .numpy-vt-corner-total {
   background: transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--txt-2, #8b93a8);
+}
+
+.numpy-vt-corner:empty,
+.numpy-vt-corner-total:empty {
   border-color: transparent !important;
 }
 
@@ -9081,7 +9097,7 @@ body {
   margin: 12px 0 0;
   font-size: 0.86rem;
   line-height: 1.55;
-  color: #9aa3b8;
+  color: var(--txt-2, #9aa3b8);
 }
 
 .numpy-vt-row-highlight .numpy-vt-row-head,
@@ -9094,6 +9110,8 @@ body {
   flex-direction: column;
   gap: 14px;
   margin-top: 4px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .numpy-array-row-block {
@@ -9102,6 +9120,27 @@ body {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.numpy-array-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+.numpy-array-row-block-wide .numpy-array-col-labels,
+.numpy-array-row-block-wide .numpy-array-data-row {
+  width: max-content;
+  min-width: 100%;
+}
+
+.numpy-array-row-block-wide .numpy-array-cell {
+  min-width: 40px;
+  padding: 6px 8px;
 }
 
 .numpy-array-row-compact {
@@ -9184,7 +9223,7 @@ body {
   margin: 0;
   font-size: 0.86rem;
   line-height: 1.55;
-  color: #9aa3b8;
+  color: var(--txt-2, #9aa3b8);
 }
 
 .numpy-matrix-op-wrap {
@@ -9550,6 +9589,14 @@ body {
   font-size: 0.92rem;
   line-height: 1.55;
   color: #9aa3b8;
+}
+
+.lesson-read-gate-error {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  font-weight: 600;
+  color: #f87171;
 }
 
 .lesson-mark-read-btn {

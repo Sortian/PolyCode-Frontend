@@ -61,9 +61,16 @@ export default function ConceptCard({
   block,
   accentColor,
   runnableCodeLangs = [],
+  quizIndex = null,
+  quizSelection = null,
+  onQuizAnswer = null,
 }) {
   const [copied, setCopied] = useState(false);
-  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [localQuizSelection, setLocalQuizSelection] = useState(null);
+  const selectedQuiz =
+    quizSelection !== null && quizSelection !== undefined
+      ? quizSelection
+      : localQuizSelection;
   const [activeStep, setActiveStep] = useState(0);
   const [activeNode, setActiveNode] = useState(0);
 
@@ -275,6 +282,14 @@ export default function ConceptCard({
     const answered = selectedQuiz !== null;
     const correct = selectedQuiz === block.answer;
 
+    function handleQuizSelect(index) {
+      if (typeof onQuizAnswer === "function" && quizIndex !== null) {
+        onQuizAnswer(quizIndex, index);
+      } else {
+        setLocalQuizSelection(index);
+      }
+    }
+
     return (
       <div
         className={`oops-quiz-card ${answered ? (correct ? "correct" : "incorrect") : ""}`}
@@ -296,7 +311,7 @@ export default function ConceptCard({
                 className={`oops-quiz-option ${
                   answered && isAnswer ? "answer" : ""
                 } ${isSelected ? "selected" : ""}`}
-                onClick={() => setSelectedQuiz(index)}
+                onClick={() => handleQuizSelect(index)}
               >
                 <span>{String.fromCharCode(65 + index)}</span>
                 <InlineText text={option} />

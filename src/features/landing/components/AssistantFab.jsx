@@ -593,32 +593,34 @@ export default function AssistantFab() {
                     highlight
                     alt={ASSISTANT_CONFIG.name}
                   />
-                  <div>
+                  <div className="assistant-panel-header-copy">
                     <p id="polym_mentor-title" className="assistant-panel-title">
                       {ASSISTANT_CONFIG.name}
                     </p>
                     <p className="assistant-panel-tagline">{ASSISTANT_CONFIG.tagline}</p>
-                    {contextLabel ? (
-                      <span className="assistant-context-badge" title={contextLabel}>
-                        {contextLabel}
-                      </span>
-                    ) : null}
-                    <label className="assistant-level-label">
-                      Level
-                      <select
-                        value={assistantLevel}
-                        onChange={(event) => setAssistantLevel(event.target.value)}
-                        disabled={sending}
-                        aria-label="PolyMentor response level"
-                        className="assistant-level-select"
-                      >
-                        {ASSISTANT_LEVELS.map((level) => (
-                          <option key={level} value={level}>
-                            {level}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    <div className="assistant-panel-header-meta">
+                      {contextLabel ? (
+                        <span className="assistant-context-badge" title={contextLabel}>
+                          {contextLabel}
+                        </span>
+                      ) : null}
+                      <label className="assistant-level-label">
+                        Level
+                        <select
+                          value={assistantLevel}
+                          onChange={(event) => setAssistantLevel(event.target.value)}
+                          disabled={sending}
+                          aria-label="PolyMentor response level"
+                          className="assistant-level-select"
+                        >
+                          {ASSISTANT_LEVELS.map((level) => (
+                            <option key={level} value={level}>
+                              {level}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
                   </div>
                 </div>
                 <div className="assistant-panel-header-actions">

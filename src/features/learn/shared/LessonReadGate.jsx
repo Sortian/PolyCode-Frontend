@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const CONFIDENCE_OPTIONS = [
   ["review", "😅 Need another read"],
@@ -18,7 +18,26 @@ export default function LessonReadGate({
   onGoChallenge,
   accentColor = "#818cf8",
   challengeLabel = "Ready? Try the coding challenge →",
+  quizzesRequired = 0,
+  quizzesAttempted = 0,
 }) {
+  const [quizGateError, setQuizGateError] = useState(false);
+  const quizzesPending =
+    quizzesRequired > 0 && quizzesAttempted < quizzesRequired;
+
+  useEffect(() => {
+    if (!quizzesPending) setQuizGateError(false);
+  }, [quizzesPending]);
+
+  function handleMarkAsRead() {
+    if (quizzesPending) {
+      setQuizGateError(true);
+      return;
+    }
+    setQuizGateError(false);
+    onMarkAsRead?.();
+  }
+
   if (!markedAsRead) {
     return (
       <div
@@ -26,12 +45,19 @@ export default function LessonReadGate({
         style={{ "--lesson-accent": accentColor }}
       >
         <p className="lesson-read-gate-hint">
-          Finished reading? Mark this lesson as read to unlock the next steps.
+          {quizzesRequired > 0
+            ? `Answer all ${quizzesRequired} quick checks above, then mark this lesson as read to unlock the challenge.`
+            : "Finished reading? Mark this lesson as read to unlock the next steps."}
         </p>
+        {quizGateError ? (
+          <p className="lesson-read-gate-error" role="alert">
+            Solve the MCQs to go ahead.
+          </p>
+        ) : null}
         <button
           type="button"
           className="lesson-mark-read-btn"
-          onClick={onMarkAsRead}
+          onClick={handleMarkAsRead}
         >
           Mark as read
         </button>

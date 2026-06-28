@@ -4,10 +4,9 @@ import Editor from "@monaco-editor/react";
 import { useAuth } from "../../../auth/context/AuthContext";
 import { getApiBase } from "../../../../config/apiBase";
 import {
-  definePolycodeMonacoTheme,
   getVSCodeEditorOptions,
-  POLYCODE_VSCODE_THEME,
 } from "../../../../shared/utils/monacoTheme";
+import { useSiteMonacoTheme } from "../../../../shared/hooks/useSiteMonacoTheme";
 import ChallengeCompleteCelebration from "../../shared/ChallengeCompleteCelebration";
 import { useChallengeCelebration } from "../../shared/useChallengeCelebration";
 
@@ -35,6 +34,7 @@ export default function CodeChallenge({
   const fixedSelectionRangeRef = useRef(null);
   const { showCelebration, triggerCelebration, dismissCelebration } =
     useChallengeCelebration(challenge.id);
+  const { monacoTheme, beforeMount } = useSiteMonacoTheme();
   useEffect(() => {
     const challengeChanged = activeChallengeId.current !== challenge.id;
 
@@ -1213,9 +1213,9 @@ export default function CodeChallenge({
             height="100%"
             language="cpp"
             value={showSolution ? challenge.solutionCode : code}
-            beforeMount={definePolycodeMonacoTheme}
+            beforeMount={beforeMount}
             onMount={handleEditorMount}
-            theme={POLYCODE_VSCODE_THEME}
+            theme={monacoTheme}
             onChange={(value) => {
               if (!showSolution) {
                 const nextCode = value || "";
