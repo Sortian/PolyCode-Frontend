@@ -317,7 +317,9 @@ function NumpyVisualTable({ block }) {
       <table className="numpy-visual-table">
         <thead>
           <tr>
-            <th className="numpy-vt-corner" />
+            <th className="numpy-vt-corner">
+              {block.rowLabelHeader || ""}
+            </th>
             {block.columns.map((col) => (
               <th key={col} className="numpy-vt-col-head">
                 {col}

@@ -755,3 +755,73 @@ html[data-theme="light"] .lesson-annotator-fab-close,
 .app.theme-light .ai-ml-hub .oops-hero-accent {
   color: var(--poly-blue) !important;
 }
+
+/* NumPy lesson theory — readable text + blue tables in light mode */
+.app.theme-light .main-content.learn-content .numpy-step-text,
+.app.theme-light .main-content.learn-content .numpy-lesson-hook,
+.app.theme-light .main-content.learn-content .numpy-vt-footnote,
+.app.theme-light .main-content.learn-content .numpy-array-footnote,
+.app.theme-light .main-content.learn-content .numpy-matrix-footnote,
+.app.theme-light .main-content.learn-content .lesson-scenario p,
+.app.theme-light .main-content.learn-content .numpy-diagram-item ul,
+.app.theme-light .main-content.learn-content .numpy-diagram-item h4,
+.app.theme-light .main-content.learn-content .numpy-outcomes-list,
+.app.theme-light .main-content.learn-content .numpy-tip-box p {
+  color: #334155 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-step-text strong,
+.app.theme-light .main-content.learn-content .numpy-lesson-hook strong,
+.app.theme-light .main-content.learn-content .numpy-vt-footnote strong,
+.app.theme-light .main-content.learn-content .numpy-array-footnote strong,
+.app.theme-light .main-content.learn-content .lesson-scenario strong {
+  color: #1e293b !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-inline-code {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: #1d4ed8 !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-visual-table th,
+.app.theme-light .main-content.learn-content .numpy-visual-table td {
+  border: 1px solid rgba(37, 99, 235, 0.28) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-vt-col-head,
+.app.theme-light .main-content.learn-content .numpy-vt-row-head,
+.app.theme-light .main-content.learn-content .numpy-vt-corner:not(:empty) {
+  color: #1d4ed8 !important;
+  background: #eff6ff !important;
+  font-weight: 600;
+}
+
+.app.theme-light .main-content.learn-content .numpy-vt-cell {
+  color: #334155 !important;
+  background: #ffffff !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-vt-row-highlight .numpy-vt-row-head,
+.app.theme-light .main-content.learn-content .numpy-vt-row-highlight .numpy-vt-cell {
+  background: rgba(37, 99, 235, 0.08) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-diagram-item {
+  background: #f8fafc !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-array-row-block {
+  background: #f8fafc !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+.app.theme-light .main-content.learn-content .numpy-array-col-label,
+.app.theme-light .main-content.learn-content .numpy-array-row-label {
+  color: #2563eb !important;
+}
+
+.app.theme-light .main-content.learn-content .lesson-scenario {
+  background: #eff6ff !important;
+  border-color: rgba(37, 99, 235, 0.28) !important;
+}
