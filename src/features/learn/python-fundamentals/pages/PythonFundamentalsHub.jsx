@@ -1,41 +1,41 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  MATPLOTLIB_CHAPTERS,
-  MATPLOTLIB_LESSONS,
-  MATPLOTLIB_TOTAL_XP,
-} from "../data/matplotlibCurriculum";
-import useMatplotlibProgress from "../hooks/usematplotlibProgress";
+  PYTHON_FUNDAMENTALS_CHAPTERS,
+  PYTHON_FUNDAMENTALS_LESSONS,
+  PYTHON_FUNDAMENTALS_TOTAL_XP,
+} from "../data/pythonFundamentalsCurriculum";
+import usePythonFundamentalsProgress from "../hooks/usePythonFundamentalsProgress";
 import CourseCertificate from "../../shared/CourseCertificate";
 import LearnChapterPathOverview from "../../shared/LearnChapterPathOverview";
 import LearnChapterGrid from "../../shared/LearnChapterGrid";
 
-const BASE_PATH = "/learn/matplotlib-py";
+const BASE_PATH = "/learn/python-fundamentals";
 
 const LEARNING_PATH = [
   {
     level: "Beginner",
-    chapters: ["foundations", "core-chart-types"],
-    color: "#2563eb",
-    summary: "Imports, first plots, chart types, and when to use each one.",
+    chapters: ["foundations", "variables-types"],
+    color: "#3776ab",
+    summary: "What Python is, running code, variables, strings, and basic types.",
   },
   {
     level: "Intermediate",
-    chapters: ["readable-charts", "layouts-composition", "real-world-data"],
-    color: "#7c3aed",
-    summary: "Labels, styling, subplots, and plotting NumPy/Pandas data.",
+    chapters: ["control-flow", "collections-core", "loops-functions"],
+    color: "#2563eb",
+    summary: "Conditionals, lists, tuples, for/while loops, and functions.",
   },
   {
     level: "Advanced",
-    chapters: ["advanced-visuals", "pro-workflows"],
-    color: "#dc2626",
-    summary: "Annotations, colormaps, exports, Seaborn, and batch workflows.",
+    chapters: ["dicts-sets", "files-errors"],
+    color: "#7c3aed",
+    summary: "Dictionaries, sets, file patterns, and exception handling.",
   },
   {
     level: "Pro",
-    chapters: ["publication-mastery"],
+    chapters: ["pro-python"],
     color: "#9333ea",
-    summary: "Publication checklist, capstone dashboard, and cheat sheet reference.",
+    summary: "Classes, imports, comprehensions, venv, capstone, and cheat sheet.",
   },
 ];
 
@@ -46,7 +46,7 @@ function lessonPlainText(lesson) {
     .join(" ");
 }
 
-export default function MatplotlibHub() {
+export default function PythonFundamentalsHub() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -55,30 +55,31 @@ export default function MatplotlibHub() {
     completedMap: progress,
     bookmarks,
     lastLessonId,
-  } = useMatplotlibProgress();
+  } = usePythonFundamentalsProgress();
 
   const completedCount = Object.keys(progress).length;
-  const earnedXP = MATPLOTLIB_LESSONS.filter(
+  const earnedXP = PYTHON_FUNDAMENTALS_LESSONS.filter(
     (lesson) => progress[lesson.id],
   ).reduce((sum, lesson) => sum + lesson.xp, 0);
   const pct =
-    Math.round((completedCount / MATPLOTLIB_LESSONS.length) * 100) || 0;
+    Math.round((completedCount / PYTHON_FUNDAMENTALS_LESSONS.length) * 100) ||
+    0;
   const nextLesson =
-    MATPLOTLIB_LESSONS.find((lesson) => !progress[lesson.id]) ||
-    MATPLOTLIB_LESSONS[0];
+    PYTHON_FUNDAMENTALS_LESSONS.find((lesson) => !progress[lesson.id]) ||
+    PYTHON_FUNDAMENTALS_LESSONS[0];
   const resumeLesson =
-    MATPLOTLIB_LESSONS.find((lesson) => lesson.id === lastLessonId) ||
+    PYTHON_FUNDAMENTALS_LESSONS.find((lesson) => lesson.id === lastLessonId) ||
     nextLesson;
-  const completedChapters = MATPLOTLIB_CHAPTERS.filter((chapter) =>
+  const completedChapters = PYTHON_FUNDAMENTALS_CHAPTERS.filter((chapter) =>
     chapter.lessons.every((lesson) => progress[lesson.id]),
   ).length;
   const bookmarkedLessons = bookmarks
-    .map((id) => MATPLOTLIB_LESSONS.find((lesson) => lesson.id === id))
+    .map((id) => PYTHON_FUNDAMENTALS_LESSONS.find((lesson) => lesson.id === id))
     .filter(Boolean);
 
   const filteredLessons = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return MATPLOTLIB_LESSONS.filter((lesson) => {
+    return PYTHON_FUNDAMENTALS_LESSONS.filter((lesson) => {
       const matchesQuery =
         !query ||
         lesson.title.toLowerCase().includes(query) ||
@@ -103,16 +104,16 @@ export default function MatplotlibHub() {
         >
           ← Python courses
         </Link>
-        <div className="oops-hero-badge">MATPLOTLIB · BEGINNER → PRO</div>
+        <div className="oops-hero-badge">PYTHON · BEGINNER → PRO</div>
         <h1 className="oops-hero-title">
-          Matplotlib
+          Python
           <br />
-          <span className="oops-hero-accent">for Python</span>
+          <span className="oops-hero-accent">Fundamentals</span>
         </h1>
         <p className="oops-hero-sub">
-          A structured path from your first line plot to publication-ready
-          dashboards — 8 chapters, 25 lessons, and hands-on challenges that
-          teach what to plot, why it matters, and how to make it clear.
+          A structured path from your first print statement to classes, files,
+          and modern Python habits — 8 chapters, 22 lessons, and hands-on
+          challenges before NumPy, Pandas, and beyond.
         </p>
 
         <div className="oops-hero-grid">
@@ -120,8 +121,8 @@ export default function MatplotlibHub() {
             <div className="oops-xp-meta">
               <span>
                 {isAuthenticated
-                  ? `${completedCount}/${MATPLOTLIB_LESSONS.length} lessons · ${earnedXP}/${MATPLOTLIB_TOTAL_XP} XP`
-                  : `Sign in to track progress · ${MATPLOTLIB_LESSONS.length} lessons`}
+                  ? `${completedCount}/${PYTHON_FUNDAMENTALS_LESSONS.length} lessons · ${earnedXP}/${PYTHON_FUNDAMENTALS_TOTAL_XP} XP`
+                  : `Sign in to track progress · ${PYTHON_FUNDAMENTALS_LESSONS.length} lessons`}
               </span>
               <span>{isAuthenticated ? `${pct}%` : "—"}</span>
             </div>
@@ -167,61 +168,59 @@ export default function MatplotlibHub() {
               type="button"
               onClick={() => navigate(`${BASE_PATH}/lesson/${resumeLesson.id}`)}
             >
-              {completedCount > 0 ? "Resume Matplotlib" : "Start Matplotlib"}
+              {completedCount > 0 ? "Resume Python" : "Start Python"}
             </button>
           </div>
         </div>
       </div>
 
-      <section className="matplotlib-prerequisites" aria-label="Before you start">
+      <section className="matplotlib-prerequisites" aria-label="What comes next">
         <div className="matplotlib-prerequisites-head">
-          <span>Before you start</span>
-          <small>Recommended background · not required for lesson 1</small>
+          <span>After this course</span>
+          <small>Continue your Python stack on PolyCode</small>
         </div>
         <div className="matplotlib-prerequisites-grid">
-          <Link to="/learn/python-fundamentals" className="matplotlib-prereq-card">
-            <strong>Python Fundamentals</strong>
-            <p>Variables, lists, and functions — the structured path before data courses.</p>
-          </Link>
           <Link to="/learn/numpy-py" className="matplotlib-prereq-card">
             <strong>NumPy</strong>
-            <p>Arrays and vector math — used in real-world plotting lessons.</p>
+            <p>Numeric arrays and vector math — the foundation of data science.</p>
           </Link>
           <Link to="/learn/pandas-py" className="matplotlib-prereq-card">
             <strong>Pandas</strong>
-            <p>DataFrames and time series — helpful from chapter 5 onward.</p>
+            <p>Tables, CSV workflows, and data cleaning.</p>
+          </Link>
+          <Link to="/learn/matplotlib-py" className="matplotlib-prereq-card">
+            <strong>Matplotlib</strong>
+            <p>Charts and publication-ready visualizations.</p>
           </Link>
           <Link
-            to={`${BASE_PATH}/lesson/plt-13`}
+            to={`${BASE_PATH}/lesson/py-13`}
             className="matplotlib-prereq-card matplotlib-prereq-cheat"
           >
             <strong>Cheat sheet</strong>
-            <p>Chart picker + API reference — bookmark lesson 25 anytime.</p>
+            <p>Syntax reference — bookmark lesson 22 anytime.</p>
           </Link>
         </div>
         <p className="matplotlib-runtime-note">
-          Plot examples run in your browser (Pyodide). The first run loads
-          Matplotlib and may take a few seconds — charts appear in the Output
-          panel after <code>plt.show()</code>, not in the text console.
+          Challenges run in your browser via Pyodide. The first run may take a
+          few seconds to load the Python runtime — output appears in the
+          console panel after <code>print()</code>.
         </p>
       </section>
 
       <div className="oops-guide-tools">
         <div className="oops-tool-panel oops-tool-panel-main">
-          <span className="oops-interactive-label">
-            Find a Matplotlib topic
-          </span>
+          <span className="oops-interactive-label">Find a Python topic</span>
           <div className="oops-search-row">
             <input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search subplots, styles, annotate..."
-              aria-label="Search Matplotlib lessons"
+              placeholder="Search loops, dicts, classes..."
+              aria-label="Search Python lessons"
             />
             <div
               className="oops-filter-tabs"
-              aria-label="Filter Matplotlib lessons"
+              aria-label="Filter Python lessons"
             >
               {[
                 ["all", "All"],
@@ -245,7 +244,8 @@ export default function MatplotlibHub() {
               <button
                 key={lesson.id}
                 type="button"
-                className="oops-search-result"                onClick={() => navigate(`${BASE_PATH}/lesson/${lesson.id}`)}
+                className="oops-search-result"
+                onClick={() => navigate(`${BASE_PATH}/lesson/${lesson.id}`)}
               >
                 <span>{progress[lesson.id] ? "✓" : "○"}</span>
                 <strong>{lesson.title}</strong>
@@ -297,19 +297,19 @@ export default function MatplotlibHub() {
         <div className="oops-stat-tile">
           <span>Lessons</span>
           <strong>
-            {completedCount}/{MATPLOTLIB_LESSONS.length}
+            {completedCount}/{PYTHON_FUNDAMENTALS_LESSONS.length}
           </strong>
         </div>
         <div className="oops-stat-tile">
           <span>Chapters</span>
           <strong>
-            {completedChapters}/{MATPLOTLIB_CHAPTERS.length}
+            {completedChapters}/{PYTHON_FUNDAMENTALS_CHAPTERS.length}
           </strong>
         </div>
         <div className="oops-stat-tile">
           <span>XP</span>
           <strong>
-            {earnedXP}/{MATPLOTLIB_TOTAL_XP}
+            {earnedXP}/{PYTHON_FUNDAMENTALS_TOTAL_XP}
           </strong>
         </div>
         <div className="oops-stat-tile">
@@ -321,11 +321,14 @@ export default function MatplotlibHub() {
       <section className="matplotlib-learn-path" aria-label="Learning path">
         <div className="matplotlib-path-label">
           <span>Your path · Beginner to Pro</span>
-          <small>{MATPLOTLIB_CHAPTERS.length} chapters · {MATPLOTLIB_LESSONS.length} lessons</small>
+          <small>
+            {PYTHON_FUNDAMENTALS_CHAPTERS.length} chapters ·{" "}
+            {PYTHON_FUNDAMENTALS_LESSONS.length} lessons
+          </small>
         </div>
         <div className="matplotlib-path-grid">
           {LEARNING_PATH.map((stage) => {
-            const stageChapters = MATPLOTLIB_CHAPTERS.filter((ch) =>
+            const stageChapters = PYTHON_FUNDAMENTALS_CHAPTERS.filter((ch) =>
               stage.chapters.includes(ch.id),
             );
             const stageLessons = stageChapters.flatMap((ch) => ch.lessons);
@@ -379,7 +382,7 @@ export default function MatplotlibHub() {
       </section>
 
       <LearnChapterPathOverview
-        chapters={MATPLOTLIB_CHAPTERS}
+        chapters={PYTHON_FUNDAMENTALS_CHAPTERS}
         progress={progress}
         onChapterSelect={(chapter) =>
           navigate(`${BASE_PATH}/lesson/${chapter.lessons[0].id}`)
@@ -387,17 +390,17 @@ export default function MatplotlibHub() {
       />
 
       <LearnChapterGrid
-        chapters={MATPLOTLIB_CHAPTERS}
+        chapters={PYTHON_FUNDAMENTALS_CHAPTERS}
         progress={progress}
         basePath={BASE_PATH}
         navigate={navigate}
       />
       <CourseCertificate
-        courseName="Matplotlib for Python"
-        totalLessons={MATPLOTLIB_LESSONS.length}
+        courseName="Python Fundamentals"
+        totalLessons={PYTHON_FUNDAMENTALS_LESSONS.length}
         completedCount={completedCount}
         earnedXP={earnedXP}
-        totalXP={MATPLOTLIB_TOTAL_XP}
+        totalXP={PYTHON_FUNDAMENTALS_TOTAL_XP}
       />
     </div>
   );

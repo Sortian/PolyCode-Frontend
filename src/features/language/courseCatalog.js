@@ -105,6 +105,15 @@ export const languageCourses = {
   ],
   python: [
     {
+      title: "Python Fundamentals",
+      tag: "Core Course",
+      icon: Terminal,
+      description:
+        "Beginner → Pro: syntax, types, control flow, collections, functions, files, OOP basics, and modern Python habits — 8 chapters with hands-on challenges.",
+      href: "/learn/python-fundamentals",
+      accent: "#3776ab",
+    },
+    {
       title: "NumPy · py",
       tag: "Data Course",
       icon: Grid3x3,
@@ -269,6 +278,7 @@ export const learnNavByLanguage = {
     { label: "Pointers", to: "/learn/pointers-cpp" },
   ],
   python: [
+    { label: "Fundamentals", to: "/learn/python-fundamentals" },
     { label: "NumPy", to: "/learn/numpy-py" },
     { label: "Pandas", to: "/learn/pandas-py" },
     { label: "FastAPI", to: "/learn/fastapi-py" },
@@ -304,6 +314,7 @@ export function inferLanguageFromLearnPath(pathname = "") {
     return "cpp";
   }
   if (
+    pathname.startsWith("/learn/python-fundamentals") ||
     pathname.startsWith("/learn/numpy-py") ||
     pathname.startsWith("/learn/pandas-py") ||
     pathname.startsWith("/learn/fastapi-py") ||
