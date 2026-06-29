@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { useAuth } from "../../auth/context/AuthContext";
-import {
-  definePolycodeMonacoTheme,
-  getVSCodeEditorOptions,
-  POLYCODE_VSCODE_THEME,
-} from "../../../shared/utils/monacoTheme";
+import { useSiteMonacoTheme } from "../../../shared/hooks/useSiteMonacoTheme";
+import { getVSCodeEditorOptions } from "../../../shared/utils/monacoTheme";
 import {
   formatCppOutput,
   getCppRuntimeError,
@@ -22,6 +19,7 @@ import {
   getPythonRuntimeError,
   runPythonCode,
 } from "./runPython";
+import PythonRunOutput from "./PythonRunOutput";
 import {
   formatCsharpOutput,
   getCsharpRuntimeError,
@@ -43,7 +41,8 @@ function normalizeLang(lang = "python") {
   if (value === "c++" || value === "cpp") return "cpp";
   if (value === "javascript" || value === "js") return "javascript";
   if (value === "csharp" || value === "c#") return "csharp";
-  if (value === "ruby") return "ruby"; // Explicitly normalize ruby strings
+  if (value === "ruby") return "ruby";
+  if (value === "php") return "php";
   return value;
 }
 
